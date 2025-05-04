@@ -2,11 +2,11 @@
 
 import { getProviders, useSession, signIn } from "next-auth/react";
 import { useEffect, useState } from "react";
-import { LineLoginButton } from "@repo/ui/line-login-button";
 import { useRouter } from "next/navigation";
+import { LineLoginButton } from "../components/line-login-button";
 
 export default function LoginPage() {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const [providers, setProviders] = useState<any>(null);
   const router = useRouter();
 

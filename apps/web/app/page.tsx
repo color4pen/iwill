@@ -1,7 +1,7 @@
 "use client";
 
 import Image, { type ImageProps } from "next/image";
-import { MenuCard } from "@repo/ui/menu-card";
+import { MenuCard } from "./components/menu-card";
 import { Calendar, Camera, User, Settings } from "lucide-react";
 import { shouldEnableRestrictedFeatures } from "./utils/environment";
 
