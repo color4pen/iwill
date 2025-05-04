@@ -2,13 +2,13 @@
 
 import { ReactNode } from "react";
 import Link from "next/link";
-import AuthStatus from "./auth-status";
+import AuthStatus from "../../components/auth-status";
 
 interface LayoutFrameProps {
   children: ReactNode;
 }
 
-export default function LayoutFrame({ children }: LayoutFrameProps) {
+export default function Layout({ children }: LayoutFrameProps) {
   return (
     <div className="min-h-screen flex flex-col">
       <header className="w-full p-4 bg-white shadow-md">

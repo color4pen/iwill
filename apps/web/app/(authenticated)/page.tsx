@@ -1,32 +1,20 @@
-"use client";
-
-import Image, { type ImageProps } from "next/image";
-import { MenuCard } from "./components/menu-card";
 import { Calendar, Camera, User, Settings } from "lucide-react";
-import { shouldEnableRestrictedFeatures } from "./utils/environment";
+import { shouldEnableRestrictedFeatures } from "../utils/environment";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
+import { MenuCard } from "../../components/menu-card";
 
-type Props = Omit<ImageProps, "src"> & {
-  srcLight: string;
-  srcDark: string;
-};
-
-const ThemeImage = (props: Props) => {
-  const { srcLight, srcDark, ...rest } = props;
-
-  return (
-    <>
-      <Image {...rest} src={srcLight} className="imgLight" />
-      <Image {...rest} src={srcDark} className="imgDark" />
-    </>
-  );
-};
-
-export default function Home() {
+export default async function Home() {
+  const session = await getServerSession();
   const enableAllFeatures = shouldEnableRestrictedFeatures();
 
+  if (!session) {
+    redirect("/login");
+  }
+
   return (
     <>
-      <h2 className="text-3xl font-bold mb-8">Welcome</h2>
+      <h2 className="text-3xl font-bold mb-8">ようこそ{session.user?.name ? `, ${session.user.name}さん` : ''}</h2>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mt-10 mb-10">
         <MenuCard

@@ -1,6 +1,6 @@
 "use client";
 
-import { useSession, signOut, signIn } from "next-auth/react";
+import { useSession, signIn } from "next-auth/react";
 import { LineLoginButton } from "./line-login-button";
 import Link from "next/link";
 
@@ -41,8 +41,8 @@ export default function AuthStatus() {
   return (
     <div className="flex items-center gap-3">
       <LineLoginButton onClick={handleLineLogin} />
-      <Link 
-        href="/login" 
+      <Link
+        href="/login"
         className="text-sm text-gray-600 hover:text-gray-900 transition-colors duration-200"
       >
         ログインページ
