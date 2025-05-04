@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession, signOut, signIn } from "next-auth/react";
-import { LineLoginButton } from "@repo/ui/line-login-button";
+import { LineLoginButton } from "./line-login-button";
 import Link from "next/link";
 
 export default function AuthStatus() {
