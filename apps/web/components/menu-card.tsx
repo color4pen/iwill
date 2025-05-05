@@ -23,7 +23,7 @@ export const MenuCard = ({
   disabledText = "準備中..."
 }: MenuCardProps) => {
   const CardContent = () => (
-    <div className={`${color} ${disabled ? 'opacity-60 grayscale' : ''} text-white p-5 sm:p-6 rounded-md border border-white/20 shadow-sm ${!disabled && 'hover:shadow'} transition-all duration-200 h-full flex flex-col relative`}>
+    <div className={`${color} ${disabled ? 'opacity-60 grayscale' : ''} text-white p-3 sm:p-6 rounded-md border border-white/20 shadow-sm ${!disabled && 'hover:shadow'} transition-all duration-200 h-full flex items-center sm:justify-center relative`}>
       {disabled && (
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 backdrop-blur-[1px] rounded-md z-10">
           <div className="bg-black/70 py-1.5 px-3 rounded text-sm font-medium">
@@ -32,16 +32,15 @@ export const MenuCard = ({
         </div>
       )}
   
-      <div className="flex items-center mb-3">
-        {icon && <div className="mr-2.5 text-white/90">{icon}</div>}
-        <h3 className="text-lg sm:text-xl font-semibold">{title}</h3>
+      <div className="flex items-center ml-3 sm:ml-0 sm:justify-center text-left sm:text-center">
+        {icon && <div className="mr-2 text-white/90">{icon}</div>}
+        <h3 className="text-base sm:text-xl font-semibold">{title}</h3>
       </div>
-      <p className="text-sm sm:text-base line-clamp-2 text-gray-100">{description}</p>
     </div>
   );
 
   return (
-    <div className="block aspect-square">
+    <div className="block h-20 sm:h-auto sm:aspect-square">
       {disabled ? (
         <CardContent />
       ) : (

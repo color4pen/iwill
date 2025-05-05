@@ -26,7 +26,7 @@ export default function InfoPage() {
 
   return (
     <>
-      <h2 className="text-3xl font-bold mb-8 text-center">結婚式情報</h2>
+      <h2 className="text-2xl font-bold mb-6">会場案内</h2>
 
       <div className="bg-white p-6 rounded-lg shadow-md mb-8">
         <div className="flex justify-center mb-6">

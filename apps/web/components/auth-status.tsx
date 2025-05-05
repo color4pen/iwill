@@ -26,14 +26,13 @@ export default function AuthStatus() {
                 alt={session.user.name || "プロフィール画像"}
                 className="w-9 h-9 rounded-full object-cover ring-2 ring-blue-100 transition-all duration-200"
               />
-              <div className="absolute -bottom-1 -right-1 bg-green-500 rounded-full w-3 h-3 border-2 border-white"></div>
             </div>
           ) : (
             <div className="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center text-gray-500">
               <span className="text-sm font-medium">{session.user.name?.[0] || "G"}</span>
             </div>
           )}
-        </Link>
+        </Link>Ï
       </div>
     );
   }

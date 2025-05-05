@@ -1,4 +1,4 @@
-import { Calendar, Camera, User, Settings } from "lucide-react";
+import { Calendar, Camera, User, Bell, HelpCircle } from "lucide-react";
 import { shouldEnableRestrictedFeatures } from "../utils/environment";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
@@ -14,22 +14,27 @@ export default async function Home() {
 
   return (
     <>
-      <h2 className="text-3xl font-bold mb-8">ようこそ{session.user?.name ? `, ${session.user.name}さん` : ''}</h2>
-
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mt-10 mb-10">
+      <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-3 gap-4 sm:gap-6 my-2 md:px-5">
         <MenuCard
           title="式情報"
           description="結婚式の詳細情報を確認する"
           href="/info"
           color="bg-rose-500"
-          icon={<Calendar size={20} strokeWidth={1.5} />}
+          icon={<Calendar size={24} strokeWidth={1.5} />}
         />
         <MenuCard
-          title="メディア"
+          title="お知らせ"
+          description="重要なお知らせや最新情報を確認する"
+          href="/notifications"
+          color="bg-blue-500"
+          icon={<Bell size={24} strokeWidth={1.5} />}
+        />
+        <MenuCard
+          title="ギャラリー"
           description="写真や動画を閲覧・アップロードする"
-          href="/medias"
+          href="/gallery"
           color="bg-amber-500"
-          icon={<Camera size={20} strokeWidth={1.5} />}
+          icon={<Camera size={24} strokeWidth={1.5} />}
           disabled={!enableAllFeatures}
           disabledText="5月25日から利用可能"
         />
@@ -38,16 +43,16 @@ export default async function Home() {
           description="自分の情報や投稿を管理する"
           href="/mypage"
           color="bg-violet-500"
-          icon={<User size={20} strokeWidth={1.5} />}
+          icon={<User size={24} strokeWidth={1.5} />}
           disabled={!enableAllFeatures}
           disabledText="5月25日から利用可能"
         />
         <MenuCard
-          title="設定"
-          description="アカウントや通知の設定を変更する"
-          href="/settings"
+          title="よくある質問"
+          description="結婚式に関するよくある質問と回答"
+          href="/qa"
           color="bg-emerald-500"
-          icon={<Settings size={20} strokeWidth={1.5} />}
+          icon={<HelpCircle size={24} strokeWidth={1.5} />}
         />
       </div>
     </>
