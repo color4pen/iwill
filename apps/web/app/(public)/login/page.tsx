@@ -6,21 +6,13 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function LoginPage() {
-  const [isLoading, setIsLoading] = useState(false);
+  // ボタン状態の管理
   const [buttonState, setButtonState] = useState<'base' | 'hover' | 'press'>('base');
-  const [activeItem, setActiveItem] = useState<number | null>(null);
 
-  const handleLineLogin = async () => {
-    setIsLoading(true);
+  const handleLineLogin = () => {
     setButtonState('press');
-    try {
-      await signIn("line", { callbackUrl: "/" });
-    } catch (error) {
-      console.error("Login error:", error);
-      setButtonState('base');
-    } finally {
-      setIsLoading(false);
-    }
+    // callbackUrlを指定し、redirectを強制することで即時リダイレクト
+    signIn("line", { callbackUrl: "/", redirect: true });
   };
 
   return (
@@ -39,40 +31,18 @@ export default function LoginPage() {
           </div>
 
 
-          <div className="space-y-4 mb-8">
-
-            <div
-              className={`p-3 cursor-pointer rounded transition-all ${activeItem === 2 ? 'bg-gray-100 border-gray-300' : 'bg-white hover:bg-gray-50 border-gray-200'} border`}
-              onMouseEnter={() => setActiveItem(2)}
-              onMouseLeave={() => setActiveItem(null)}
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <span className="text-gray-500 mr-2 text-lg">▶</span>
-                  <span className="text-gray-800 font-medium">
-                    <Link href="/terms" target="_blank" className="hover:underline">
-                      利用規約
-                    </Link>
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div
-              className={`p-3 cursor-pointer rounded transition-all ${activeItem === 1 ? 'bg-gray-100 border-gray-300' : 'bg-white hover:bg-gray-50 border-gray-200'} border`}
-              onMouseEnter={() => setActiveItem(1)}
-              onMouseLeave={() => setActiveItem(null)}
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <span className="text-gray-500 mr-2 text-lg">▶</span>
-                  <span className="text-gray-800 font-medium">
-                    <Link href="/privacy" target="_blank" className="hover:underline">
-                      プライバシーポリシー
-                    </Link>
-                  </span>
-                </div>
-              </div>
+          <div className="mb-8 text-center">
+            <p className="text-sm text-gray-600 mb-3">
+              ログインする前に以下をご確認ください
+            </p>
+            <div className="flex justify-center space-x-4">
+              <Link href="/terms" className="text-blue-600 hover:text-blue-800 text-sm">
+                利用規約
+              </Link>
+              <span className="text-gray-400">|</span>
+              <Link href="/privacy" className="text-blue-600 hover:text-blue-800 text-sm">
+                プライバシーポリシー
+              </Link>
             </div>
           </div>
 
@@ -82,18 +52,11 @@ export default function LoginPage() {
 
             <button
               onClick={handleLineLogin}
-              onMouseEnter={() => {
-                setButtonState('hover');
-                setActiveItem(3);
-              }}
-              onMouseLeave={() => {
-                setButtonState('base');
-                setActiveItem(null);
-              }}
+              onMouseEnter={() => setButtonState('hover')}
+              onMouseLeave={() => setButtonState('base')}
               onMouseDown={() => setButtonState('press')}
               onMouseUp={() => setButtonState('hover')}
-              disabled={isLoading}
-              className={`relative focus:outline-none transition-all ${activeItem === 3 ? 'scale-105' : ''}`}
+              className="relative focus:outline-none transition-all"
             >
               <Image
                 src={`/line/btn_login_${buttonState}.png`}
@@ -103,11 +66,6 @@ export default function LoginPage() {
                 className="h-[50px]"
                 style={{ width: 'auto' }}
               />
-              {isLoading && (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-5 h-5 border-t-2 border-white rounded-full animate-spin"></div>
-                </div>
-              )}
             </button>
 
           </div>

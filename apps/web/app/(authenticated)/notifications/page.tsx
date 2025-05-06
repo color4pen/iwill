@@ -90,31 +90,29 @@ export default function NotificationsPage() {
       </div>
 
       {notifications.length === 0 ? (
-        <div className="bg-white rounded-lg shadow p-6 text-center text-gray-500">
+        <div className="py-8 text-center text-gray-500">
           お知らせはありません
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="divide-y divide-gray-100">
           {notifications.map(notification => (
             <div 
               key={notification.id} 
-              className={`bg-white rounded-lg shadow-md overflow-hidden transition-all cursor-pointer hover:shadow-lg hover:bg-gray-50 ${!notification.read ? 'border-l-4 border-blue-500' : ''}`}
+              className={`py-4 px-3 transition-colors cursor-pointer hover:bg-gray-50 ${!notification.read ? 'border-l-2 border-blue-500' : ''}`}
               onClick={() => openNotificationModal(notification)}
             >
-              <div className="p-5">
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className={`text-lg font-semibold ${!notification.read ? 'text-blue-800' : ''}`}>
-                    {notification.title}
-                    {!notification.read && (
-                      <span className="ml-2 bg-blue-100 text-blue-800 text-xs font-medium px-2 py-0.5 rounded-full">
-                        未読
-                      </span>
-                    )}
-                  </h3>
-                  <span className="text-sm text-gray-500">{formatDate(notification.date)}</span>
-                </div>
-                <p className="text-gray-600 mb-0">{notification.content}</p>
+              <div className="flex justify-between items-start mb-1.5">
+                <h3 className={`text-lg font-medium ${!notification.read ? 'text-blue-700' : ''}`}>
+                  {notification.title}
+                  {!notification.read && (
+                    <span className="ml-2 text-blue-600 text-xs font-medium">
+                      • 未読
+                    </span>
+                  )}
+                </h3>
+                <span className="text-xs text-gray-500">{formatDate(notification.date)}</span>
               </div>
+              <p className="text-gray-600 text-sm line-clamp-2">{notification.content}</p>
             </div>
           ))}
         </div>
@@ -144,39 +142,42 @@ export default function NotificationsPage() {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-black/70" aria-hidden="true" />
+            <div className="fixed inset-0 bg-black/60" aria-hidden="true" />
           </Transition.Child>
 
           {/* モーダルコンテンツ */}
           <div className="fixed inset-0 flex items-center justify-center p-4">
             <Transition.Child
               enter="ease-out duration-300"
-              enterFrom="opacity-0 scale-95"
-              enterTo="opacity-100 scale-100"
+              enterFrom="opacity-0 translate-y-4"
+              enterTo="opacity-100 translate-y-0"
               leave="ease-in duration-200"
-              leaveFrom="opacity-100 scale-100"
-              leaveTo="opacity-0 scale-95"
+              leaveFrom="opacity-100 translate-y-0"
+              leaveTo="opacity-0 translate-y-4"
             >
-              <Dialog.Panel className="mx-auto max-w-2xl w-full rounded-lg bg-white p-8 shadow-2xl border border-gray-200">
+              <Dialog.Panel className="mx-auto max-w-2xl w-full bg-white p-6 sm:p-8">
                 {selectedNotification && (
                   <>
-                    <Dialog.Title className="text-2xl font-semibold mb-2">
-                      {selectedNotification.title}
-                    </Dialog.Title>
-                    <div className="text-sm text-gray-500 mb-6">
-                      {formatDate(selectedNotification.date)}
-                    </div>
-                    <Dialog.Description className="text-gray-600 mb-6 text-lg leading-relaxed">
-                      {selectedNotification.content}
-                    </Dialog.Description>
-                    <div className="mt-6 flex justify-end">
-                      <button
+                    <div className="flex justify-between items-start mb-4">
+                      <Dialog.Title className="text-xl font-medium">
+                        {selectedNotification.title}
+                      </Dialog.Title>
+                      <button 
                         onClick={closeModal}
-                        className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-5 rounded-md transition-colors text-base"
+                        className="text-gray-400 hover:text-gray-600"
+                        aria-label="閉じる"
                       >
-                        閉じる
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
                       </button>
                     </div>
+                    <div className="text-xs text-gray-500 mb-4">
+                      {formatDate(selectedNotification.date)}
+                    </div>
+                    <Dialog.Description className="text-gray-700 mb-6 text-base leading-relaxed">
+                      {selectedNotification.content}
+                    </Dialog.Description>
                   </>
                 )}
               </Dialog.Panel>

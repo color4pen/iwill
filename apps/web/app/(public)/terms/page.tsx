@@ -11,7 +11,7 @@ export default function TermsOfServicePage() {
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold mb-8 text-center">利用規約</h1>
         
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+        <div className="mb-8">
           <p className="mb-6">
             本利用規約（以下「本規約」）は、iWill（以下「当サービス」）の利用条件を定めるものです。
             当サービスをご利用いただくことで、本規約に同意したものとみなされます。
