@@ -49,7 +49,7 @@ export default function FAQForm({ faq }: FAQFormProps) {
       } else {
         alert("エラーが発生しました")
       }
-    } catch (error) {
+    } catch {
       alert("エラーが発生しました")
     } finally {
       setIsSubmitting(false)
