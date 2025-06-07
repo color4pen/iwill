@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth"
 import { redirect } from "next/navigation"
-import { authOptions } from "../api/auth/[...nextauth]/route"
+import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import AdminLayout from "@/components/admin-layout"
 import UserActions from "@/components/user-actions"
@@ -60,7 +60,9 @@ export default async function UsersPage() {
                                 {user.name || '名前未設定'}
                               </p>
                               {user.role === 'ADMIN' && (
-                                <Shield className="h-4 w-4 text-blue-600" title="管理者" />
+                                <span className="inline-flex items-center" title="管理者">
+                                  <Shield className="h-4 w-4 text-blue-600" />
+                                </span>
                               )}
                             </div>
                             <p className="text-sm text-gray-500">

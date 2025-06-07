@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Notification } from "@prisma/client"
+import { Notification, NotificationCategory } from "@prisma/client"
 
 interface NotificationFormProps {
   notification?: Notification
@@ -77,7 +77,7 @@ export default function NotificationForm({ notification }: NotificationFormProps
               id="category"
               name="category"
               value={formData.category}
-              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+              onChange={(e) => setFormData({ ...formData, category: e.target.value as NotificationCategory })}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm form-select"
             >
               <option value="GENERAL">一般</option>
