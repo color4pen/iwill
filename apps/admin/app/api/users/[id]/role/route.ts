@@ -18,6 +18,17 @@ export async function PATCH(
     const body = await request.json()
     const { role } = body
 
+    // Define allowed roles
+    const allowedRoles = ["USER", "ADMIN"]
+    
+    // Validate the role
+    if (!allowedRoles.includes(role)) {
+      return NextResponse.json(
+        { error: "Invalid role provided" },
+        { status: 400 }
+      )
+    }
+
     const user = await prisma.user.update({
       where: { id },
       data: { role },
