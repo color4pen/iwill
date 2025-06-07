@@ -1,0 +1,213 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model for NextAuth with LINE provider
+model User {
+  id            String    @id @default(cuid())
+  lineId        String    @unique
+  email         String?   @unique
+  name          String?
+  image         String?
+  provider      String    @default("line")
+  role          Role      @default(USER)
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // Relations
+  attendance    Attendance?
+  notifications NotificationRead[]
+  media         Media[]
+  
+  @@index([lineId])
+  @@index([role])
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+// RSVP/出欠管理
+model Attendance {
+  id                  String    @id @default(cuid())
+  userId              String    @unique
+  user                User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  status              AttendanceStatus
+  numberOfGuests      Int       @default(1)
+  dietaryRestrictions String?
+  messageToCouple     String?   @db.Text
+  
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  
+  @@index([userId])
+}
+
+enum AttendanceStatus {
+  ATTENDING     // 出席
+  NOT_ATTENDING // 欠席
+  UNDECIDED     // 未定
+}
+
+// お知らせ
+model Notification {
+  id           String    @id @default(cuid())
+  title        String
+  content      String    @db.Text
+  category     NotificationCategory?
+  priority     Priority  @default(NORMAL)
+  publishedAt  DateTime  @default(now())
+  
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  
+  // Relations
+  reads        NotificationRead[]
+  
+  @@index([publishedAt])
+}
+
+enum NotificationCategory {
+  GENERAL      // 一般
+  SCHEDULE     // スケジュール
+  VENUE        // 会場
+  IMPORTANT    // 重要
+}
+
+enum Priority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+// 通知既読管理
+model NotificationRead {
+  userId         String
+  notificationId String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  
+  readAt         DateTime     @default(now())
+  
+  @@id([userId, notificationId])
+  @@index([userId])
+  @@index([notificationId])
+}
+
+// メディア（写真・動画）
+model Media {
+  id           String    @id @default(cuid())
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  type         MediaType
+  url          String
+  thumbnailUrl String?   // 動画のサムネイル
+  caption      String?
+  
+  isApproved   Boolean   @default(false) // 管理者承認
+  uploadedAt   DateTime  @default(now())
+  
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  
+  @@index([userId])
+  @@index([uploadedAt])
+  @@index([isApproved])
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+}
+
+// 結婚式情報（基本的に1レコード）
+model WeddingInfo {
+  id              String    @id @default(cuid())
+  date            DateTime
+  ceremonyTime    String    // "13:00" のような形式
+  receptionTime   String    // "14:00" のような形式
+  
+  venueName       String
+  venueAddress    String
+  accessInfo      String    @db.Text
+  mapUrl          String?
+  venueImageUrl   String?
+  
+  dresscode       String?
+  emergencyContact String?
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+// スケジュール
+model Schedule {
+  id          String    @id @default(cuid())
+  time        String    // "14:30" のような形式
+  event       String
+  description String?
+  order       Int       // 表示順
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  @@index([order])
+}
+
+// よくある質問
+model FAQ {
+  id        String      @id @default(cuid())
+  question  String
+  answer    String      @db.Text
+  category  FAQCategory
+  order     Int         // 表示順
+  isActive  Boolean     @default(true)
+  
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  
+  @@index([category, order])
+  @@index([isActive])
+}
+
+enum FAQCategory {
+  GENERAL      // 一般
+  VENUE        // 会場・受付
+  GIFT         // ご祝儀・ギフト
+  ATTENDANCE   // 出席情報
+  MEDIA        // メディア
+}
+
+// 招待URL管理
+model Invitation {
+  id          String    @id @default(cuid())
+  token       String    @unique @default(cuid())
+  email       String?   // 特定のメールアドレス用（オプション）
+  name        String?   // 招待者の名前（オプション）
+  
+  isUsed      Boolean   @default(false)
+  usedAt      DateTime?
+  usedBy      String?   // ユーザーID
+  
+  expiresAt   DateTime? // 有効期限（オプション）
+  notes       String?   // 管理者用メモ
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  @@index([token])
+  @@index([isUsed])
+}

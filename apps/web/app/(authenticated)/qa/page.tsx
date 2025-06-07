@@ -1,189 +1,162 @@
-"use client";
+import { getServerSession } from "next-auth"
+import { redirect } from "next/navigation"
+import { authOptions } from "@/lib/auth"
+import { PrismaClient } from "@prisma/client"
+import Link from "next/link"
 
-import { useState } from "react";
+const prisma = new PrismaClient()
 
-// よくある質問のデータ型
-interface FaqItem {
-  id: number;
-  question: string;
-  answer: string;
-  category: string;
-}
+export default async function QAPage() {
+  const session = await getServerSession(authOptions)
+  
+  if (!session) {
+    redirect("/login")
+  }
 
-export default function QaPage() {
-  // アクティブな質問のID
-  const [activeId, setActiveId] = useState<number | null>(null);
+  const faqs = await prisma.fAQ.findMany({
+    where: { isActive: true },
+    orderBy: [
+      { category: "asc" },
+      { order: "asc" },
+    ],
+  })
 
-  // カテゴリ選択
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  await prisma.$disconnect()
 
-  // FAQ データ
-  const faqItems: FaqItem[] = [
-    {
-      id: 1,
-      question: "結婚式の服装について教えてください",
-      answer: "男性はスーツまたはフォーマルウェア、女性はワンピースやドレスなど、華美になりすぎない服装がおすすめです。白や黒などの花嫁・喪服を連想させる色は避けていただくとよいでしょう。",
-      category: "general",
-    },
-    {
-      id: 2,
-      question: "受付の時間は何時からですか？",
-      answer: "受付は結婚式の開始30分前から開始しております。余裕を持ってお越しください。",
-      category: "venue",
-    },
-    {
-      id: 3,
-      question: "子供を連れていくことはできますか？",
-      answer: "お子様連れの参加も歓迎しております。ただし、式中はお子様の様子によっては一時的に退席いただける場合もございます。お子様用の料理や席のご用意がありますので、出席情報入力の際に人数をお知らせください。",
-      category: "general",
-    },
-    {
-      id: 4,
-      question: "ご祝儀の金額の相場はいくらですか？",
-      answer: "一般的には、ご親族の場合は3万円〜5万円、友人・同僚の場合は2万円〜3万円が相場とされています。ただし、金額よりもお気持ちを大切にしていただければ幸いです。",
-      category: "gift",
-    },
-    {
-      id: 5,
-      question: "会場までの交通手段について教えてください",
-      answer: "会場へは電車または車でお越しいただけます。最寄り駅からは送迎バスも運行予定です。詳細は「会場案内」ページをご確認ください。",
-      category: "venue",
-    },
-    {
-      id: 6,
-      question: "出席できるか未定なのですが、どうすればよいですか？",
-      answer: "まずは「出席情報」ページで「未定」を選択してください。決まり次第、同ページで情報を更新いただければ幸いです。お返事の期限は結婚式の1ヶ月前となっております。",
-      category: "attendance",
-    },
-    {
-      id: 7,
-      question: "アレルギーがある場合はどうすればよいですか？",
-      answer: "「出席情報」ページの「食事の制限・アレルギー」欄に詳細をご記入ください。可能な限り対応させていただきます。",
-      category: "attendance",
-    },
-    {
-      id: 8,
-      question: "写真や動画の撮影は可能ですか？",
-      answer: "挙式中の撮影はご遠慮いただいておりますが、披露宴では撮影いただけます。撮影した写真や動画は「メディア」ページからアップロードいただけると嬉しいです。",
-      category: "general",
-    },
-    {
-      id: 9,
-      question: "メディアのアップロード方法を教えてください",
-      answer: "「メディア」ページの「新規アップロード」ボタンから、写真や動画をアップロードできます。キャプションをつけて思い出をシェアしましょう。",
-      category: "media",
-    },
-    {
-      id: 10,
-      question: "結婚式の二次会はありますか？",
-      answer: "結婚式後に二次会も予定しております。二次会のみの参加も可能です。詳細は「会場案内」ページをご確認ください。",
-      category: "venue",
-    },
-  ];
+  // カテゴリーのラベル
+  const getCategoryLabel = (category: string) => {
+    switch (category) {
+      case 'GENERAL':
+        return '一般'
+      case 'VENUE':
+        return '会場・受付'
+      case 'GIFT':
+        return 'ご祝儀・ギフト'
+      case 'ATTENDANCE':
+        return '出席情報'
+      case 'MEDIA':
+        return 'メディア'
+      default:
+        return category
+    }
+  }
 
-  // カテゴリでフィルタリング
-  const filteredFaqs = selectedCategory === "all" 
-    ? faqItems 
-    : faqItems.filter(item => item.category === selectedCategory);
+  // カテゴリーのアイコン
+  const getCategoryIcon = (category: string) => {
+    switch (category) {
+      case 'GENERAL':
+        return (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        )
+      case 'VENUE':
+        return (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+        )
+      case 'GIFT':
+        return (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+          </svg>
+        )
+      case 'ATTENDANCE':
+        return (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        )
+      case 'MEDIA':
+        return (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+        )
+      default:
+        return null
+    }
+  }
 
-  // カテゴリリスト
-  const categories = [
-    { id: "all", name: "すべて" },
-    { id: "general", name: "一般" },
-    { id: "venue", name: "会場・受付" },
-    { id: "gift", name: "ご祝儀・ギフト" },
-    { id: "attendance", name: "出席情報" },
-    { id: "media", name: "メディア" },
-  ];
+  // カテゴリー別にグループ化
+  const groupedFaqs = faqs.reduce((acc, faq) => {
+    if (!acc[faq.category]) {
+      acc[faq.category] = []
+    }
+    acc[faq.category]!.push(faq)
+    return acc
+  }, {} as Record<string, typeof faqs>)
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">よくある質問</h1>
-        <p className="text-gray-600">
-          結婚式やウェブサイトについてのよくある質問をまとめました。
-          お探しの回答がない場合は、お問い合わせフォームからご連絡ください。
+    <>
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold">よくある質問</h2>
+        <p className="mt-1 text-sm text-gray-600">
+          結婚式に関するよくある質問をまとめました
         </p>
       </div>
 
-      {/* カテゴリ選択 */}
-      <div className="mb-8">
-        <div className="flex flex-wrap gap-2">
-          {categories.map(category => (
-            <button
-              key={category.id}
-              onClick={() => setSelectedCategory(category.id)}
-              className={`px-4 py-2 text-sm rounded-full transition-colors ${
-                selectedCategory === category.id
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-              }`}
-            >
-              {category.name}
-            </button>
-          ))}
+      {Object.keys(groupedFaqs).length === 0 ? (
+        <div className="py-8 text-center text-gray-500">
+          よくある質問はまだ登録されていません
         </div>
-      </div>
-
-      {/* FAQ リスト */}
-      <div className="space-y-4">
-        {filteredFaqs.map((item) => (
-          <div
-            key={item.id}
-            className="border border-gray-200 rounded-lg overflow-hidden"
-          >
-            <button
-              onClick={() => setActiveId(activeId === item.id ? null : item.id)}
-              className="w-full text-left p-4 flex justify-between items-center hover:bg-gray-50 transition-colors"
-            >
-              <span className="font-medium text-gray-900">{item.question}</span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className={`h-5 w-5 text-gray-500 transition-transform ${
-                  activeId === item.id ? "transform rotate-180" : ""
-                }`}
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </button>
-            <div
-              className={`transition-all overflow-hidden ${
-                activeId === item.id
-                  ? "max-h-96 opacity-100"
-                  : "max-h-0 opacity-0"
-              }`}
-            >
-              <div className="p-4 pt-0 bg-gray-50 text-gray-700">
-                {item.answer}
+      ) : (
+        <div className="space-y-8">
+          {Object.entries(groupedFaqs).map(([category, categoryFaqs]) => (
+            <div key={category}>
+              <div className="flex items-center gap-2 mb-4 text-gray-700">
+                {getCategoryIcon(category)}
+                <h3 className="text-lg font-semibold">
+                  {getCategoryLabel(category)}
+                </h3>
+              </div>
+              
+              <div className="space-y-4">
+                {categoryFaqs.map((faq) => (
+                  <details
+                    key={faq.id}
+                    className="group bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"
+                  >
+                    <summary className="px-6 py-4 cursor-pointer hover:bg-gray-50 transition-colors flex items-start justify-between">
+                      <span className="font-medium text-gray-900 pr-4">
+                        {faq.question}
+                      </span>
+                      <svg
+                        className="w-5 h-5 text-gray-400 flex-shrink-0 transition-transform group-open:rotate-180"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </summary>
+                    <div className="px-6 pb-4 pt-2">
+                      <p className="text-gray-700 whitespace-pre-wrap">
+                        {faq.answer}
+                      </p>
+                    </div>
+                  </details>
+                ))}
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
-      {/* 問い合わせリンク */}
-      <div className="mt-12 text-center p-6 bg-blue-50 rounded-lg">
-        <h2 className="text-lg font-semibold text-gray-900 mb-2">
-          お探しの質問が見つかりませんか？
-        </h2>
-        <p className="text-gray-600 mb-4">
-          お問い合わせフォームから直接ご質問いただけます。
-        </p>
-        <a
-          href="/contact"
-          className="inline-flex items-center justify-center px-5 py-2.5 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+      <div className="mt-8">
+        <Link 
+          href="/" 
+          className="inline-flex items-center text-blue-600 hover:text-blue-800"
         >
-          お問い合わせ
-        </a>
+          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          ホームに戻る
+        </Link>
       </div>
-    </div>
-  );
+    </>
+  )
 }
