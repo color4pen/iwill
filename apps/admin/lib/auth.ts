@@ -1,9 +1,8 @@
 import { NextAuthOptions } from "next-auth"
 import LineProvider from "next-auth/providers/line"
-import { PrismaClient } from "@prisma/client"
+import { prisma } from "./prisma"
 
-// ローカルでPrismaクライアントを初期化
-const prisma = new PrismaClient()
+const useSecureCookies = process.env.NODE_ENV === 'production';
 
 export const authOptions: NextAuthOptions = {
   // 一時的にアダプターを無効化してJWT戦略を使用
@@ -29,7 +28,7 @@ export const authOptions: NextAuthOptions = {
         httpOnly: true,
         sameSite: 'lax',
         path: '/',
-        secure: false // 開発環境用
+        secure: useSecureCookies
       }
     },
     callbackUrl: {
@@ -37,7 +36,7 @@ export const authOptions: NextAuthOptions = {
       options: {
         sameSite: 'lax',
         path: '/',
-        secure: false
+        secure: useSecureCookies
       }
     },
     csrfToken: {
@@ -46,33 +45,49 @@ export const authOptions: NextAuthOptions = {
         httpOnly: true,
         sameSite: 'lax',
         path: '/',
-        secure: false
+        secure: useSecureCookies
       }
     },
   },
   callbacks: {
     async signIn({ user }) {
-      // ユーザーのロールをチェック
-      const dbUser = await prisma.user.findUnique({
-        where: { lineId: user.id },
-      });
+      try {
+        // 環境変数のチェック
+        if (!process.env.DATABASE_URL) {
+          console.error('DATABASE_URL is not set');
+          return false;
+        }
 
-      // ユーザーが存在しない、またはADMINロールでない場合はログイン拒否
-      if (!dbUser || dbUser.role !== 'ADMIN') {
+        // ユーザーのロールをチェック
+        const dbUser = await prisma.user.findUnique({
+          where: { lineId: user.id },
+        });
+
+        // ユーザーが存在しない、またはADMINロールでない場合はログイン拒否
+        if (!dbUser || dbUser.role !== 'ADMIN') {
+          return false;
+        }
+
+        return true;
+      } catch (error) {
+        console.error('SignIn error:', error);
         return false;
       }
-
-      return true;
     },
     async jwt({ token, account, user }) {
       if (account && user) {
         token.id = user.id
         
-        // ロール情報も追加
-        const dbUser = await prisma.user.findUnique({
-          where: { lineId: user.id },
-        });
-        token.role = dbUser?.role || 'USER';
+        try {
+          // ロール情報も追加
+          const dbUser = await prisma.user.findUnique({
+            where: { lineId: user.id },
+          });
+          token.role = dbUser?.role || 'USER';
+        } catch (error) {
+          console.error('JWT callback error:', error);
+          token.role = 'USER';
+        }
       }
       return token
     },
@@ -88,6 +103,6 @@ export const authOptions: NextAuthOptions = {
     signIn: "/login",
     error: "/login",
   },
-  debug: true, // デバッグモードを有効化
-  useSecureCookies: false, // 開発環境でセキュアクッキーを無効化
+  debug: process.env.NODE_ENV === 'development',
+  useSecureCookies: useSecureCookies
 }
