@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma"
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await getServerSession(authOptions)
   
@@ -14,11 +14,12 @@ export async function PUT(
   }
 
   try {
+    const { id } = await params
     const body = await request.json()
     const { title, content, category } = body
 
     const notification = await prisma.notification.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         title,
         content,
@@ -38,7 +39,7 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await getServerSession(authOptions)
   
@@ -47,8 +48,9 @@ export async function DELETE(
   }
 
   try {
+    const { id } = await params
     await prisma.notification.delete({
-      where: { id: params.id },
+      where: { id },
     })
 
     return NextResponse.json({ success: true })
