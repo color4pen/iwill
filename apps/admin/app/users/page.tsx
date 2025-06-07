@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma"
 import AdminLayout from "@/components/admin-layout"
 import UserActions from "@/components/user-actions"
 import { Shield, User } from "lucide-react"
+import Image from "next/image"
 
 export default async function UsersPage() {
   const session = await getServerSession(authOptions)
@@ -44,10 +45,12 @@ export default async function UsersPage() {
                       <div className="flex-1">
                         <div className="flex items-center">
                           {user.image ? (
-                            <img
+                            <Image
                               className="h-10 w-10 rounded-full"
                               src={user.image}
                               alt={user.name || ''}
+                              width={40}
+                              height={40}
                             />
                           ) : (
                             <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">

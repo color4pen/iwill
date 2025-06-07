@@ -2,6 +2,7 @@
 
 import { X } from "lucide-react"
 import { useEffect } from "react"
+import Image from "next/image"
 
 interface User {
   id: string
@@ -63,10 +64,12 @@ export default function UserDetailModal({ user, onClose }: UserDetailModalProps)
               <div className="space-y-4">
                 {user.image && (
                   <div className="flex justify-center">
-                    <img
+                    <Image
                       className="h-20 w-20 rounded-full"
                       src={user.image}
                       alt={user.name || ''}
+                      width={80}
+                      height={80}
                     />
                   </div>
                 )}
