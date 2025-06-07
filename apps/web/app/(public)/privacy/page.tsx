@@ -11,7 +11,7 @@ export default function PrivacyPolicyPage() {
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold mb-8 text-center">プライバシーポリシー</h1>
         
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+        <div className="mb-8">
           <p className="mb-6">
             本プライバシーポリシーは、iWill（以下「当サービス」）が収集する情報と、その情報の使用方法について説明するものです。
             当サービスをご利用いただくことで、本プライバシーポリシーに同意したものとみなされます。

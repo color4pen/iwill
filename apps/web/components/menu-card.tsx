@@ -23,10 +23,10 @@ export const MenuCard = ({
   disabledText = "準備中..."
 }: MenuCardProps) => {
   const CardContent = () => (
-    <div className={`${color} ${disabled ? 'opacity-60 grayscale' : ''} text-white p-3 sm:p-6 rounded-md border border-white/20 shadow-sm ${!disabled && 'hover:shadow'} transition-all duration-200 h-full flex items-center sm:justify-center relative`}>
+    <div className={`${disabled ? 'bg-gray-400 opacity-60 grayscale' : color} text-white p-3 sm:p-6 rounded-md border border-white/20 shadow-sm ${!disabled && 'hover:shadow'} transition-all duration-200 h-full flex items-center sm:justify-center relative`}>
       {disabled && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 backdrop-blur-[1px] rounded-md z-10">
-          <div className="bg-black/70 py-1.5 px-3 rounded text-sm font-medium">
+        <div className="absolute bottom-2 left-0 right-0 flex justify-end sm:justify-center z-10 pr-2 sm:pr-0">
+          <div className="bg-gray-700/90 py-1 px-2.5 rounded-full text-xs font-medium">
             {disabledText}
           </div>
         </div>

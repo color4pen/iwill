@@ -31,7 +31,7 @@ export default function Layout({ children }: LayoutFrameProps) {
         </div>
       </header>
 
-      {/* モバイルメニューは不要のため削除 */}
+      {/* モバイルメニューは不要のため  削除 */}
 
       <main className="container mx-auto max-w-4xl py-5 px-3 flex-grow relative z-10">
         {children}
