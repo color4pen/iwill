@@ -50,7 +50,7 @@ export const authOptions: NextAuthOptions = {
     },
   },
   callbacks: {
-    async signIn({ user, account, profile }) {
+    async signIn({ user, profile }) {
       try {
         // 環境変数のチェック
         if (!process.env.DATABASE_URL) {
@@ -75,9 +75,9 @@ export const authOptions: NextAuthOptions = {
             dbUser = await prisma.user.create({
               data: {
                 lineId: user.id!,
-                name: user.name || (profile as any)?.name || 'Admin',
-                email: user.email || (profile as any)?.email,
-                image: user.image || (profile as any)?.picture,
+                name: user.name,
+                email: user.email,
+                image: user.image,
                 role: 'ADMIN'
               }
             });
@@ -104,7 +104,7 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, account, user }) {
       if (account && user) {
         token.id = user.id
-        
+
         try {
           // ロール情報も追加
           const dbUser = await prisma.user.findUnique({
