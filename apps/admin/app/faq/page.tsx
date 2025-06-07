@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth"
 import { redirect } from "next/navigation"
-import { authOptions } from "../api/auth/[...nextauth]/route"
+import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import { Plus, Edit2, GripVertical } from "lucide-react"
