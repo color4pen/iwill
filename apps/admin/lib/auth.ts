@@ -50,7 +50,7 @@ export const authOptions: NextAuthOptions = {
     },
   },
   callbacks: {
-    async signIn({ user, profile }) {
+    async signIn({ user }) {
       try {
         // 環境変数のチェック
         if (!process.env.DATABASE_URL) {
