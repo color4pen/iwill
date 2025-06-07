@@ -1,11 +1,12 @@
-import { Calendar, Camera, User, Bell, HelpCircle } from "lucide-react";
+import { Calendar, Camera, User, Bell, HelpCircle, MapPin } from "lucide-react";
 import { shouldEnableRestrictedFeatures } from "../utils/environment";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { MenuCard } from "../../components/menu-card";
+import { authOptions } from "@/lib/auth";
 
 export default async function Home() {
-  const session = await getServerSession();
+  const session = await getServerSession(authOptions);
   const enableAllFeatures = shouldEnableRestrictedFeatures();
 
   if (!session) {
@@ -23,11 +24,25 @@ export default async function Home() {
           icon={<Calendar size={24} strokeWidth={1.5} />}
         />
         <MenuCard
+          title="アクセス"
+          description="会場までの詳しいアクセス方法"
+          href="/access"
+          color="bg-cyan-500"
+          icon={<MapPin size={24} strokeWidth={1.5} />}
+        />
+        <MenuCard
           title="お知らせ"
           description="重要なお知らせや最新情報を確認する"
           href="/notifications"
           color="bg-blue-500"
           icon={<Bell size={24} strokeWidth={1.5} />}
+        />
+        <MenuCard
+          title="よくある質問"
+          description="結婚式に関するよくある質問と回答"
+          href="/qa"
+          color="bg-emerald-500"
+          icon={<HelpCircle size={24} strokeWidth={1.5} />}
         />
         <MenuCard
           title="ギャラリー"
@@ -46,13 +61,6 @@ export default async function Home() {
           icon={<User size={24} strokeWidth={1.5} />}
           disabled={!enableAllFeatures}
           disabledText="5月25日から利用可能"
-        />
-        <MenuCard
-          title="よくある質問"
-          description="結婚式に関するよくある質問と回答"
-          href="/qa"
-          color="bg-emerald-500"
-          icon={<HelpCircle size={24} strokeWidth={1.5} />}
         />
       </div>
     </>

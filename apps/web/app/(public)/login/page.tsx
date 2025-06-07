@@ -2,17 +2,44 @@
 
 import { signIn } from "next-auth/react";
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 
 export default function LoginPage() {
   // ボタン状態の管理
   const [buttonState, setButtonState] = useState<'base' | 'hover' | 'press'>('base');
+  const searchParams = useSearchParams();
+  const [showInvitationError, setShowInvitationError] = useState(false);
+  const [invitationToken, setInvitationToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    const error = searchParams.get("error");
+    const token = searchParams.get("invitation");
+    
+    if (error === "invitation_required") {
+      setShowInvitationError(true);
+    }
+    
+    if (token) {
+      setInvitationToken(token);
+    }
+  }, [searchParams]);
 
   const handleLineLogin = () => {
     setButtonState('press');
-    // callbackUrlを指定し、redirectを強制することで即時リダイレクト
-    signIn("line", { callbackUrl: "/", redirect: true });
+    let callbackUrl = "/";
+    
+    // 招待トークンがある場合は、コールバックURLに含める
+    if (invitationToken) {
+      const lineId = searchParams.get("lineId");
+      callbackUrl = `/invitation?token=${invitationToken}`;
+      if (lineId) {
+        callbackUrl += `&lineId=${lineId}`;
+      }
+    }
+    
+    signIn("line", { callbackUrl, redirect: true });
   };
 
   return (
@@ -29,6 +56,24 @@ export default function LoginPage() {
               利用規約に同意しログイン
             </p>
           </div>
+
+          {showInvitationError && (
+            <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+              <p className="text-sm">
+                このアプリを利用するには招待が必要です。
+                管理者から招待URLを受け取ってください。
+              </p>
+            </div>
+          )}
+
+          {invitationToken && (
+            <div className="mb-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded">
+              <p className="text-sm">
+                招待URLが確認されました。
+                LINEでログインして登録を完了してください。
+              </p>
+            </div>
+          )}
 
 
           <div className="mb-8 text-center">
