@@ -1,6 +1,8 @@
 import { NextAuthOptions } from "next-auth";
 import LineProvider from "next-auth/providers/line";
 
+const useSecureCookies = process.env.NODE_ENV === 'production';
+
 export const authOptions: NextAuthOptions = {
   providers: [
     LineProvider({
@@ -18,7 +20,7 @@ export const authOptions: NextAuthOptions = {
         httpOnly: true,
         sameSite: 'lax',
         path: '/',
-        secure: false // 開発環境用
+        secure: useSecureCookies
       }
     },
     callbackUrl: {
@@ -26,7 +28,7 @@ export const authOptions: NextAuthOptions = {
       options: {
         sameSite: 'lax',
         path: '/',
-        secure: false
+        secure: useSecureCookies
       }
     },
     csrfToken: {
@@ -35,7 +37,7 @@ export const authOptions: NextAuthOptions = {
         httpOnly: true,
         sameSite: 'lax',
         path: '/',
-        secure: false
+        secure: useSecureCookies
       }
     },
   },
@@ -95,6 +97,6 @@ export const authOptions: NextAuthOptions = {
     signIn: "/login", // カスタムログインページのパス
   },
   secret: process.env.NEXTAUTH_SECRET,
-  debug: true, // デバッグモードを有効化
-  useSecureCookies: false, // 開発環境でセキュアクッキーを無効化
+  debug: process.env.NODE_ENV === 'development',
+  useSecureCookies: useSecureCookies
 };
