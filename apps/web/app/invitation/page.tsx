@@ -1,12 +1,13 @@
 "use client"
 
-import { useSearchParams } from "next/navigation"
+import { useSearchParams, useRouter } from "next/navigation"
 import { useEffect, useState, Suspense } from "react"
-import { signIn } from "next-auth/react"
 import { useSession } from "next-auth/react"
+import { acceptInvitation } from "./actions"
 
 function InvitationContent() {
   const searchParams = useSearchParams()
+  const router = useRouter()
   const { data: session } = useSession()
   const [isProcessing, setIsProcessing] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -18,13 +19,16 @@ function InvitationContent() {
   const image = session?.user?.image || searchParams.get("image")
 
   useEffect(() => {
-    if (!token || !lineId) {
+    if (!token) {
       setError("無効な招待URLです")
       return
     }
 
-    // 自動的に招待を受け入れて処理
-    handleAcceptInvitation()
+    // lineIdが取得できるまで待つ（セッション確立待ち）
+    if (lineId) {
+      // 自動的に招待を受け入れて処理
+      handleAcceptInvitation()
+    }
   }, [token, lineId])
 
   const handleAcceptInvitation = async () => {
@@ -34,28 +38,14 @@ function InvitationContent() {
     setError(null)
 
     try {
-      // 招待を受け入れてユーザーを作成
-      const response = await fetch("/api/invitation/accept", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          token,
-          lineId,
-          name,
-          email,
-          image,
-        }),
-      })
+      // サーバーアクションを呼び出し
+      const result = await acceptInvitation(token, lineId, name, email, image)
 
-      const data = await response.json()
-
-      if (response.ok) {
+      if (result.success) {
         // ユーザー作成成功、ホームページへリダイレクト
-        window.location.href = "/"
+        router.push("/")
       } else {
-        setError(data.error || "招待の処理に失敗しました")
+        setError(result.error || "招待の処理に失敗しました")
       }
     } catch (error) {
       setError("エラーが発生しました")
@@ -71,6 +61,11 @@ function InvitationContent() {
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             招待を処理しています
           </h2>
+          {!error && !lineId && (
+            <p className="mt-2 text-center text-sm text-gray-600">
+              認証情報を確認中...
+            </p>
+          )}
         </div>
 
         <div className="mt-8 space-y-6">
