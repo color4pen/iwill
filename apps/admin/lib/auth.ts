@@ -50,7 +50,7 @@ export const authOptions: NextAuthOptions = {
     },
   },
   callbacks: {
-    async signIn({ user }) {
+    async signIn({ user, account, profile }) {
       try {
         // 環境変数のチェック
         if (!process.env.DATABASE_URL) {
@@ -58,13 +58,40 @@ export const authOptions: NextAuthOptions = {
           return false;
         }
 
-        // ユーザーのロールをチェック
-        const dbUser = await prisma.user.findUnique({
+        // 既存のユーザーを確認
+        let dbUser = await prisma.user.findUnique({
           where: { lineId: user.id },
         });
 
-        // ユーザーが存在しない、またはADMINロールでない場合はログイン拒否
-        if (!dbUser || dbUser.role !== 'ADMIN') {
+        // ユーザーが存在しない場合
+        if (!dbUser) {
+          // 最初のユーザーかチェック（ADMINユーザーが存在しない）
+          const adminCount = await prisma.user.count({
+            where: { role: 'ADMIN' }
+          });
+
+          // 最初のユーザーの場合、自動的にADMINとして作成
+          if (adminCount === 0) {
+            dbUser = await prisma.user.create({
+              data: {
+                lineId: user.id!,
+                name: user.name || (profile as any)?.name || 'Admin',
+                email: user.email || (profile as any)?.email,
+                image: user.image || (profile as any)?.picture,
+                role: 'ADMIN'
+              }
+            });
+            console.log('First user created as ADMIN:', dbUser.lineId);
+            return true;
+          } else {
+            // 既にADMINが存在する場合は新規登録を拒否
+            console.log('Non-admin user attempted to sign in:', user.id);
+            return false;
+          }
+        }
+
+        // 既存ユーザーの場合、ADMINロールかチェック
+        if (dbUser.role !== 'ADMIN') {
           return false;
         }
 
