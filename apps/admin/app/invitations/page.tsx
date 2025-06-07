@@ -3,7 +3,7 @@ import { redirect } from "next/navigation"
 import { authOptions } from "../api/auth/[...nextauth]/route"
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
-import { Plus, Copy, Check, X } from "lucide-react"
+import { Plus, Check, X } from "lucide-react"
 import AdminLayout from "@/components/admin-layout"
 import InvitationActions from "@/components/invitation-actions"
 

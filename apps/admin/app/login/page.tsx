@@ -2,7 +2,6 @@
 
 import { signIn } from "next-auth/react"
 import { useSearchParams } from "next/navigation"
-import Image from "next/image"
 import { Suspense } from "react"
 
 function LoginContent() {

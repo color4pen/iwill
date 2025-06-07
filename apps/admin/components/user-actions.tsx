@@ -53,7 +53,7 @@ export default function UserActions({ user }: UserActionsProps) {
       } else {
         alert("更新に失敗しました")
       }
-    } catch (error) {
+    } catch {
       alert("更新に失敗しました")
     } finally {
       setIsUpdating(false)
@@ -75,7 +75,7 @@ export default function UserActions({ user }: UserActionsProps) {
       } else {
         alert("削除に失敗しました")
       }
-    } catch (error) {
+    } catch {
       alert("削除に失敗しました")
     }
   }
