@@ -29,7 +29,7 @@ export default function DeleteFAQButton({ faqId }: DeleteFAQButtonProps) {
       } else {
         alert("削除に失敗しました")
       }
-    } catch (error) {
+    } catch {
       alert("削除に失敗しました")
     } finally {
       setIsDeleting(false)

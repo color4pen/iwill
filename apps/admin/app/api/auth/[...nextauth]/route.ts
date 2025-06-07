@@ -1,6 +1,5 @@
 import NextAuth, { NextAuthOptions } from "next-auth"
 import LineProvider from "next-auth/providers/line"
-import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import { PrismaClient } from "@prisma/client"
 
 // ローカルでPrismaクライアントを初期化
@@ -52,7 +51,7 @@ export const authOptions: NextAuthOptions = {
     },
   },
   callbacks: {
-    async signIn({ user, account, profile }) {
+    async signIn({ user }) {
       // ユーザーのロールをチェック
       const dbUser = await prisma.user.findUnique({
         where: { lineId: user.id },

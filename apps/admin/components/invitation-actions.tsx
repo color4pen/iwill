@@ -32,7 +32,7 @@ export default function InvitationActions({ invitationUrl, invitationId }: Invit
       } else {
         alert("削除に失敗しました")
       }
-    } catch (error) {
+    } catch {
       alert("削除に失敗しました")
     }
   }
