@@ -20,11 +20,18 @@ function LoginContent() {
           </p>
         </div>
         
-        {error === "AccessDenied" && (
+        {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
             <p className="text-sm text-center">
-              管理者権限がありません。管理者アカウントでログインしてください。
+              {error === "AccessDenied" 
+                ? "管理者権限がありません。管理者アカウントでログインしてください。" 
+                : error === "Configuration"
+                ? "認証設定にエラーがあります。環境変数を確認してください。"
+                : "ログインに失敗しました。しばらくしてから再度お試しください。"}
             </p>
+            {process.env.NODE_ENV === 'development' && (
+              <p className="text-xs mt-2 text-center">エラー詳細: {error}</p>
+            )}
           </div>
         )}
         <div>

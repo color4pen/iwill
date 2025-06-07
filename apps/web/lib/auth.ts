@@ -61,8 +61,7 @@ export const authOptions: NextAuthOptions = {
         // 新規ユーザーの場合は一旦保留（招待ページで処理）
         await prisma.$disconnect();
         return true;
-      } catch (error) {
-        console.error('Error checking user:', error);
+      } catch {
         await prisma.$disconnect();
         return false;
       }
