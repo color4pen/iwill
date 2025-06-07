@@ -50,11 +50,10 @@ export const authOptions: NextAuthOptions = {
     },
   },
   callbacks: {
-    async signIn({ user }) {
+    async signIn({ user, profile }) {
       try {
         // 環境変数のチェック
         if (!process.env.DATABASE_URL) {
-          console.error('DATABASE_URL is not set');
           return false;
         }
 
@@ -75,17 +74,15 @@ export const authOptions: NextAuthOptions = {
             dbUser = await prisma.user.create({
               data: {
                 lineId: user.id!,
-                name: user.name,
-                email: user.email,
-                image: user.image,
+                name: user.name || (profile as Record<string, unknown>)?.displayName as string || 'Admin',
+                email: user.email || (profile as Record<string, unknown>)?.email as string || undefined,
+                image: user.image || (profile as Record<string, unknown>)?.pictureUrl as string || undefined,
                 role: 'ADMIN'
               }
             });
-            console.log('First user created as ADMIN:', dbUser.lineId);
             return true;
           } else {
             // 既にADMINが存在する場合は新規登録を拒否
-            console.log('Non-admin user attempted to sign in:', user.id);
             return false;
           }
         }
@@ -96,8 +93,7 @@ export const authOptions: NextAuthOptions = {
         }
 
         return true;
-      } catch (error) {
-        console.error('SignIn error:', error);
+      } catch {
         return false;
       }
     },
@@ -111,8 +107,7 @@ export const authOptions: NextAuthOptions = {
             where: { lineId: user.id },
           });
           token.role = dbUser?.role || 'USER';
-        } catch (error) {
-          console.error('JWT callback error:', error);
+        } catch {
           token.role = 'USER';
         }
       }
