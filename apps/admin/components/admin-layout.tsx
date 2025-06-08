@@ -17,7 +17,7 @@ const navigation = [
   { name: "ダッシュボード", href: "/", icon: Home },
   { name: "ユーザー管理", href: "/users", icon: Users },
   { name: "お知らせ管理", href: "/notifications", icon: Bell },
-  { name: "FAQ管理", href: "/faqs", icon: HelpCircle },
+  { name: "FAQ管理", href: "/faq", icon: HelpCircle },
   { name: "招待URL管理", href: "/invitations", icon: Mail },
 ]
 
