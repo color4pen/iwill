@@ -29,15 +29,15 @@ export default async function Home() {
                   </div>
                   <div className="ml-5 w-0 flex-1">
                     <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">ゲスト管理</dt>
-                      <dd className="text-lg font-medium text-gray-900">出欠管理・ゲスト一覧</dd>
+                      <dt className="text-sm font-medium text-gray-500 truncate">ユーザー管理</dt>
+                      <dd className="text-lg font-medium text-gray-900">ユーザー一覧・詳細確認</dd>
                     </dl>
                   </div>
                 </div>
               </div>
               <div className="bg-gray-50 px-5 py-3">
                 <div className="text-sm">
-                  <a href="/guests" className="font-medium text-blue-600 hover:text-blue-500">
+                  <a href="/users" className="font-medium text-blue-600 hover:text-blue-500">
                     管理画面へ →
                   </a>
                 </div>
@@ -74,20 +74,45 @@ export default async function Home() {
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
                     <svg className="h-6 w-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
                   <div className="ml-5 w-0 flex-1">
                     <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">メディア管理</dt>
-                      <dd className="text-lg font-medium text-gray-900">写真・動画の承認</dd>
+                      <dt className="text-sm font-medium text-gray-500 truncate">FAQ管理</dt>
+                      <dd className="text-lg font-medium text-gray-900">よくある質問の編集</dd>
                     </dl>
                   </div>
                 </div>
               </div>
               <div className="bg-gray-50 px-5 py-3">
                 <div className="text-sm">
-                  <a href="/media" className="font-medium text-blue-600 hover:text-blue-500">
+                  <a href="/faqs" className="font-medium text-blue-600 hover:text-blue-500">
+                    管理画面へ →
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white overflow-hidden shadow rounded-lg">
+              <div className="p-5">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <svg className="h-6 w-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+                    </svg>
+                  </div>
+                  <div className="ml-5 w-0 flex-1">
+                    <dl>
+                      <dt className="text-sm font-medium text-gray-500 truncate">招待URL管理</dt>
+                      <dd className="text-lg font-medium text-gray-900">招待URLの発行・管理</dd>
+                    </dl>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-gray-50 px-5 py-3">
+                <div className="text-sm">
+                  <a href="/invitations" className="font-medium text-blue-600 hover:text-blue-500">
                     管理画面へ →
                   </a>
                 </div>

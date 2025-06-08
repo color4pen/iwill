@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, Bell, Users, Camera, HelpCircle, LogOut, Menu, X } from "lucide-react"
+import { Home, Bell, Users, HelpCircle, LogOut, Menu, X, Mail } from "lucide-react"
 import { useState } from "react"
 
 interface AdminLayoutProps {
@@ -15,12 +15,10 @@ interface AdminLayoutProps {
 
 const navigation = [
   { name: "ダッシュボード", href: "/", icon: Home },
-  { name: "お知らせ管理", href: "/notifications", icon: Bell },
   { name: "ユーザー管理", href: "/users", icon: Users },
-  { name: "招待URL管理", href: "/invitations", icon: Users },
-  { name: "ゲスト管理", href: "/guests", icon: Users },
-  { name: "メディア管理", href: "/media", icon: Camera },
-  { name: "FAQ管理", href: "/faq", icon: HelpCircle },
+  { name: "お知らせ管理", href: "/notifications", icon: Bell },
+  { name: "FAQ管理", href: "/faqs", icon: HelpCircle },
+  { name: "招待URL管理", href: "/invitations", icon: Mail },
 ]
 
 export default function AdminLayout({ children, user }: AdminLayoutProps) {

@@ -47,8 +47,8 @@ export default function InfoPage() {
             <p className="text-lg font-semibold text-gray-800">星野リゾート リゾナーレ八ヶ岳</p>
             <p className="text-gray-600 text-sm">〒408-0044</p>
             <p className="text-gray-600 text-sm mb-3">山梨県北杜市小淵沢町129-1</p>
-            <Link 
-              href="/access" 
+            <Link
+              href="/access"
               className="text-blue-600 hover:text-blue-800 text-sm inline-flex items-center"
             >
               <Navigation className="w-4 h-4 mr-1" />
@@ -134,7 +134,7 @@ export default function InfoPage() {
       {/* 参加にあたってのご案内 */}
       <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
         <h2 className="text-2xl font-semibold mb-4">参加にあたってのご案内</h2>
-        
+
         <div className="grid md:grid-cols-2 gap-6">
           <div>
             <h3 className="font-medium text-lg mb-3 flex items-center">
@@ -146,7 +146,6 @@ export default function InfoPage() {
               <ul className="text-sm text-gray-600 space-y-1">
                 <li>男性: スーツ・ジャケット着用</li>
                 <li>女性: ワンピース・セットアップなど</li>
-                <li>※白色の衣装はご遠慮ください</li>
               </ul>
             </div>
           </div>
@@ -159,8 +158,8 @@ export default function InfoPage() {
             <div className="bg-gray-50 rounded-lg p-4">
               <ul className="text-sm text-gray-600 space-y-1">
                 <li>挙式中の撮影はご遠慮ください</li>
-                <li>披露宴中は自由に撮影いただけます</li>
-                <li>撮影した写真は「ギャラリー」からシェアをお願いします</li>
+                <li>その他では自由に撮影いただけます</li>
+                <li>撮影した写真は今後追加される「ギャラリー」からシェアをお願いします</li>
               </ul>
             </div>
           </div>
@@ -174,7 +173,7 @@ export default function InfoPage() {
           ご不明な点やお困りの際は、下記までご連絡ください
         </p>
         <p className="font-medium text-gray-800">
-          📞 090-0000-0000（新郎: 山田太郎）
+          📞 090-3530-2998（新郎: 関 晟吾）
         </p>
       </div>
     </div>
