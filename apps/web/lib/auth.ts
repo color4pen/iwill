@@ -44,8 +44,7 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async signIn({ user, account, profile }) {
       // 既存ユーザーかチェック
-      const { PrismaClient } = await import('@prisma/client');
-      const prisma = new PrismaClient();
+      const { prisma } = await import('./prisma');
       
       try {
         const existingUser = await prisma.user.findUnique({
@@ -54,15 +53,12 @@ export const authOptions: NextAuthOptions = {
 
         // 既存ユーザーならログイン許可
         if (existingUser) {
-          await prisma.$disconnect();
           return true;
         }
 
         // 新規ユーザーの場合は一旦保留（招待ページで処理）
-        await prisma.$disconnect();
         return true;
       } catch {
-        await prisma.$disconnect();
         return false;
       }
     },

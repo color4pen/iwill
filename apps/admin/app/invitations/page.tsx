@@ -18,7 +18,7 @@ export default async function InvitationsPage() {
     orderBy: { createdAt: "desc" },
   })
 
-  const baseUrl = process.env.NEXTAUTH_URL?.replace('/admin', '/web') || 'http://localhost:3001'
+  const baseUrl = process.env.NEXTAUTH_URL?.replace('admin.', '') || 'http://localhost:3000'
 
   return (
     <AdminLayout user={session.user}>
