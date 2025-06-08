@@ -13,7 +13,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "iWill - 結婚式情報サイト",
+  title: "iWill",
   description: "結婚式の情報配信や参列者のメディアアップロードサイト",
 };
 
