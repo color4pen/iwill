@@ -87,7 +87,7 @@ export default async function Home() {
               </div>
               <div className="bg-gray-50 px-5 py-3">
                 <div className="text-sm">
-                  <a href="/faqs" className="font-medium text-blue-600 hover:text-blue-500">
+                  <a href="/faq" className="font-medium text-blue-600 hover:text-blue-500">
                     管理画面へ →
                   </a>
                 </div>
