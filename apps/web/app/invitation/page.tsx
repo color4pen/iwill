@@ -8,7 +8,7 @@ import { acceptInvitation } from "./actions"
 function InvitationContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
   const [isProcessing, setIsProcessing] = useState(false)
   const [error, setError] = useState<string | null>(null)
   
@@ -24,12 +24,17 @@ function InvitationContent() {
       return
     }
 
+    // セッションの読み込みが完了していない場合は待つ
+    if (status === "loading") {
+      return
+    }
+
     // lineIdが取得できるまで待つ（セッション確立待ち）
     if (lineId) {
       // 自動的に招待を受け入れて処理
       handleAcceptInvitation()
     }
-  }, [token, lineId])
+  }, [token, lineId, status])
 
   const handleAcceptInvitation = async () => {
     if (!token || !lineId) return

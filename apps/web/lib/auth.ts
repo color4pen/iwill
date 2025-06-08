@@ -18,7 +18,7 @@ export const authOptions: NextAuthOptions = {
       name: `web-next-auth.session-token`,
       options: {
         httpOnly: true,
-        sameSite: 'lax',
+        sameSite: useSecureCookies ? 'none' : 'lax',
         path: '/',
         secure: useSecureCookies
       }
@@ -26,7 +26,7 @@ export const authOptions: NextAuthOptions = {
     callbackUrl: {
       name: `web-next-auth.callback-url`,
       options: {
-        sameSite: 'lax',
+        sameSite: useSecureCookies ? 'none' : 'lax',
         path: '/',
         secure: useSecureCookies
       }
@@ -35,7 +35,7 @@ export const authOptions: NextAuthOptions = {
       name: `web-next-auth.csrf-token`,
       options: {
         httpOnly: true,
-        sameSite: 'lax',
+        sameSite: useSecureCookies ? 'none' : 'lax',
         path: '/',
         secure: useSecureCookies
       }
