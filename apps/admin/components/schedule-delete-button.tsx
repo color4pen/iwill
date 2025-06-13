@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Trash2 } from "lucide-react"
+import { deleteSchedule } from "@/app/actions/schedules"
 
 interface ScheduleDeleteButtonProps {
   scheduleId: string
@@ -17,18 +18,11 @@ export default function ScheduleDeleteButton({ scheduleId }: ScheduleDeleteButto
 
     setIsDeleting(true)
     try {
-      const response = await fetch(`/api/schedules/${scheduleId}`, {
-        method: "DELETE",
-      })
-
-      if (response.ok) {
-        router.refresh()
-      } else {
-        alert("削除に失敗しました")
-      }
-    } catch {
+      await deleteSchedule(scheduleId)
+      router.refresh()
+    } catch (error) {
+      console.error("Error:", error)
       alert("削除に失敗しました")
-    } finally {
       setIsDeleting(false)
     }
   }

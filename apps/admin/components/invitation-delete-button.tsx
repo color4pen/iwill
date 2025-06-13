@@ -3,24 +3,22 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Trash2 } from "lucide-react"
-import { deleteNotification } from "@/app/actions/notifications"
+import { deleteInvitation } from "@/app/actions/invitations"
 
-interface DeleteNotificationButtonProps {
-  notificationId: string
+interface InvitationDeleteButtonProps {
+  invitationId: string
 }
 
-export default function DeleteNotificationButton({ notificationId }: DeleteNotificationButtonProps) {
+export default function InvitationDeleteButton({ invitationId }: InvitationDeleteButtonProps) {
   const router = useRouter()
   const [isDeleting, setIsDeleting] = useState(false)
 
   const handleDelete = async () => {
-    if (!confirm("このお知らせを削除してもよろしいですか？")) {
-      return
-    }
+    if (!confirm("この招待URLを削除しますか？")) return
 
     setIsDeleting(true)
     try {
-      await deleteNotification(notificationId)
+      await deleteInvitation(invitationId)
       router.refresh()
     } catch (error) {
       console.error("Error:", error)
@@ -33,8 +31,8 @@ export default function DeleteNotificationButton({ notificationId }: DeleteNotif
     <button
       onClick={handleDelete}
       disabled={isDeleting}
-      className="p-2 text-red-500 hover:text-red-700 disabled:opacity-50"
-      aria-label="削除"
+      className="p-2 text-gray-500 hover:text-red-600 disabled:opacity-50"
+      title="削除"
     >
       <Trash2 className="h-5 w-5" />
     </button>

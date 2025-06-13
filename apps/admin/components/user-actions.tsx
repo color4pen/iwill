@@ -2,9 +2,10 @@
 
 import { useState } from "react"
 import { Shield, ShieldOff, Eye, Trash2 } from "lucide-react"
-import { useRouter } from "next/navigation"
 import UserDetailModal from "./user-detail-modal"
 import UserModalPortal from "./user-modal-portal"
+import { deleteUser, updateUserRole } from "@/app/actions/users"
+import { Role } from "@prisma/client"
 
 interface User {
   id: string
@@ -27,7 +28,6 @@ interface UserActionsProps {
 }
 
 export default function UserActions({ user }: UserActionsProps) {
-  const router = useRouter()
   const [showDetail, setShowDetail] = useState(false)
   const [isUpdating, setIsUpdating] = useState(false)
 
@@ -38,22 +38,10 @@ export default function UserActions({ user }: UserActionsProps) {
 
     setIsUpdating(true)
     try {
-      const response = await fetch(`/api/users/${user.id}/role`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          role: user.role === 'ADMIN' ? 'USER' : 'ADMIN'
-        }),
-      })
-
-      if (response.ok) {
-        router.refresh()
-      } else {
-        alert("更新に失敗しました")
-      }
-    } catch {
+      const newRole: Role = user.role === 'ADMIN' ? 'USER' : 'ADMIN'
+      await updateUserRole(user.id, newRole)
+    } catch (error) {
+      console.error("Failed to update user role:", error)
       alert("更新に失敗しました")
     } finally {
       setIsUpdating(false)
@@ -66,16 +54,9 @@ export default function UserActions({ user }: UserActionsProps) {
     }
 
     try {
-      const response = await fetch(`/api/users/${user.id}`, {
-        method: "DELETE",
-      })
-
-      if (response.ok) {
-        router.refresh()
-      } else {
-        alert("削除に失敗しました")
-      }
-    } catch {
+      await deleteUser(user.id)
+    } catch (error) {
+      console.error("Failed to delete user:", error)
       alert("削除に失敗しました")
     }
   }

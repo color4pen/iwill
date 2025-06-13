@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { toggleFAQStatus } from "@/app/actions/faq"
 
 interface FAQ {
   id: string
@@ -13,28 +13,16 @@ interface FAQActiveToggleProps {
 }
 
 export default function FAQActiveToggle({ faq }: FAQActiveToggleProps) {
-  const router = useRouter()
   const [isUpdating, setIsUpdating] = useState(false)
 
   const handleToggle = async () => {
     setIsUpdating(true)
 
     try {
-      const response = await fetch(`/api/faq/${faq.id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          isActive: !faq.isActive,
-        }),
-      })
-
-      if (response.ok) {
-        router.refresh()
-      }
+      await toggleFAQStatus(faq.id, !faq.isActive)
     } catch (error) {
       console.error("Failed to update FAQ status:", error)
+      alert("ステータスの更新に失敗しました")
     } finally {
       setIsUpdating(false)
     }

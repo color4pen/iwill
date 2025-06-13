@@ -4,7 +4,7 @@ import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import { Plus, Edit2, GripVertical } from "lucide-react"
-import DeleteFAQButton from "@/components/delete-faq-button"
+import FAQDeleteButton from "@/components/faq-delete-button"
 import AdminLayout from "@/components/admin-layout"
 import FAQActiveToggle from "@/components/faq-active-toggle"
 
@@ -123,7 +123,7 @@ export default async function FAQPage() {
                           >
                             <Edit2 className="h-5 w-5" />
                           </Link>
-                          <DeleteFAQButton faqId={faq.id} />
+                          <FAQDeleteButton id={faq.id} />
                         </div>
                       </div>
                     </div>

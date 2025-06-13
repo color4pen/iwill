@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { invitationConfig } from "@/config/invitation"
 import { Input, Select, Textarea, Button } from "@/components/ui/form-elements"
+import { createInvitation } from "@/app/actions/invitations"
 
 export default function InvitationForm() {
   const router = useRouter()
@@ -15,35 +16,16 @@ export default function InvitationForm() {
     notes: invitationConfig.messageTemplate
   })
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsSubmitting(true)
 
     try {
-      const expiresAt = formData.expiresIn 
-        ? new Date(Date.now() + parseInt(formData.expiresIn) * 24 * 60 * 60 * 1000).toISOString()
-        : null
-
-      const response = await fetch("/api/invitations", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...formData,
-          expiresAt
-        }),
-      })
-
-      if (response.ok) {
-        router.push("/invitations")
-        router.refresh()
-      } else {
-        alert("エラーが発生しました")
-      }
-    } catch {
+      const formDataObj = new FormData(e.currentTarget)
+      await createInvitation(formDataObj)
+    } catch (error) {
+      console.error("Error:", error)
       alert("エラーが発生しました")
-    } finally {
       setIsSubmitting(false)
     }
   }
@@ -54,6 +36,7 @@ export default function InvitationForm() {
         <div>
           <Input
             id="name"
+            name="name"
             label="招待者名（オプション）"
             type="text"
             value={formData.name}
@@ -68,6 +51,7 @@ export default function InvitationForm() {
         <div>
           <Input
             id="email"
+            name="email"
             label="メールアドレス（オプション）"
             type="email"
             value={formData.email}
@@ -81,6 +65,7 @@ export default function InvitationForm() {
 
         <Select
           id="expiresIn"
+          name="expiresIn"
           label="有効期限"
           value={formData.expiresIn}
           onChange={(e) => setFormData({ ...formData, expiresIn: e.target.value })}
@@ -95,6 +80,7 @@ export default function InvitationForm() {
         <div>
           <Textarea
             id="notes"
+            name="notes"
             label="招待メッセージ"
             rows={10}
             value={formData.notes}
