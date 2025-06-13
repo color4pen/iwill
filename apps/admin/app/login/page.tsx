@@ -13,21 +13,21 @@ function LoginContent() {
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            iwill 管理者ログイン
+            iWill 管理者ログイン
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
             管理者権限を持つLINEアカウントでログインしてください
           </p>
         </div>
-        
+
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
             <p className="text-sm text-center">
-              {error === "AccessDenied" 
-                ? "管理者権限がありません。管理者アカウントでログインしてください。" 
+              {error === "AccessDenied"
+                ? "管理者権限がありません。管理者アカウントでログインしてください。"
                 : error === "Configuration"
-                ? "認証設定にエラーがあります。環境変数を確認してください。"
-                : "ログインに失敗しました。しばらくしてから再度お試しください。"}
+                  ? "認証設定にエラーがあります。環境変数を確認してください。"
+                  : "ログインに失敗しました。しばらくしてから再度お試しください。"}
             </p>
             {process.env.NODE_ENV === 'development' && (
               <p className="text-xs mt-2 text-center">エラー詳細: {error}</p>

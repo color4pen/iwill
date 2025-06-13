@@ -9,8 +9,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "iwill Admin",
-  description: "iwill 管理者ダッシュボード",
+  title: "iWill Admin",
+  description: "iWill 管理者ダッシュボード",
 };
 
 export default function RootLayout({

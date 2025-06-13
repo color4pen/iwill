@@ -20,27 +20,25 @@ export default function AdminHeader({ user }: AdminHeaderProps) {
         <div className="flex justify-between items-center py-4">
           <div className="flex items-center space-x-8">
             <Link href="/" className="text-2xl font-bold text-gray-900">
-              iwill Admin
+              iWill Admin
             </Link>
             <nav className="flex space-x-4">
               <Link
                 href="/"
-                className={`inline-flex items-center px-3 py-2 text-sm font-medium rounded-md ${
-                  pathname === "/" 
-                    ? "bg-gray-900 text-white" 
+                className={`inline-flex items-center px-3 py-2 text-sm font-medium rounded-md ${pathname === "/"
+                    ? "bg-gray-900 text-white"
                     : "text-gray-700 hover:text-gray-900 hover:bg-gray-100"
-                }`}
+                  }`}
               >
                 <Home className="h-4 w-4 mr-2" />
                 ホーム
               </Link>
               <Link
                 href="/notifications"
-                className={`inline-flex items-center px-3 py-2 text-sm font-medium rounded-md ${
-                  pathname.startsWith("/notifications")
-                    ? "bg-gray-900 text-white" 
+                className={`inline-flex items-center px-3 py-2 text-sm font-medium rounded-md ${pathname.startsWith("/notifications")
+                    ? "bg-gray-900 text-white"
                     : "text-gray-700 hover:text-gray-900 hover:bg-gray-100"
-                }`}
+                  }`}
               >
                 <Bell className="h-4 w-4 mr-2" />
                 お知らせ管理
