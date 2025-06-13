@@ -27,6 +27,7 @@ model User {
   attendance    Attendance?
   notifications NotificationRead[]
   media         Media[]
+  inquiryThreads InquiryThread[]
   
   @@index([lineId])
   @@index([role])
@@ -72,10 +73,10 @@ model Notification {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
   
-  // Relations
   reads        NotificationRead[]
   
   @@index([publishedAt])
+  @@index([category])
 }
 
 enum NotificationCategory {
@@ -92,50 +93,53 @@ enum Priority {
   URGENT
 }
 
-// 通知既読管理
+// お知らせ既読管理
 model NotificationRead {
-  userId         String
-  notificationId String
-  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  id              String       @id @default(cuid())
+  userId          String
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  notificationId  String
+  notification    Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
   
-  readAt         DateTime     @default(now())
+  readAt          DateTime     @default(now())
   
-  @@id([userId, notificationId])
+  @@unique([userId, notificationId])
   @@index([userId])
   @@index([notificationId])
 }
 
 // メディア（写真・動画）
 model Media {
-  id           String    @id @default(cuid())
-  userId       String
-  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   
-  type         MediaType
-  url          String
-  thumbnailUrl String?   // 動画のサムネイル
-  caption      String?
+  fileUrl     String
+  thumbnailUrl String?
+  fileName    String
+  fileSize    Int       // バイト単位
+  mimeType    String
   
-  isApproved   Boolean   @default(false) // 管理者承認
-  uploadedAt   DateTime  @default(now())
+  caption     String?
   
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  isApproved  Boolean   @default(false)
+  approvedAt  DateTime?
+  approvedBy  String?   // 管理者のID
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
   
   @@index([userId])
-  @@index([uploadedAt])
   @@index([isApproved])
+  @@index([createdAt])
 }
 
-enum MediaType {
-  IMAGE
-  VIDEO
-}
-
-// 結婚式情報（基本的に1レコード）
+// 結婚式情報
 model WeddingInfo {
   id              String    @id @default(cuid())
+  
+  groomName       String
+  brideName       String
   date            DateTime
   ceremonyTime    String    // "13:00" のような形式
   receptionTime   String    // "14:00" のような形式
@@ -215,4 +219,67 @@ model Invitation {
   
   @@index([token])
   @@index([isUsed])
+}
+
+// 問い合わせスレッド
+model InquiryThread {
+  id          String        @id @default(cuid())
+  
+  user        User          @relation(fields: [userId], references: [id])
+  userId      String
+  
+  title       String        // タイトル
+  category    InquiryCategory
+  status      InquiryStatus @default(OPEN)
+  
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  
+  messages    InquiryMessage[]
+  
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+// 問い合わせメッセージ
+model InquiryMessage {
+  id          String        @id @default(cuid())
+  
+  thread      InquiryThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  threadId    String
+  
+  // 送信者情報（ユーザーまたは管理者）
+  senderId    String
+  senderName  String
+  senderRole  MessageSenderRole
+  
+  content     String        @db.Text
+  
+  isRead      Boolean       @default(false) // 受信者が読んだか
+  readAt      DateTime?
+  
+  createdAt   DateTime      @default(now())
+  
+  @@index([threadId])
+  @@index([createdAt])
+}
+
+enum MessageSenderRole {
+  USER        // 一般ユーザー
+  ADMIN       // 管理者
+}
+
+enum InquiryCategory {
+  GENERAL     // 一般的な質問
+  ATTENDANCE  // 出欠について
+  VENUE       // 会場について
+  GIFT        // ご祝儀・ギフトについて
+  OTHER       // その他
+}
+
+enum InquiryStatus {
+  OPEN        // 対応中
+  RESOLVED    // 解決済み
+  CLOSED      // クローズ
 }
