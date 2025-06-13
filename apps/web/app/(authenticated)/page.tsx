@@ -51,7 +51,7 @@ export default async function Home() {
           color="bg-amber-500"
           icon={<Camera size={24} strokeWidth={1.5} />}
           disabled={!enableAllFeatures}
-          disabledText="5月25日から利用可能"
+          disabledText="9月7日から利用可能"
         />
         <MenuCard
           title="マイページ"
@@ -60,7 +60,7 @@ export default async function Home() {
           color="bg-violet-500"
           icon={<User size={24} strokeWidth={1.5} />}
           disabled={!enableAllFeatures}
-          disabledText="5月25日から利用可能"
+          disabledText="9月7日から利用可能"
         />
       </div>
     </>
