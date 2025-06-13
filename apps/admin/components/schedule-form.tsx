@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Input, Select, Textarea, Checkbox, Button } from "@/components/ui/form-elements"
+import { createSchedule, updateSchedule } from "@/app/actions/schedules"
 
 const iconOptions = [
   { value: "Users", label: "人々（Users）" },
@@ -61,34 +62,25 @@ export default function ScheduleForm({ initialData }: ScheduleFormProps) {
     setFormData({ ...formData, colorBg: bg, colorText: text })
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsSubmitting(true)
 
     try {
-      const url = initialData?.id 
-        ? `/api/schedules/${initialData.id}`
-        : "/api/schedules"
+      const formDataObj = new FormData(e.currentTarget)
       
-      const method = initialData?.id ? "PUT" : "POST"
-
-      const response = await fetch(url, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      })
-
-      if (response.ok) {
-        router.push("/schedules")
-        router.refresh()
+      // Add hidden fields
+      formDataObj.set("colorBg", formData.colorBg)
+      formDataObj.set("colorText", formData.colorText)
+      
+      if (initialData?.id) {
+        await updateSchedule(initialData.id, formDataObj)
       } else {
-        alert("エラーが発生しました")
+        await createSchedule(formDataObj)
       }
-    } catch {
+    } catch (error) {
+      console.error("Error:", error)
       alert("エラーが発生しました")
-    } finally {
       setIsSubmitting(false)
     }
   }
@@ -99,6 +91,7 @@ export default function ScheduleForm({ initialData }: ScheduleFormProps) {
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           <Input
             id="time"
+            name="time"
             label="時刻（必須）"
             type="text"
             required
@@ -109,6 +102,7 @@ export default function ScheduleForm({ initialData }: ScheduleFormProps) {
 
           <Input
             id="order"
+            name="order"
             label="表示順"
             type="number"
             value={formData.order}
@@ -119,6 +113,7 @@ export default function ScheduleForm({ initialData }: ScheduleFormProps) {
 
         <Input
           id="title"
+          name="title"
           label="イベント名（必須）"
           type="text"
           required
@@ -129,6 +124,7 @@ export default function ScheduleForm({ initialData }: ScheduleFormProps) {
 
         <Textarea
           id="description"
+          name="description"
           label="説明（オプション）"
           rows={2}
           value={formData.description}
@@ -138,6 +134,7 @@ export default function ScheduleForm({ initialData }: ScheduleFormProps) {
 
         <Select
           id="icon"
+          name="icon"
           label="アイコン（オプション）"
           value={formData.icon}
           onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
@@ -176,6 +173,7 @@ export default function ScheduleForm({ initialData }: ScheduleFormProps) {
 
         <Checkbox
           id="isActive"
+          name="isActive"
           label="公開する"
           checked={formData.isActive}
           onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
