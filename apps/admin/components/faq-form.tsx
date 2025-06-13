@@ -33,26 +33,21 @@ export default function FAQForm({ faq }: FAQFormProps) {
     e.preventDefault()
     setIsSubmitting(true)
 
-    try {
-      const formDataObj = new FormData(e.currentTarget)
-      
-      // チェックボックスの値を正しく設定
-      if (formData.isActive) {
-        formDataObj.set("isActive", "on")
-      } else {
-        formDataObj.delete("isActive")
-      }
-      
-      if (faq) {
-        await updateFAQ(faq.id, formDataObj)
-      } else {
-        await createFAQ(formDataObj)
-      }
-    } catch (error) {
-      console.error("Error:", error)
-      alert("エラーが発生しました")
-      setIsSubmitting(false)
+    const formDataObj = new FormData(e.currentTarget)
+    
+    // チェックボックスの値を正しく設定
+    if (formData.isActive) {
+      formDataObj.set("isActive", "on")
+    } else {
+      formDataObj.delete("isActive")
     }
+    
+    if (faq) {
+      await updateFAQ(faq.id, formDataObj)
+    } else {
+      await createFAQ(formDataObj)
+    }
+    // Server Actionがredirectを実行するため、ここには到達しない
   }
 
   return (
