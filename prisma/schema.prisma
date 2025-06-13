@@ -157,14 +157,19 @@ model WeddingInfo {
 model Schedule {
   id          String    @id @default(cuid())
   time        String    // "14:30" のような形式
-  event       String
+  title       String    // イベント名
   description String?
+  icon        String?   // アイコン名（例: "Users", "Church", "Utensils"）
+  colorBg     String    @default("bg-gray-100") // 背景色クラス
+  colorText   String    @default("text-gray-600") // テキスト色クラス
   order       Int       // 表示順
+  isActive    Boolean   @default(true)
   
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   
   @@index([order])
+  @@index([isActive])
 }
 
 // よくある質問
