@@ -1,8 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { MapPin, Calendar, Clock, Navigation, Users, Utensils, Camera, Music } from "lucide-react";
+import TimeSchedule from "@/components/info/TimeSchedule";
+import { prisma } from "@/lib/prisma";
 
-export default function InfoPage() {
+export default async function InfoPage() {
+  const schedules = await prisma.schedule.findMany({
+    where: { isActive: true },
+    orderBy: { order: "asc" },
+  });
   return (
     <div className="min-h-screen">
       <div className="relative h-64 overflow-hidden rounded-lg mb-8">
@@ -31,10 +37,6 @@ export default function InfoPage() {
               <p className="text-2xl font-bold text-gray-800">2025年9月21日</p>
               <p className="text-lg text-gray-600">日曜日</p>
             </div>
-            <div className="pt-2 border-t border-gray-200">
-              <p className="text-gray-700">挙式開始: <span className="font-semibold">15:00</span></p>
-              <p className="text-gray-700">披露宴開始: <span className="font-semibold">16:00</span></p>
-            </div>
           </div>
         </div>
 
@@ -59,77 +61,7 @@ export default function InfoPage() {
       </div>
 
       {/* タイムスケジュール */}
-      <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
-        <h2 className="text-2xl font-semibold mb-6 flex items-center">
-          <Clock className="w-6 h-6 text-blue-600 mr-2" />
-          タイムスケジュール
-        </h2>
-        <div className="relative">
-          <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gray-300"></div>
-          <div className="space-y-6">
-            <div className="flex items-start">
-              <div className="relative">
-                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
-                  <span className="font-bold text-blue-600">14:30</span>
-                </div>
-              </div>
-              <div className="ml-6 pt-3">
-                <h3 className="font-semibold text-lg">受付開始</h3>
-                <p className="text-gray-600 text-sm">ウェルカムドリンクをご用意しております</p>
-              </div>
-            </div>
-
-            <div className="flex items-start">
-              <div className="relative">
-                <div className="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center">
-                  <span className="font-bold text-pink-600">15:00</span>
-                </div>
-              </div>
-              <div className="ml-6 pt-3">
-                <h3 className="font-semibold text-lg">挙式</h3>
-                <p className="text-gray-600 text-sm">チャペルでの挙式となります</p>
-              </div>
-            </div>
-
-            <div className="flex items-start">
-              <div className="relative">
-                <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center">
-                  <span className="font-bold text-amber-600">16:00</span>
-                </div>
-              </div>
-              <div className="ml-6 pt-3">
-                <h3 className="font-semibold text-lg">披露宴開宴</h3>
-                <div className="mt-2 space-y-2 text-sm text-gray-600">
-                  <div className="flex items-center">
-                    <Utensils className="w-4 h-4 mr-2" />
-                    <span>お食事・歓談</span>
-                  </div>
-                  <div className="flex items-center">
-                    <Music className="w-4 h-4 mr-2" />
-                    <span>余興・スピーチ</span>
-                  </div>
-                  <div className="flex items-center">
-                    <Camera className="w-4 h-4 mr-2" />
-                    <span>フォトセッション</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-start">
-              <div className="relative">
-                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-                  <span className="font-bold text-green-600">18:30</span>
-                </div>
-              </div>
-              <div className="ml-6 pt-3">
-                <h3 className="font-semibold text-lg">お開き（予定）</h3>
-                <p className="text-gray-600 text-sm">プチギフトをお渡しします</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <TimeSchedule scheduleItems={schedules} />
 
       {/* 参加にあたってのご案内 */}
       <div className="bg-white rounded-lg shadow-lg p-6 mb-8">

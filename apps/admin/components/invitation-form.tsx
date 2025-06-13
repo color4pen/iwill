@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { invitationConfig } from "@/config/invitation"
+import { Input, Select, Textarea, Button } from "@/components/ui/form-elements"
 
 export default function InvitationForm() {
   const router = useRouter()
@@ -51,16 +52,12 @@ export default function InvitationForm() {
     <form onSubmit={handleSubmit} className="bg-white shadow sm:rounded-lg p-6">
       <div className="space-y-6">
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-            招待者名（オプション）
-          </label>
-          <input
-            type="text"
-            name="name"
+          <Input
             id="name"
+            label="招待者名（オプション）"
+            type="text"
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             placeholder="山田 太郎"
           />
           <p className="mt-1 text-sm text-gray-500">
@@ -69,16 +66,12 @@ export default function InvitationForm() {
         </div>
 
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-            メールアドレス（オプション）
-          </label>
-          <input
-            type="email"
-            name="email"
+          <Input
             id="email"
+            label="メールアドレス（オプション）"
+            type="email"
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             placeholder="example@email.com"
           />
           <p className="mt-1 text-sm text-gray-500">
@@ -86,36 +79,26 @@ export default function InvitationForm() {
           </p>
         </div>
 
-        <div>
-          <label htmlFor="expiresIn" className="block text-sm font-medium text-gray-700">
-            有効期限
-          </label>
-          <select
-            id="expiresIn"
-            name="expiresIn"
-            value={formData.expiresIn}
-            onChange={(e) => setFormData({ ...formData, expiresIn: e.target.value })}
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-          >
-            <option value="">無期限</option>
-            <option value="7">7日間</option>
-            <option value="30">30日間</option>
-            <option value="60">60日間</option>
-            <option value="90">90日間</option>
-          </select>
-        </div>
+        <Select
+          id="expiresIn"
+          label="有効期限"
+          value={formData.expiresIn}
+          onChange={(e) => setFormData({ ...formData, expiresIn: e.target.value })}
+        >
+          <option value="">無期限</option>
+          <option value="7">7日間</option>
+          <option value="30">30日間</option>
+          <option value="60">60日間</option>
+          <option value="90">90日間</option>
+        </Select>
 
         <div>
-          <label htmlFor="notes" className="block text-sm font-medium text-gray-700">
-            招待メッセージ
-          </label>
-          <textarea
+          <Textarea
             id="notes"
-            name="notes"
+            label="招待メッセージ"
             rows={10}
             value={formData.notes}
             onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             placeholder="招待URLと一緒に送るメッセージ"
           />
           <p className="mt-1 text-sm text-gray-500">
@@ -125,20 +108,19 @@ export default function InvitationForm() {
       </div>
 
       <div className="mt-6 flex items-center justify-end space-x-3">
-        <button
+        <Button
           type="button"
+          variant="secondary"
           onClick={() => router.push("/invitations")}
-          className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >
           キャンセル
-        </button>
-        <button
+        </Button>
+        <Button
           type="submit"
           disabled={isSubmitting}
-          className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
         >
           {isSubmitting ? "発行中..." : "発行"}
-        </button>
+        </Button>
       </div>
     </form>
   )
