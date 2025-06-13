@@ -15,10 +15,9 @@ interface Message {
 
 interface AdminChatMessagesProps {
   messages: Message[]
-  currentUserId: string
 }
 
-export default function AdminChatMessages({ messages, currentUserId }: AdminChatMessagesProps) {
+export default function AdminChatMessages({ messages }: AdminChatMessagesProps) {
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {

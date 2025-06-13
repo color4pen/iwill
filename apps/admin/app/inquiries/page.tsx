@@ -4,7 +4,7 @@ import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import AdminLayout from "@/components/admin-layout"
 import Link from "next/link"
-import { MessageSquare, Clock, User, CheckCircle } from "lucide-react"
+import { MessageSquare, Clock, User } from "lucide-react"
 import { format } from "date-fns"
 import { ja } from "date-fns/locale"
 
