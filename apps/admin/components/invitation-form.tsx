@@ -20,14 +20,8 @@ export default function InvitationForm() {
     e.preventDefault()
     setIsSubmitting(true)
 
-    try {
-      const formDataObj = new FormData(e.currentTarget)
-      await createInvitation(formDataObj)
-    } catch (error) {
-      console.error("Error:", error)
-      alert("エラーが発生しました")
-      setIsSubmitting(false)
-    }
+    const formDataObj = new FormData(e.currentTarget)
+    await createInvitation(formDataObj)
   }
 
   return (
