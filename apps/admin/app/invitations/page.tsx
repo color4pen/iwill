@@ -94,6 +94,7 @@ export default async function InvitationsPage() {
                       <InvitationActions
                         invitationUrl={`${baseUrl}/login?invitation=${invitation.token}`}
                         invitationId={invitation.id}
+                        invitationNotes={invitation.notes}
                       />
                     </div>
                   </div>

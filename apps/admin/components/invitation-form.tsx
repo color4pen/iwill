@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { invitationConfig } from "@/config/invitation"
 
 export default function InvitationForm() {
   const router = useRouter()
@@ -10,7 +11,7 @@ export default function InvitationForm() {
     name: "",
     email: "",
     expiresIn: "30", // days
-    notes: ""
+    notes: invitationConfig.messageTemplate
   })
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -106,17 +107,20 @@ export default function InvitationForm() {
 
         <div>
           <label htmlFor="notes" className="block text-sm font-medium text-gray-700">
-            管理者用メモ（オプション）
+            招待メッセージ
           </label>
           <textarea
             id="notes"
             name="notes"
-            rows={3}
+            rows={10}
             value={formData.notes}
             onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
             className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            placeholder="この招待URLに関するメモ"
+            placeholder="招待URLと一緒に送るメッセージ"
           />
+          <p className="mt-1 text-sm text-gray-500">
+            {'{url}'} は自動的に招待URLに置き換えられます
+          </p>
         </div>
       </div>
 

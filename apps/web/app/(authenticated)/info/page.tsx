@@ -28,7 +28,7 @@ export default function InfoPage() {
           </div>
           <div className="space-y-2">
             <div>
-              <p className="text-2xl font-bold text-gray-800">2024年9月15日</p>
+              <p className="text-2xl font-bold text-gray-800">2025年9月21日</p>
               <p className="text-lg text-gray-600">日曜日</p>
             </div>
             <div className="pt-2 border-t border-gray-200">
