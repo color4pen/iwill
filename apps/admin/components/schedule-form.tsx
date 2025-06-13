@@ -31,8 +31,8 @@ interface ScheduleFormProps {
     id?: string
     time?: string
     title?: string
-    description?: string
-    icon?: string
+    description?: string | null
+    icon?: string | null
     colorBg?: string
     colorText?: string
     order?: number
