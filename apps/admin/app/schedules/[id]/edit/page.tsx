@@ -8,7 +8,7 @@ import ScheduleForm from "@/components/schedule-form"
 export default async function EditSchedulePage({
   params,
 }: {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }) {
   const session = await getServerSession(authOptions)
   
@@ -16,8 +16,9 @@ export default async function EditSchedulePage({
     redirect("/login")
   }
 
+  const { id } = await params
   const schedule = await prisma.schedule.findUnique({
-    where: { id: params.id },
+    where: { id },
   })
 
   if (!schedule) {
