@@ -1,4 +1,4 @@
-import { Calendar, Camera, User, Bell, HelpCircle, MapPin } from "lucide-react";
+import { Calendar, Camera, User, Bell, HelpCircle, MapPin, MessageSquare } from "lucide-react";
 import { shouldEnableRestrictedFeatures } from "../utils/environment";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
@@ -61,6 +61,13 @@ export default async function Home() {
           icon={<User size={24} strokeWidth={1.5} />}
           disabled={!enableAllFeatures}
           disabledText="9月7日から利用可能"
+        />
+        <MenuCard
+          title="お問い合わせ"
+          description="ご質問やご相談はこちらから"
+          href="/contact"
+          color="bg-indigo-500"
+          icon={<MessageSquare size={24} strokeWidth={1.5} />}
         />
       </div>
     </>
