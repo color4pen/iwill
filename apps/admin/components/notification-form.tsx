@@ -23,21 +23,16 @@ export default function NotificationForm({ notification }: NotificationFormProps
     e.preventDefault()
     setIsSubmitting(true)
 
-    try {
-      const formDataObj = new FormData(e.currentTarget)
-      // Priority is always NORMAL for now
-      formDataObj.set("priority", "NORMAL")
-      
-      if (notification) {
-        await updateNotification(notification.id, formDataObj)
-      } else {
-        await createNotification(formDataObj)
-      }
-    } catch (error) {
-      console.error("Error:", error)
-      alert("エラーが発生しました")
-      setIsSubmitting(false)
+    const formDataObj = new FormData(e.currentTarget)
+    // Priority is always NORMAL for now
+    formDataObj.set("priority", "NORMAL")
+    
+    if (notification) {
+      await updateNotification(notification.id, formDataObj)
+    } else {
+      await createNotification(formDataObj)
     }
+    // Server Actionがredirectを実行するため、ここには到達しない
   }
 
   return (

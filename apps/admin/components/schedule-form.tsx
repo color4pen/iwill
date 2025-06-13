@@ -66,23 +66,25 @@ export default function ScheduleForm({ initialData }: ScheduleFormProps) {
     e.preventDefault()
     setIsSubmitting(true)
 
-    try {
-      const formDataObj = new FormData(e.currentTarget)
-      
-      // Add hidden fields
-      formDataObj.set("colorBg", formData.colorBg)
-      formDataObj.set("colorText", formData.colorText)
-      
-      if (initialData?.id) {
-        await updateSchedule(initialData.id, formDataObj)
-      } else {
-        await createSchedule(formDataObj)
-      }
-    } catch (error) {
-      console.error("Error:", error)
-      alert("エラーが発生しました")
-      setIsSubmitting(false)
+    const formDataObj = new FormData(e.currentTarget)
+    
+    // Add hidden fields
+    formDataObj.set("colorBg", formData.colorBg)
+    formDataObj.set("colorText", formData.colorText)
+    
+    // チェックボックスの値を正しく設定
+    if (formData.isActive) {
+      formDataObj.set("isActive", "on")
+    } else {
+      formDataObj.delete("isActive")
     }
+    
+    if (initialData?.id) {
+      await updateSchedule(initialData.id, formDataObj)
+    } else {
+      await createSchedule(formDataObj)
+    }
+    // Server Actionがredirectを実行するため、ここには到達しない
   }
 
   return (
