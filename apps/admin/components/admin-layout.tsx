@@ -31,7 +31,7 @@ export default function AdminLayout({ children, user }: AdminLayoutProps) {
       {/* モバイル用サイドバー */}
       <div className={`fixed inset-0 z-40 flex md:hidden ${sidebarOpen ? '' : 'pointer-events-none'}`}>
         <div className={`fixed inset-0 bg-gray-600 bg-opacity-75 transition-opacity ${sidebarOpen ? 'opacity-100' : 'opacity-0'}`} onClick={() => setSidebarOpen(false)} />
-        
+
         <div className={`relative flex-1 flex flex-col max-w-xs w-full bg-gray-800 transform transition-transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
           <div className="absolute top-0 right-0 -mr-12 pt-2">
             <button
@@ -42,21 +42,20 @@ export default function AdminLayout({ children, user }: AdminLayoutProps) {
               <X className="h-6 w-6 text-white" />
             </button>
           </div>
-          
+
           <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
             <div className="flex-shrink-0 flex items-center px-4">
-              <h1 className="text-xl font-bold text-white">iwill Admin</h1>
+              <h1 className="text-xl font-bold text-white">iWill Admin</h1>
             </div>
             <nav className="mt-5 px-2 space-y-1">
               {navigation.map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`group flex items-center px-2 py-2 text-base font-medium rounded-md ${
-                    pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href))
-                      ? 'bg-gray-900 text-white'
-                      : 'text-gray-300 hover:bg-gray-700 hover:text-white'
-                  }`}
+                  className={`group flex items-center px-2 py-2 text-base font-medium rounded-md ${pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href))
+                    ? 'bg-gray-900 text-white'
+                    : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+                    }`}
                 >
                   <item.icon className="mr-4 h-6 w-6" />
                   {item.name}
@@ -64,7 +63,7 @@ export default function AdminLayout({ children, user }: AdminLayoutProps) {
               ))}
             </nav>
           </div>
-          
+
           <div className="flex-shrink-0 flex bg-gray-700 p-4">
             <div className="flex-shrink-0 w-full group block">
               <div className="flex items-center">
@@ -93,18 +92,17 @@ export default function AdminLayout({ children, user }: AdminLayoutProps) {
         <div className="flex-1 flex flex-col min-h-0 bg-gray-800">
           <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
             <div className="flex items-center flex-shrink-0 px-4">
-              <h1 className="text-xl font-bold text-white">iwill Admin</h1>
+              <h1 className="text-xl font-bold text-white">iWill Admin</h1>
             </div>
             <nav className="mt-5 flex-1 px-2 space-y-1">
               {navigation.map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
-                    pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href))
-                      ? 'bg-gray-900 text-white'
-                      : 'text-gray-300 hover:bg-gray-700 hover:text-white'
-                  }`}
+                  className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md ${pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href))
+                    ? 'bg-gray-900 text-white'
+                    : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+                    }`}
                 >
                   <item.icon className="mr-3 h-5 w-5" />
                   {item.name}
@@ -112,7 +110,7 @@ export default function AdminLayout({ children, user }: AdminLayoutProps) {
               ))}
             </nav>
           </div>
-          
+
           <div className="flex-shrink-0 flex bg-gray-700 p-4">
             <div className="flex-shrink-0 w-full group block">
               <div className="flex items-center">
@@ -147,7 +145,7 @@ export default function AdminLayout({ children, user }: AdminLayoutProps) {
             <Menu className="h-6 w-6" />
           </button>
         </div>
-        
+
         <main className="flex-1">
           {children}
         </main>

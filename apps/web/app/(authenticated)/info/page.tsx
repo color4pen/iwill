@@ -4,11 +4,15 @@ import { MapPin, Calendar, Clock, Navigation, Users, Utensils, Camera, Music } f
 import TimeSchedule from "@/components/info/TimeSchedule";
 import { prisma } from "@/lib/prisma";
 
+// キャッシュを無効化
+export const revalidate = 0;
+
 export default async function InfoPage() {
   const schedules = await prisma.schedule.findMany({
     where: { isActive: true },
     orderBy: { order: "asc" },
   });
+  
   return (
     <div className="min-h-screen">
       <div className="relative h-64 overflow-hidden rounded-lg mb-8">
