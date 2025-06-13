@@ -82,8 +82,7 @@ export default async function InquiryDetailPage({
 
         <div className="flex-1 overflow-hidden bg-gray-50 flex flex-col">
           <AdminChatMessages 
-            messages={thread.messages} 
-            currentUserId={session.user.id}
+            messages={thread.messages}
           />
           
           <AdminChatInput threadId={thread.id} />
