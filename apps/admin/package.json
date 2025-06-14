@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "next dev --port 3001",
-    "build": "prisma generate && prisma migrate deploy && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "set-admin": "tsx scripts/set-admin.ts",
