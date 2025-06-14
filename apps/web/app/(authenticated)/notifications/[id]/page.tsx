@@ -1,11 +1,9 @@
 import { getServerSession } from "next-auth"
 import { redirect } from "next/navigation"
 import { authOptions } from "@/lib/auth"
-import { PrismaClient } from "@prisma/client"
+import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import { notFound } from "next/navigation"
-
-const prisma = new PrismaClient()
 
 export default async function NotificationDetailPage({ 
   params 
@@ -14,7 +12,7 @@ export default async function NotificationDetailPage({
 }) {
   const session = await getServerSession(authOptions)
   
-  if (!session) {
+  if (!session?.user) {
     redirect("/login")
   }
 
@@ -29,21 +27,28 @@ export default async function NotificationDetailPage({
   }
 
   // 既読にする
-  await prisma.notificationRead.upsert({
-    where: {
-      userId_notificationId: {
-        userId: session.user.id,
-        notificationId: id,
-      },
-    },
-    update: {},
-    create: {
-      userId: session.user.id,
-      notificationId: id,
-    },
-  })
+  if (session.user.id) {
+    try {
+      await prisma.notificationRead.upsert({
+        where: {
+          userId_notificationId: {
+            userId: session.user.id,
+            notificationId: id,
+          },
+        },
+        update: {},
+        create: {
+          userId: session.user.id,
+          notificationId: id,
+        },
+      })
+    } catch (error) {
+      console.error("Failed to mark notification as read:", error)
+      console.error("User ID:", session.user.id)
+      console.error("Notification ID:", id)
+    }
+  }
 
-  await prisma.$disconnect()
 
   // 日付フォーマット
   const formatDate = (date: Date) => {
