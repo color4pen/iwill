@@ -3,6 +3,7 @@ import { redirect } from "next/navigation"
 import { authOptions } from "@/lib/auth"
 import AdminLayout from "@/components/admin-layout"
 import DashboardCard from "@/components/dashboard-card"
+import { getUnreadInquiryCountForAdmin } from "@/lib/get-unread-count"
 
 export default async function Home() {
   const session = await getServerSession(authOptions)
@@ -10,6 +11,8 @@ export default async function Home() {
   if (!session) {
     redirect("/login")
   }
+
+  const unreadCount = await getUnreadInquiryCountForAdmin()
 
   const dashboardItems = [
     {
@@ -90,6 +93,7 @@ export default async function Home() {
                 description={item.description}
                 href={item.href}
                 icon={item.icon}
+                badge={item.href === '/inquiries' ? unreadCount : undefined}
               />
             ))}
           </div>

@@ -4,14 +4,17 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { MenuCard } from "../../components/menu-card";
 import { authOptions } from "@/lib/auth";
+import { getUnreadInquiryCount } from "@/lib/get-unread-count";
 
 export default async function Home() {
   const session = await getServerSession(authOptions);
   const enableAllFeatures = shouldEnableRestrictedFeatures();
 
-  if (!session) {
+  if (!session?.user) {
     redirect("/login");
   }
+
+  const unreadCount = await getUnreadInquiryCount(session.user.id);
 
   return (
     <>
@@ -68,6 +71,7 @@ export default async function Home() {
           href="/contact"
           color="bg-indigo-500"
           icon={<MessageSquare size={24} strokeWidth={1.5} />}
+          badge={unreadCount > 0 ? unreadCount : undefined}
         />
       </div>
     </>
