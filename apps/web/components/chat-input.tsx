@@ -41,7 +41,11 @@ export default function ChatInput({ threadId }: ChatInputProps) {
     // 日本語入力の変換中は送信しない
     if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
       e.preventDefault()
-      handleSubmit(e as any)
+      const form = e.currentTarget.form
+      if (form) {
+        const submitEvent = new Event('submit', { cancelable: true, bubbles: true })
+        form.dispatchEvent(submitEvent)
+      }
     }
   }
 

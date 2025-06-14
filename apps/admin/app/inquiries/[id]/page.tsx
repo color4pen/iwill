@@ -36,13 +36,6 @@ export default async function InquiryDetailPage({
     redirect("/inquiries")
   }
 
-  const categoryLabels = {
-    GENERAL: "一般",
-    ATTENDANCE: "出欠",
-    VENUE: "会場",
-    GIFT: "ご祝儀",
-    OTHER: "その他"
-  }
 
   return (
     <div className="h-screen flex flex-col bg-white">
