@@ -6,7 +6,7 @@ import Link from "next/link"
 import { ArrowLeft, Send } from "lucide-react"
 import ChatMessages from "@/components/chat-messages"
 import ChatInput from "@/components/chat-input"
-import { markMessagesAsRead } from "@/app/actions/inquiries"
+import MarkAsRead from "@/components/mark-as-read"
 
 export default async function ContactThreadPage({
   params,
@@ -36,9 +36,6 @@ export default async function ContactThreadPage({
   if (!thread) {
     redirect("/contact")
   }
-
-  // 管理者からのメッセージを既読にする
-  await markMessagesAsRead(thread.id)
 
   const categoryLabels = {
     GENERAL: "一般",
@@ -90,6 +87,7 @@ export default async function ContactThreadPage({
 
       <div className="flex-1 overflow-hidden bg-gray-50">
         <div className="max-w-4xl mx-auto h-full flex flex-col">
+          <MarkAsRead threadId={thread.id} />
           <ChatMessages 
             messages={thread.messages} 
             currentUserId={session.user.id}
