@@ -21,6 +21,10 @@ function InvitationContent() {
   useEffect(() => {
     if (!token) {
       setError("無効な招待URLです")
+      // 3秒後にホームページへリダイレクト
+      setTimeout(() => {
+        router.push("/")
+      }, 3000)
       return
     }
 
@@ -29,12 +33,19 @@ function InvitationContent() {
       return
     }
 
+    // 既にログイン済みの場合
+    if (status === "authenticated" && session?.user) {
+      // すぐにホームページへリダイレクト
+      router.push("/")
+      return
+    }
+
     // lineIdが取得できるまで待つ（セッション確立待ち）
     if (lineId) {
       // 自動的に招待を受け入れて処理
       handleAcceptInvitation()
     }
-  }, [token, lineId, status])
+  }, [token, lineId, status, session, router])
 
   const handleAcceptInvitation = async () => {
     if (!token || !lineId) return
@@ -97,11 +108,14 @@ function InvitationContent() {
                     <p>{error}</p>
                   </div>
                   <div className="mt-4">
+                    <p className="text-sm text-gray-600">
+                      {error === "無効な招待URLです" ? "ホームページへリダイレクトします..." : ""}
+                    </p>
                     <button
-                      onClick={() => window.location.href = "/login"}
+                      onClick={() => router.push("/")}
                       className="text-sm font-medium text-red-800 hover:text-red-700"
                     >
-                      ログインページへ戻る
+                      ホームページへ移動
                     </button>
                   </div>
                 </div>

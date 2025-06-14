@@ -33,7 +33,8 @@ export async function acceptInvitation(
     })
 
     if (existingUser) {
-      return { error: "このアカウントは既に登録されています" }
+      // 既に登録済みのユーザーは成功として扱う
+      return { success: true, user: existingUser, alreadyRegistered: true }
     }
 
     // ユーザーを作成
