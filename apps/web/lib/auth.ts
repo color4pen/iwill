@@ -67,7 +67,30 @@ export const authOptions: NextAuthOptions = {
       if (account && user) {
         token.accessToken = account.access_token;
         token.provider = account.provider;
-        token.id = user.id;
+        token.lineId = user.id; // LINE IDを保存
+        
+        // データベースからユーザーIDを取得
+        const { prisma } = await import('./prisma');
+        const dbUser = await prisma.user.findUnique({
+          where: { lineId: user.id }
+        });
+        
+        if (dbUser) {
+          token.id = dbUser.id; // データベースのユーザーID
+        } else {
+          // ユーザーがまだ存在しない場合はLINE IDを使用
+          token.id = user.id;
+        }
+      } else if (token.lineId) {
+        // 既存のセッションの場合、LINE IDから再度ユーザーIDを確認
+        const { prisma } = await import('./prisma');
+        const dbUser = await prisma.user.findUnique({
+          where: { lineId: token.lineId as string }
+        });
+        
+        if (dbUser) {
+          token.id = dbUser.id;
+        }
       }
       return token;
     },
@@ -75,6 +98,7 @@ export const authOptions: NextAuthOptions = {
       // セッションにトークン情報を追加
       if (session.user) {
         session.user.id = token.id as string;
+        session.user.lineId = token.lineId as string; // デバッグ用
         session.user.accessToken = token.accessToken as string;
         session.user.provider = token.provider as string;
       }
