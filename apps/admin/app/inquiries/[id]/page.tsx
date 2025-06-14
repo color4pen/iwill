@@ -4,7 +4,7 @@ import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
-import AdminChatMessages from "@/components/admin-chat-messages"
+import ChatMessages from "@repo/ui/components/chat-messages"
 import AdminChatInput from "@/components/admin-chat-input"
 import ThreadStatusSelector from "@/components/thread-status-selector"
 import AdminMarkAsRead from "@/components/admin-mark-as-read"
@@ -68,7 +68,7 @@ export default async function InquiryDetailPage({
           threadId={thread.id} 
           userId={thread.userId} 
         />
-        <AdminChatMessages 
+        <ChatMessages 
           messages={thread.messages}
           currentUserId={session.user?.id}
           variant="admin"
