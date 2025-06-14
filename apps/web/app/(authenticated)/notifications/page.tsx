@@ -75,7 +75,7 @@ export default async function NotificationsPage() {
           お知らせはありません
         </div>
       ) : (
-        <div className="divide-y divide-gray-100">
+        <div className="space-y-3">
           {notifications.map(notification => {
             const isRead = notification.reads.length > 0
             
@@ -83,7 +83,7 @@ export default async function NotificationsPage() {
               <Link
                 key={notification.id}
                 href={`/notifications/${notification.id}`}
-                className="block py-4 hover:bg-gray-50 transition-colors"
+                className="block p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow"
               >
                 <div className="flex items-start gap-4">
                   <div className="flex-shrink-0 mt-0.5">
