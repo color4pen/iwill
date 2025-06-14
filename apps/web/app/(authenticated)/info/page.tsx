@@ -12,7 +12,7 @@ export default async function InfoPage() {
     where: { isActive: true },
     orderBy: { order: "asc" },
   });
-  
+
   return (
     <div className="min-h-screen">
       <div className="relative h-64 overflow-hidden rounded-lg mb-8">
@@ -100,17 +100,6 @@ export default async function InfoPage() {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* お問い合わせ */}
-      <div className="bg-amber-50 border border-amber-200 rounded-lg p-6">
-        <h3 className="text-lg font-semibold mb-2">当日のご連絡先</h3>
-        <p className="text-gray-700 mb-2">
-          ご不明な点やお困りの際は、下記までご連絡ください
-        </p>
-        <p className="font-medium text-gray-800">
-          📞 090-3530-2998（新郎: 関 晟吾）
-        </p>
       </div>
     </div>
   );
