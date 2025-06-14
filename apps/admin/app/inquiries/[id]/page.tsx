@@ -8,7 +8,7 @@ import { ArrowLeft } from "lucide-react"
 import AdminChatMessages from "@/components/admin-chat-messages"
 import AdminChatInput from "@/components/admin-chat-input"
 import ThreadStatusSelector from "@/components/thread-status-selector"
-import { markAdminMessagesAsRead } from "@/app/actions/inquiries"
+import AdminMarkAsRead from "@/components/admin-mark-as-read"
 
 export default async function InquiryDetailPage({
   params,
@@ -36,9 +36,6 @@ export default async function InquiryDetailPage({
   if (!thread) {
     redirect("/inquiries")
   }
-
-  // ユーザーからのメッセージを既読にする
-  await markAdminMessagesAsRead(thread.id, thread.userId)
 
   const categoryLabels = {
     GENERAL: "一般",
@@ -81,6 +78,10 @@ export default async function InquiryDetailPage({
         </div>
 
         <div className="flex-1 overflow-hidden bg-gray-50 flex flex-col">
+          <AdminMarkAsRead 
+            threadId={thread.id} 
+            userId={thread.userId} 
+          />
           <AdminChatMessages 
             messages={thread.messages}
           />
