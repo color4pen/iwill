@@ -1,5 +1,6 @@
 import { getServerSession } from "next-auth"
 import { redirect } from "next/navigation"
+import Link from "next/link"
 import { authOptions } from "@/lib/auth"
 import AdminLayout from "@/components/admin-layout"
 
@@ -37,9 +38,9 @@ export default async function Home() {
               </div>
               <div className="bg-gray-50 px-5 py-3">
                 <div className="text-sm">
-                  <a href="/users" className="font-medium text-blue-600 hover:text-blue-500">
+                  <Link href="/users" className="font-medium text-blue-600 hover:text-blue-500">
                     管理画面へ →
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -62,9 +63,9 @@ export default async function Home() {
               </div>
               <div className="bg-gray-50 px-5 py-3">
                 <div className="text-sm">
-                  <a href="/notifications" className="font-medium text-blue-600 hover:text-blue-500">
+                  <Link href="/notifications" className="font-medium text-blue-600 hover:text-blue-500">
                     管理画面へ →
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -87,9 +88,9 @@ export default async function Home() {
               </div>
               <div className="bg-gray-50 px-5 py-3">
                 <div className="text-sm">
-                  <a href="/faq" className="font-medium text-blue-600 hover:text-blue-500">
+                  <Link href="/faq" className="font-medium text-blue-600 hover:text-blue-500">
                     管理画面へ →
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -112,9 +113,9 @@ export default async function Home() {
               </div>
               <div className="bg-gray-50 px-5 py-3">
                 <div className="text-sm">
-                  <a href="/schedules" className="font-medium text-blue-600 hover:text-blue-500">
+                  <Link href="/schedules" className="font-medium text-blue-600 hover:text-blue-500">
                     管理画面へ →
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -137,9 +138,9 @@ export default async function Home() {
               </div>
               <div className="bg-gray-50 px-5 py-3">
                 <div className="text-sm">
-                  <a href="/invitations" className="font-medium text-blue-600 hover:text-blue-500">
+                  <Link href="/invitations" className="font-medium text-blue-600 hover:text-blue-500">
                     管理画面へ →
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -162,9 +163,9 @@ export default async function Home() {
               </div>
               <div className="bg-gray-50 px-5 py-3">
                 <div className="text-sm">
-                  <a href="/inquiries" className="font-medium text-blue-600 hover:text-blue-500">
+                  <Link href="/inquiries" className="font-medium text-blue-600 hover:text-blue-500">
                     管理画面へ →
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>
