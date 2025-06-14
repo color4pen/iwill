@@ -33,11 +33,11 @@ export default function Layout({ children }: LayoutFrameProps) {
 
       {/* モバイルメニューは不要のため  削除 */}
 
-      <main className="container mx-auto max-w-4xl py-5 px-3 flex-grow relative z-10">
+      <main className="container mx-auto max-w-4xl py-5 px-3 flex-grow relative flex flex-col overflow-hidden">
         {children}
       </main>
 
-      <footer className="bg-white text-gray-800 py-3 px-4 mt-auto shadow-md z-10 border-t border-gray-100">
+      <footer className="bg-white text-gray-800 py-3 px-4 mt-auto shadow-md border-t border-gray-100 relative">
         <div className="container mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-2 md:mb-0">

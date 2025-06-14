@@ -7,6 +7,7 @@ import { ArrowLeft, Send } from "lucide-react"
 import ChatMessages from "@/components/chat-messages"
 import ChatInput from "@/components/chat-input"
 import MarkAsRead from "@/components/mark-as-read"
+import HideLayout from "@/components/hide-layout"
 
 export default async function ContactThreadPage({
   params,
@@ -58,24 +59,26 @@ export default async function ContactThreadPage({
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-4xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+    <>
+      <HideLayout />
+      <div className="flex flex-col h-screen bg-white">
+        {/* Fixed Header */}
+        <div className="bg-white shadow-sm border-b flex-shrink-0">
+          <div className="px-4 py-3">
+            <div className="flex items-center gap-3">
               <Link
                 href="/contact"
-                className="text-gray-500 hover:text-gray-700"
+                className="text-gray-500 hover:text-gray-700 p-2 -ml-2"
               >
-                <ArrowLeft className="h-5 w-5" />
+                <ArrowLeft className="h-6 w-6" />
               </Link>
-              <div>
-                <h1 className="text-lg font-semibold">{thread.title}</h1>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="text-sm text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+              <div className="flex-1 min-w-0">
+                <h1 className="text-lg font-semibold truncate mb-1">{thread.title}</h1>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
                     {categoryLabels[thread.category]}
                   </span>
-                  <span className={`text-xs px-2 py-0.5 rounded-full ${statusColors[thread.status]}`}>
+                  <span className={`text-xs px-2 py-1 rounded-full ${statusColors[thread.status]}`}>
                     {statusLabels[thread.status]}
                   </span>
                 </div>
@@ -83,29 +86,31 @@ export default async function ContactThreadPage({
             </div>
           </div>
         </div>
-      </div>
 
-      <div className="flex-1 overflow-hidden bg-gray-50">
-        <div className="max-w-4xl mx-auto h-full flex flex-col">
+        {/* Scrollable Messages Area */}
+        <div className="flex-1 overflow-y-auto bg-gray-50 min-h-0">
           <MarkAsRead threadId={thread.id} />
           <ChatMessages 
             messages={thread.messages} 
             currentUserId={session.user.id}
+            variant="user"
           />
-          
-          {thread.status === 'OPEN' && (
-            <ChatInput threadId={thread.id} />
-          )}
-          
-          {thread.status !== 'OPEN' && (
-            <div className="p-4 bg-yellow-50 border-t border-yellow-200">
-              <p className="text-sm text-yellow-800 text-center">
-                この問い合わせは{statusLabels[thread.status]}です
-              </p>
-            </div>
-          )}
+          <div className="h-4"></div>
         </div>
+        
+        {/* Fixed Input/Status at Bottom */}
+        {thread.status === 'OPEN' ? (
+          <div className="flex-shrink-0">
+            <ChatInput threadId={thread.id} />
+          </div>
+        ) : (
+          <div className="flex-shrink-0 p-4 bg-yellow-50 border-t border-yellow-200">
+            <p className="text-sm text-yellow-800 text-center">
+              この問い合わせは{statusLabels[thread.status]}です
+            </p>
+          </div>
+        )}
       </div>
-    </div>
+    </>
   )
 }

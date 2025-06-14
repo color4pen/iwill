@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import { Send } from "lucide-react"
 import { sendMessage } from "@/app/actions/inquiries"
 
@@ -11,6 +11,14 @@ interface ChatInputProps {
 export default function ChatInput({ threadId }: ChatInputProps) {
   const [message, setMessage] = useState("")
   const [isSending, setIsSending] = useState(false)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto'
+      textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px'
+    }
+  }, [message])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -29,25 +37,39 @@ export default function ChatInput({ threadId }: ChatInputProps) {
     }
   }
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // 日本語入力の変換中は送信しない
+    if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
+      e.preventDefault()
+      handleSubmit(e as any)
+    }
+  }
+
   return (
-    <form onSubmit={handleSubmit} className="p-4 bg-white border-t">
-      <div className="flex gap-2">
-        <input
-          type="text"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder="メッセージを入力..."
-          className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          disabled={isSending}
-        />
-        <button
-          type="submit"
-          disabled={!message.trim() || isSending}
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <Send className="h-5 w-5" />
-        </button>
-      </div>
-    </form>
+    <div className="flex-shrink-0 bg-white border-t">
+      <form onSubmit={handleSubmit} className="p-4">
+        <div className="flex gap-2 items-end">
+          <textarea
+            ref={textareaRef}
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="メッセージを入力..."
+            className="flex-1 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-base resize-none overflow-y-auto"
+            style={{ minHeight: '44px', maxHeight: '128px' }}
+            disabled={isSending}
+            autoFocus
+            rows={1}
+          />
+          <button
+            type="submit"
+            disabled={!message.trim() || isSending}
+            className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+          >
+            <Send className="h-5 w-5" />
+          </button>
+        </div>
+      </form>
+    </div>
   )
 }

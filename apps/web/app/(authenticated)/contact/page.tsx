@@ -49,40 +49,25 @@ export default async function ContactPage() {
   }
 
   return (
-    <div className="min-h-screen">
-      <div className="bg-white rounded-lg shadow-lg">
-        <div className="p-6 border-b border-gray-200">
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-2xl font-bold">お問い合わせ</h1>
-              <p className="text-gray-600 mt-1">
-                ご不明な点やご質問がございましたら、お気軽にお問い合わせください
-              </p>
-            </div>
-            <Link
-              href="/contact/new"
-              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-            >
-              <Plus className="h-5 w-5 mr-2" />
-              新しい問い合わせ
-            </Link>
-          </div>
+    <div className="flex flex-col h-full">
+      {/* ヘッダー */}
+      <div className="bg-white border-b sticky top-0 z-10">
+        <div className="px-4 py-3">
+          <h1 className="text-lg font-semibold">お問い合わせ</h1>
         </div>
+      </div>
 
+      {/* スレッド一覧 */}
+      <div className="flex-1 overflow-y-auto">
         {threads.length === 0 ? (
-          <div className="p-12 text-center">
-            <MessageSquare className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-500">まだ問い合わせはありません</p>
-            <Link
-              href="/contact/new"
-              className="inline-flex items-center mt-4 text-blue-600 hover:text-blue-800"
-            >
-              <Plus className="h-4 w-4 mr-1" />
-              最初の問い合わせを作成
-            </Link>
+          <div className="flex flex-col items-center justify-center h-full p-8">
+            <MessageSquare className="h-16 w-16 text-gray-300 mb-4" />
+            <p className="text-gray-500 text-center mb-6">
+              まだ問い合わせはありません
+            </p>
           </div>
         ) : (
-          <div className="divide-y divide-gray-200">
+          <div className="p-4 space-y-3">
             {threads.map((thread) => {
               const lastMessage = thread.messages[0]
               const unreadCount = thread.messages.filter(m => 
@@ -93,48 +78,45 @@ export default async function ContactPage() {
                 <Link
                   key={thread.id}
                   href={`/contact/${thread.id}`}
-                  className="block p-6 hover:bg-gray-50"
+                  className="block"
                 >
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3">
-                        <h3 className="text-lg font-medium text-gray-900">
-                          {thread.title}
-                        </h3>
-                        <span className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                          {categoryLabels[thread.category]}
-                        </span>
+                  <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-4">
+                    <div className="flex items-start justify-between mb-2">
+                      <h3 className="font-medium text-gray-900 flex-1 mr-2">
+                        {thread.title}
+                      </h3>
+                      <div className="flex items-center gap-2">
                         <span className={`text-xs px-2 py-1 rounded-full ${statusColors[thread.status]}`}>
                           {statusLabels[thread.status]}
                         </span>
-                      </div>
-                      
-                      {lastMessage && (
-                        <p className="text-gray-600 mt-2 line-clamp-2">
-                          {lastMessage.senderRole === 'USER' ? 'あなた: ' : '管理者: '}
-                          {lastMessage.content}
-                        </p>
-                      )}
-                      
-                      <div className="flex items-center gap-4 mt-3 text-sm text-gray-500">
-                        <span className="flex items-center">
-                          <MessageSquare className="h-4 w-4 mr-1" />
-                          {thread._count.messages}件
-                        </span>
-                        <span className="flex items-center">
-                          <Clock className="h-4 w-4 mr-1" />
-                          {format(new Date(thread.updatedAt), 'M月d日 HH:mm', { locale: ja })}
-                        </span>
+                        {unreadCount > 0 && (
+                          <span className="inline-flex items-center justify-center min-w-[20px] h-5 px-1 bg-red-500 text-white text-xs font-bold rounded-full">
+                            {unreadCount}
+                          </span>
+                        )}
                       </div>
                     </div>
                     
-                    {unreadCount > 0 && (
-                      <div className="ml-4">
-                        <span className="inline-flex items-center justify-center w-6 h-6 bg-red-500 text-white text-xs rounded-full">
-                          {unreadCount}
+                    {lastMessage && (
+                      <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                        {lastMessage.content}
+                      </p>
+                    )}
+                    
+                    <div className="flex items-center justify-between text-xs">
+                      <div className="flex items-center gap-3 text-gray-500">
+                        <span className="bg-gray-100 px-2 py-1 rounded">
+                          {categoryLabels[thread.category]}
+                        </span>
+                        <span className="flex items-center">
+                          <MessageSquare className="h-3 w-3 mr-1" />
+                          {thread._count.messages}
                         </span>
                       </div>
-                    )}
+                      <span className="text-gray-400">
+                        {format(new Date(thread.updatedAt), 'M/d HH:mm', { locale: ja })}
+                      </span>
+                    </div>
                   </div>
                 </Link>
               )
@@ -142,6 +124,15 @@ export default async function ContactPage() {
           </div>
         )}
       </div>
+
+      {/* 新規作成ボタン */}
+      <Link
+        href="/contact/new"
+        className="fixed bottom-20 right-4 w-14 h-14 bg-blue-600 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-blue-700 active:scale-95 transition-all"
+        style={{ zIndex: 40 }}
+      >
+        <Plus className="h-6 w-6" />
+      </Link>
     </div>
   )
 }
