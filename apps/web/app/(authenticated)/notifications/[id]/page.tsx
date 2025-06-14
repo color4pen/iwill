@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import { notFound } from "next/navigation"
+import MarkNotificationAsRead from "@/components/mark-notification-as-read"
 
 export default async function NotificationDetailPage({ 
   params 
@@ -26,28 +27,6 @@ export default async function NotificationDetailPage({
     notFound()
   }
 
-  // 既読にする
-  if (session.user.id) {
-    try {
-      await prisma.notificationRead.upsert({
-        where: {
-          userId_notificationId: {
-            userId: session.user.id,
-            notificationId: id,
-          },
-        },
-        update: {},
-        create: {
-          userId: session.user.id,
-          notificationId: id,
-        },
-      })
-    } catch (error) {
-      console.error("Failed to mark notification as read:", error)
-      console.error("User ID:", session.user.id)
-      console.error("Notification ID:", id)
-    }
-  }
 
 
   // 日付フォーマット
@@ -91,6 +70,7 @@ export default async function NotificationDetailPage({
 
   return (
     <div className="max-w-3xl mx-auto">
+      <MarkNotificationAsRead notificationId={id} />
       <div className="mb-6">
         <Link 
           href="/notifications" 
