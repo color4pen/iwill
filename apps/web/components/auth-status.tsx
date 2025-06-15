@@ -65,19 +65,29 @@ export default function AuthStatus() {
               <p className="font-medium text-sm truncate">{session.user.name || "ゲスト"}</p>
               <p className="text-xs text-gray-500 truncate">{session.user.email}</p>
             </div>
-            <Link 
-              href="/mypage" 
+            <div 
+              className="block px-4 py-2 text-sm text-gray-400 cursor-not-allowed"
+            >
+              プロフィール（準備中）
+            </div>
+            <a 
+              href={window.location.hostname === 'localhost' 
+                ? 'http://localhost:3001' 
+                : `${window.location.protocol}//admin.${window.location.host.replace('www.', '')}`
+              }
               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
               onClick={() => setIsMenuOpen(false)}
             >
-              マイページ
-            </Link>
-            <button 
-              onClick={handleLogout}
-              className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-            >
-              ログアウト
-            </button>
+              管理画面
+            </a>
+            <div className="border-t border-gray-100 mt-1">
+              <button 
+                onClick={handleLogout}
+                className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+              >
+                ログアウト
+              </button>
+            </div>
           </div>
         )}
       </div>
