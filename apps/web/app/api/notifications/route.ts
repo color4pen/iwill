@@ -6,10 +6,7 @@ import { prisma } from "@/lib/prisma"
 export async function GET(request: Request) {
   const session = await getServerSession(authOptions)
   
-  console.log('Session:', session)
-  
   if (!session) {
-    console.log('No session')
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
@@ -25,8 +22,6 @@ export async function GET(request: Request) {
         }
       }
     })
-    
-    console.log('Found notifications:', notifications.length)
 
     // 既読状態を含めてフォーマット
     const formattedNotifications = notifications.map(notification => ({
@@ -40,7 +35,6 @@ export async function GET(request: Request) {
 
     return NextResponse.json(formattedNotifications)
   } catch (error) {
-    console.error("Error fetching notifications:", error)
     return NextResponse.json(
       { error: "Failed to fetch notifications" },
       { status: 500 }

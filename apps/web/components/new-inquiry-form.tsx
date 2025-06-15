@@ -11,12 +11,17 @@ export default function NewInquiryForm() {
     e.preventDefault()
     setIsSubmitting(true)
 
-    const formData = new FormData(e.currentTarget)
-    const title = formData.get("title") as string
-    const category = formData.get("category") as InquiryCategory
-    const message = formData.get("message") as string
+    try {
+      const formData = new FormData(e.currentTarget)
+      const title = formData.get("title") as string
+      const category = formData.get("category") as InquiryCategory
+      const message = formData.get("message") as string
 
-    await createInquiryThread(title, category, message)
+      await createInquiryThread(title, category, message)
+    } catch (error) {
+      alert("問い合わせの送信に失敗しました。もう一度お試しください。")
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -30,7 +35,7 @@ export default function NewInquiryForm() {
           id="title"
           name="title"
           required
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 px-3 py-2"
           placeholder="例: 会場へのアクセスについて"
         />
       </div>
@@ -43,7 +48,7 @@ export default function NewInquiryForm() {
           id="category"
           name="category"
           required
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 px-3 py-2"
         >
           <option value="">選択してください</option>
           <option value="GENERAL">一般的な質問</option>
@@ -63,7 +68,7 @@ export default function NewInquiryForm() {
           name="message"
           rows={6}
           required
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 px-3 py-2"
           placeholder="お問い合わせ内容を詳しくご記入ください"
         />
       </div>

@@ -5,7 +5,7 @@ import { markNotificationAsRead } from "@/app/actions/notifications"
 
 export default function MarkNotificationAsRead({ notificationId }: { notificationId: string }) {
   useEffect(() => {
-    markNotificationAsRead(notificationId).catch(console.error)
+    markNotificationAsRead(notificationId).catch(() => {})
   }, [notificationId])
   
   return null
