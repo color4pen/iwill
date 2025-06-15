@@ -8,6 +8,7 @@ import ChatMessages from "@/components/chat-messages"
 import ChatInput from "@/components/chat-input"
 import MarkAsRead from "@/components/mark-as-read"
 import HideLayout from "@/components/hide-layout"
+import AutoRefreshMessages from "@/components/auto-refresh-messages"
 
 export default async function ContactThreadPage({
   params,
@@ -61,7 +62,7 @@ export default async function ContactThreadPage({
   return (
     <>
       <HideLayout />
-      <div className="flex flex-col h-screen bg-white">
+      <div className="flex flex-col h-[100vh] h-[100dvh] bg-white">
         {/* Fixed Header */}
         <div className="bg-white shadow-sm border-b flex-shrink-0">
           <div className="px-4 py-3">
@@ -90,6 +91,7 @@ export default async function ContactThreadPage({
         {/* Scrollable Messages Area */}
         <div className="flex-1 overflow-y-auto bg-gray-50 min-h-0">
           <MarkAsRead threadId={thread.id} />
+          <AutoRefreshMessages threadId={thread.id} />
           <ChatMessages 
             messages={thread.messages} 
             currentUserId={session.user.id}
