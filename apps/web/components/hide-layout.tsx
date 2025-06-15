@@ -23,6 +23,7 @@ export default function HideLayout() {
         main.style.setProperty('display', 'flex', 'important')
         main.style.setProperty('flex-direction', 'column', 'important')
         main.style.setProperty('height', '100vh', 'important')
+        main.style.setProperty('height', '100dvh', 'important')
       }
     }
 
