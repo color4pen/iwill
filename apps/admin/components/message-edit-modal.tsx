@@ -41,10 +41,10 @@ export default function MessageEditModal({
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
-      <div className="flex min-h-screen items-center justify-center p-4 text-center sm:p-0">
+      <div className="flex min-h-screen items-end justify-center p-0 text-center sm:items-center sm:p-4">
         <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onClick={onClose} />
         
-        <div className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
+        <div className="relative transform overflow-hidden rounded-t-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all w-full sm:my-8 sm:w-full sm:max-w-2xl sm:rounded-lg sm:p-6">
           <div className="absolute right-0 top-0 pr-4 pt-4">
             <button
               type="button"
@@ -55,36 +55,37 @@ export default function MessageEditModal({
             </button>
           </div>
           
-          <div className="sm:flex sm:items-start">
-            <div className="mt-3 w-full text-center sm:mt-0 sm:text-left">
-              <h3 className="text-lg font-semibold leading-6 text-gray-900">
-                招待メッセージを編集
-              </h3>
-              
-              <div className="mt-4">
-                <label htmlFor="message" className="block text-sm font-medium text-gray-700">
-                  メッセージ内容
-                </label>
-                <textarea
-                  id="message"
-                  rows={12}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                />
-                <p className="mt-2 text-sm text-gray-500">
-                  {'{url}'} は自動的に招待URLに置き換えられます
-                </p>
+          <div className="max-h-[60vh] overflow-y-auto sm:max-h-none sm:overflow-visible">
+            <div className="sm:flex sm:items-start">
+              <div className="mt-3 w-full text-center sm:mt-0 sm:text-left">
+                <h3 className="text-lg font-semibold leading-6 text-gray-900">
+                  招待メッセージを編集
+                </h3>
                 
-                <div className="mt-3 rounded-md bg-gray-50 p-3">
-                  <p className="text-sm font-medium text-gray-700">プレビュー（URL部分）:</p>
-                  <p className="mt-1 text-sm text-gray-600 break-all">{invitationUrl}</p>
+                <div className="mt-4">
+                  <div className="space-y-4">
+                    <div>
+                      <label htmlFor="message" className="block text-sm font-medium text-gray-700">
+                        メッセージ内容
+                      </label>
+                      <textarea
+                        id="message"
+                        rows={8}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                      />
+                      <p className="mt-2 text-sm text-gray-500">
+                        {'{url}'} は自動的に招待URLに置き換えられます
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
           
-          <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse gap-2">
+          <div className="mt-5 border-t pt-4 sm:mt-4 sm:flex sm:flex-row-reverse gap-3">
             <button
               type="button"
               className="inline-flex w-full items-center justify-center rounded-md bg-[#00B900] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#00A000] sm:w-auto"

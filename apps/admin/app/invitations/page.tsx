@@ -37,8 +37,8 @@ export default async function InvitationsPage() {
         </div>
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 mt-6">
-          <div className="bg-white shadow overflow-hidden sm:rounded-md">
-            <ul className="divide-y divide-gray-200">
+          <div className="bg-white shadow overflow-x-auto sm:rounded-md">
+            <ul className="divide-y divide-gray-200 min-w-full">
               {invitations.map((invitation) => (
                 <li key={invitation.id}>
                   <div className="px-4 py-4 sm:px-6">
@@ -56,13 +56,13 @@ export default async function InvitationsPage() {
                             <p className="text-sm font-medium text-gray-900">
                               {invitation.name || invitation.email || '名前未設定'}
                             </p>
-                            <p className="text-sm text-gray-500">
+                            <p className="text-sm text-gray-500 break-all">
                               招待URL: {baseUrl}/login?invitation={invitation.token}
                             </p>
                           </div>
                         </div>
-                        <div className="mt-2 flex items-center text-sm text-gray-500">
-                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                        <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-gray-500">
+                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full whitespace-nowrap ${
                             invitation.isUsed ? 'bg-green-100 text-green-800' :
                             invitation.expiresAt && new Date(invitation.expiresAt) < new Date() ? 'bg-red-100 text-red-800' :
                             'bg-yellow-100 text-yellow-800'
@@ -71,16 +71,16 @@ export default async function InvitationsPage() {
                              invitation.expiresAt && new Date(invitation.expiresAt) < new Date() ? '期限切れ' :
                              '未使用'}
                           </span>
-                          <span className="ml-4">
+                          <span className="whitespace-nowrap">
                             作成日: {new Date(invitation.createdAt).toLocaleDateString('ja-JP')}
                           </span>
                           {invitation.expiresAt && (
-                            <span className="ml-4">
+                            <span className="whitespace-nowrap">
                               有効期限: {new Date(invitation.expiresAt).toLocaleDateString('ja-JP')}
                             </span>
                           )}
                           {invitation.usedAt && (
-                            <span className="ml-4">
+                            <span className="whitespace-nowrap">
                               使用日: {new Date(invitation.usedAt).toLocaleDateString('ja-JP')}
                             </span>
                           )}
