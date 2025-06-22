@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { X } from "lucide-react"
+import { X, Share2, Copy } from "lucide-react"
 
 interface MessageEditModalProps {
   isOpen: boolean
@@ -30,6 +30,13 @@ export default function MessageEditModal({
     const messageWithUrl = message.replace('{url}', invitationUrl)
     onCopy(messageWithUrl)
     onClose()
+  }
+
+  const handleLineShare = () => {
+    const messageWithUrl = message.replace('{url}', invitationUrl)
+    const encodedMessage = encodeURIComponent(messageWithUrl)
+    const lineUrl = `https://line.me/R/msg/text/?${encodedMessage}`
+    window.open(lineUrl, '_blank')
   }
 
   return (
@@ -77,12 +84,21 @@ export default function MessageEditModal({
             </div>
           </div>
           
-          <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+          <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse gap-2">
             <button
               type="button"
-              className="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto"
+              className="inline-flex w-full items-center justify-center rounded-md bg-[#00B900] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#00A000] sm:w-auto"
+              onClick={handleLineShare}
+            >
+              <Share2 className="h-4 w-4 mr-2" />
+              LINEで共有
+            </button>
+            <button
+              type="button"
+              className="inline-flex w-full items-center justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 sm:w-auto"
               onClick={handleCopy}
             >
+              <Copy className="h-4 w-4 mr-2" />
               コピー
             </button>
             <button
