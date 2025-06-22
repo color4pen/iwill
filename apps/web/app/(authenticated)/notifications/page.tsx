@@ -90,11 +90,11 @@ export default async function NotificationsPage() {
                     <div className={`h-2 w-2 rounded-full ${isRead ? 'bg-gray-300' : 'bg-blue-600'}`} />
                   </div>
                   <div className="flex-grow">
-                    <div className="flex items-center gap-2 mb-1">
+                    <div className="flex items-center gap-2 mb-1 flex-wrap">
                       <h3 className={`text-lg font-medium ${isRead ? 'text-gray-700' : 'text-gray-900'}`}>
                         {notification.title}
                       </h3>
-                      <span className={`text-xs px-2 py-0.5 rounded-full border ${getCategoryStyle(notification.category)}`}>
+                      <span className={`text-xs px-2 py-0.5 rounded-full border whitespace-nowrap ${getCategoryStyle(notification.category)}`}>
                         {getCategoryLabel(notification.category)}
                       </span>
                     </div>
