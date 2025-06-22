@@ -3,8 +3,9 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { invitationConfig } from "@/config/invitation"
-import { Input, Select, Textarea, Button } from "@/components/ui/form-elements"
+import { Input, Select, Button } from "@/components/ui/form-elements"
 import { createInvitation } from "@/app/actions/invitations"
+import InvitationMessageEditor from "./invitation-message-editor"
 
 export default function InvitationForm() {
   const router = useRouter()
@@ -71,20 +72,10 @@ export default function InvitationForm() {
           <option value="90">90日間</option>
         </Select>
 
-        <div>
-          <Textarea
-            id="notes"
-            name="notes"
-            label="招待メッセージ"
-            rows={10}
-            value={formData.notes}
-            onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-            placeholder="招待URLと一緒に送るメッセージ"
-          />
-          <p className="mt-1 text-sm text-gray-500">
-            {'{url}'} は自動的に招待URLに置き換えられます
-          </p>
-        </div>
+        <InvitationMessageEditor
+          value={formData.notes}
+          onChange={(value) => setFormData({ ...formData, notes: value })}
+        />
       </div>
 
       <div className="mt-6 flex items-center justify-end space-x-3">
