@@ -13,13 +13,10 @@ interface InvitationActionsProps {
 }
 
 export default function InvitationActions({ invitationUrl, invitationId, invitationNotes }: InvitationActionsProps) {
-  const [copied, setCopied] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const handleCopy = async (message: string) => {
     await navigator.clipboard.writeText(message)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
   }
 
   const handleShareClick = () => {
