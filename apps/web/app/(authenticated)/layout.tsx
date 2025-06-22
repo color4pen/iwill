@@ -3,6 +3,7 @@
 import { ReactNode, useState } from "react";
 import Link from "next/link";
 import AuthStatus from "../../components/auth-status";
+import { BackToTop } from "../../components/back-to-top";
 
 interface LayoutFrameProps {
   children: ReactNode;
@@ -50,6 +51,8 @@ export default function Layout({ children }: LayoutFrameProps) {
           </div>
         </div>
       </footer>
+      
+      <BackToTop />
     </div>
   );
 }
