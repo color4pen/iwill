@@ -20,6 +20,16 @@ export async function acceptInvitation(
     }
 
     if (invitation.isUsed) {
+      // 既存ユーザーをチェック
+      const existingUser = await prisma.user.findUnique({
+        where: { lineId },
+      })
+      
+      if (existingUser) {
+        // 既に登録済みのユーザーは成功として扱う
+        return { success: true, user: existingUser, alreadyRegistered: true }
+      }
+      
       return { error: "この招待URLは既に使用されています" }
     }
 
