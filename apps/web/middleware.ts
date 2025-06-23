@@ -43,28 +43,14 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL('/login', req.url));
   }
   
-  // 認証済みでユーザーがDBに存在するかチェック
-  if (isAuthenticated && token.id && (path === '/' || authRequiredPaths.some(p => path.startsWith(p)))) {
-    try {
-      const { PrismaClient } = await import('@prisma/client');
-      const prisma = new PrismaClient();
-      
-      const user = await prisma.user.findUnique({
-        where: { id: token.id as string },
-      });
-      
-      await prisma.$disconnect();
-      
-      // ユーザーが存在しない場合
-      if (!user) {
-        // 招待処理中の可能性があるため、一旦スルー
-        const invitationToken = req.nextUrl.searchParams.get('token');
-        if (!invitationToken) {
-          return NextResponse.redirect(new URL('/login?error=invitation_required', req.url));
-        }
-      }
-    } catch (error) {
-      console.error('Error checking user:', error);
+  // 認証済みだがデータベースにユーザーIDが存在しない場合
+  // （新規ユーザーが招待ページ以外にアクセスしようとした場合）
+  if (isAuthenticated && token.id && !path.startsWith('/invitation')) {
+    // jwtコールバックでデータベースIDが設定されていない場合、
+    // LINE IDのままになっているので、これをチェック
+    if (token.id && token.id === token.lineId) {
+      // 招待ページへリダイレクト
+      return NextResponse.redirect(new URL('/invitation', req.url));
     }
   }
   

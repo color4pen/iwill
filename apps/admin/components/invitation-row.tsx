@@ -25,7 +25,7 @@ export default function InvitationRow({ invitation, baseUrl }: InvitationRowProp
   const [isExpanded, setIsExpanded] = useState(false)
   const [message, setMessage] = useState(invitation.notes || invitationConfig.messageTemplate)
   const [copied, setCopied] = useState(false)
-  const invitationUrl = `${baseUrl}/login?invitation=${invitation.token}`
+  const invitationUrl = `${baseUrl}/invitation?token=${invitation.token}`
 
   const handleCopy = async () => {
     const messageWithUrl = message.replace('{url}', invitationUrl)

@@ -33,17 +33,18 @@ function InvitationContent() {
       return
     }
 
-    // 既にログイン済みの場合
-    if (status === "authenticated" && session?.user) {
-      // すぐにホームページへリダイレクト
-      router.push("/")
+    // 未認証の場合は、招待トークンを持ってログインページへリダイレクト
+    if (status === "unauthenticated") {
+      router.push(`/login?invitation=${token}`)
       return
     }
 
-    // lineIdが取得できるまで待つ（セッション確立待ち）
-    if (lineId) {
-      // 自動的に招待を受け入れて処理
-      handleAcceptInvitation()
+    // 既にログイン済みの場合
+    if (status === "authenticated" && session?.user) {
+      // lineIdが取得できたら自動的に招待を受け入れて処理
+      if (lineId) {
+        handleAcceptInvitation()
+      }
     }
   }, [token, lineId, status, session, router])
 
