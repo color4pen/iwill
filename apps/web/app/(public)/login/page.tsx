@@ -21,6 +21,11 @@ function LoginContent() {
       setShowInvitationError(true);
     }
     
+    // NextAuthのAccessDeniedエラー（招待されていないユーザー）
+    if (error === "AccessDenied") {
+      setShowInvitationError(true);
+    }
+    
     if (token) {
       setInvitationToken(token);
     }

@@ -50,24 +50,30 @@ export const authOptions: NextAuthOptions = {
       const { prisma } = await import('./prisma');
       
       try {
-        // LINE IDを使ってユーザーを作成または更新
         const lineId = user.id;
         
-        await prisma.user.upsert({
+        // 既存のユーザーをチェック
+        const existingUser = await prisma.user.findUnique({
           where: { lineId },
-          create: {
-            lineId,
-            email: user.email,
-            name: user.name,
-            image: user.image,
-          },
-          update: {
-            email: user.email,
-            name: user.name,
-            image: user.image,
-          },
         });
 
+        // ユーザーが存在する場合は情報を更新してログイン許可
+        if (existingUser) {
+          await prisma.user.update({
+            where: { lineId },
+            data: {
+              email: user.email,
+              name: user.name,
+              image: user.image,
+            },
+          });
+          return true;
+        }
+
+        // ユーザーが存在しない場合
+        // 新規ユーザーの場合も一時的にログインを許可
+        // （招待ページでトークン検証後にユーザー作成される）
+        console.log("New user signing in:", lineId);
         return true;
       } catch (error) {
         console.error("Error in signIn callback:", error);
