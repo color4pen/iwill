@@ -43,22 +43,34 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async signIn({ user, account, profile }) {
-      // 既存ユーザーかチェック
+      if (account?.provider !== "line") {
+        return false;
+      }
+
       const { prisma } = await import('./prisma');
       
       try {
-        const existingUser = await prisma.user.findUnique({
-          where: { lineId: user.id },
+        // LINE IDを使ってユーザーを作成または更新
+        const lineId = user.id;
+        
+        await prisma.user.upsert({
+          where: { lineId },
+          create: {
+            lineId,
+            email: user.email,
+            name: user.name,
+            image: user.image,
+          },
+          update: {
+            email: user.email,
+            name: user.name,
+            image: user.image,
+          },
         });
 
-        // 既存ユーザーならログイン許可
-        if (existingUser) {
-          return true;
-        }
-
-        // 新規ユーザーの場合は一旦保留（招待ページで処理）
         return true;
-      } catch {
+      } catch (error) {
+        console.error("Error in signIn callback:", error);
         return false;
       }
     },
