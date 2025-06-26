@@ -2,7 +2,7 @@
 
 import { useSearchParams, useRouter } from "next/navigation"
 import { useEffect, useState, Suspense } from "react"
-import { useSession } from "next-auth/react"
+import { useSession, signOut } from "next-auth/react"
 import { acceptInvitation } from "./actions"
 
 function InvitationContent() {
@@ -76,7 +76,7 @@ function InvitationContent() {
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            招待を処理しています
+            {error ? "エラー" : "招待を処理しています"}
           </h2>
           {!error && !lineId && (
             <p className="mt-2 text-center text-sm text-gray-600">
@@ -108,16 +108,29 @@ function InvitationContent() {
                   <div className="mt-2 text-sm text-red-700">
                     <p>{error}</p>
                   </div>
-                  <div className="mt-4">
-                    <p className="text-sm text-gray-600">
-                      {error === "無効な招待URLです" ? "ホームページへリダイレクトします..." : ""}
-                    </p>
-                    <button
-                      onClick={() => router.push("/")}
-                      className="text-sm font-medium text-red-800 hover:text-red-700"
-                    >
-                      ホームページへ移動
-                    </button>
+                  <div className="mt-4 space-y-3">
+                    {error === "この招待URLは既に使用されています" && (
+                      <p className="text-sm text-gray-600">
+                        有効な招待URLを取得してください
+                      </p>
+                    )}
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <button
+                        onClick={() => router.push("/")}
+                        className="inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                      >
+                        ホームページへ移動
+                      </button>
+                      <button
+                        onClick={() => {
+                          // ログアウト処理
+                          signOut({ callbackUrl: "/login" })
+                        }}
+                        className="inline-flex justify-center items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                      >
+                        ログアウト
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
