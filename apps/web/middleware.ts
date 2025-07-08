@@ -30,7 +30,12 @@ export async function middleware(req: NextRequest) {
   
   // ゲスト専用パスに認証済みユーザーがアクセスした場合
   if (guestOnlyPaths.includes(path) && isAuthenticated) {
-    // 招待トークンがある場合は招待ページへ
+    // 既存ユーザー（DBにユーザーIDが存在）の場合は常にトップへ
+    if (token.id && token.id !== token.lineId) {
+      return NextResponse.redirect(new URL('/', req.url));
+    }
+    
+    // 新規ユーザーで招待トークンがある場合は招待ページへ
     const invitationToken = req.nextUrl.searchParams.get('invitation');
     if (invitationToken && token.id) {
       return NextResponse.redirect(new URL(`/invitation?token=${invitationToken}&lineId=${token.id}`, req.url));

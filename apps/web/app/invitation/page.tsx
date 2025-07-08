@@ -41,7 +41,13 @@ function InvitationContent() {
 
     // 既にログイン済みの場合
     if (status === "authenticated" && session?.user) {
-      // lineIdが取得できたら自動的に招待を受け入れて処理
+      // 既存ユーザーかチェック（DBのユーザーIDとLINE IDが異なる = 既存ユーザー）
+      if (lineId && session.user.id !== session.user.lineId) {
+        router.push("/")
+        return
+      }
+      
+      // 新規ユーザーの場合のみ招待処理
       if (lineId) {
         handleAcceptInvitation()
       }
