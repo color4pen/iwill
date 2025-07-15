@@ -9,6 +9,7 @@ import ChatInput from "@/components/chat-input"
 import MarkAsRead from "@/components/mark-as-read"
 import HideLayout from "@/components/hide-layout"
 import AutoRefreshMessages from "@/components/auto-refresh-messages"
+import { INQUIRY_CATEGORY_LABELS, INQUIRY_STATUS_LABELS, INQUIRY_STATUS_COLORS } from "@repo/types/constants"
 
 export default async function ContactThreadPage({
   params,
@@ -39,25 +40,9 @@ export default async function ContactThreadPage({
     redirect("/contact")
   }
 
-  const categoryLabels = {
-    GENERAL: "一般",
-    ATTENDANCE: "出欠",
-    VENUE: "会場",
-    GIFT: "ご祝儀",
-    OTHER: "その他"
-  }
-
-  const statusLabels = {
-    OPEN: "対応中",
-    RESOLVED: "解決済み",
-    CLOSED: "クローズ"
-  }
-
-  const statusColors = {
-    OPEN: "bg-blue-100 text-blue-800",
-    RESOLVED: "bg-green-100 text-green-800",
-    CLOSED: "bg-gray-100 text-gray-800"
-  }
+  const categoryLabels = INQUIRY_CATEGORY_LABELS
+  const statusLabels = INQUIRY_STATUS_LABELS
+  const statusColors = INQUIRY_STATUS_COLORS
 
   return (
     <>

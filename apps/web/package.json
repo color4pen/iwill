@@ -17,7 +17,12 @@
   },
   "dependencies": {
     "@prisma/client": "^6.8.2",
+    "@repo/auth": "workspace:*",
+    "@repo/database": "workspace:*",
+    "@repo/env": "workspace:*",
+    "@repo/types": "workspace:*",
     "@repo/ui": "workspace:*",
+    "@repo/utils": "workspace:*",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "lucide-react": "^0.507.0",

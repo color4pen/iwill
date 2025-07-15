@@ -1,7 +1,6 @@
 "use client"
 
-import { useState } from "react"
-import { Button } from "@/components/ui/form-elements"
+import { DeleteButton } from "@repo/ui/delete-button"
 import { deleteFAQ } from "@/app/actions/faq"
 
 interface FAQDeleteButtonProps {
@@ -9,31 +8,13 @@ interface FAQDeleteButtonProps {
 }
 
 export default function FAQDeleteButton({ id }: FAQDeleteButtonProps) {
-  const [isDeleting, setIsDeleting] = useState(false)
-
-  const handleDelete = async () => {
-    if (!confirm("本当に削除しますか？")) {
-      return
-    }
-
-    setIsDeleting(true)
-    try {
-      await deleteFAQ(id)
-    } catch (error) {
-      console.error("Error deleting FAQ:", error)
-      alert("削除に失敗しました")
-      setIsDeleting(false)
-    }
-  }
-
   return (
-    <Button
-      onClick={handleDelete}
-      disabled={isDeleting}
-      variant="danger"
+    <DeleteButton
+      onDelete={() => deleteFAQ(id)}
+      confirmMessage="本当に削除しますか？"
+      variant="button"
       size="sm"
-    >
-      {isDeleting ? "削除中..." : "削除"}
-    </Button>
+      className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded"
+    />
   )
 }
