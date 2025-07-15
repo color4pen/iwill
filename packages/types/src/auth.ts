@@ -1,13 +1,16 @@
 import { DefaultSession } from "next-auth"
 
+/**
+ * NextAuth.jsのセッション型を拡張
+ */
 declare module "next-auth" {
   interface Session {
     user: {
       id: string
       lineId?: string
+      role?: string
       accessToken?: string
       provider?: string
-      role?: string
     } & DefaultSession["user"]
   }
 
@@ -18,12 +21,15 @@ declare module "next-auth" {
   }
 }
 
+/**
+ * NextAuth.jsのJWT型を拡張
+ */
 declare module "next-auth/jwt" {
   interface JWT {
     id?: string
     lineId?: string
+    role?: string
     accessToken?: string
     provider?: string
-    role?: string
   }
 }
