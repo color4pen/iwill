@@ -67,6 +67,54 @@ export default async function InfoPage() {
       {/* タイムスケジュール */}
       <TimeSchedule scheduleItems={schedules} />
 
+      {/* 進行の詳細 */}
+      <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <h2 className="text-2xl font-semibold mb-4">進行の詳細</h2>
+        <div className="grid md:grid-cols-2 gap-4">
+          <Link
+            href="/info/ceremony"
+            className="group bg-blue-50 hover:bg-blue-100 rounded-lg p-6 transition-colors"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-800 group-hover:text-blue-700">
+                  挙式の進行
+                </h3>
+                <p className="text-sm text-gray-600 mt-1">
+                  人前式の流れをご案内
+                </p>
+              </div>
+              <div className="text-blue-600">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </div>
+          </Link>
+          
+          <Link
+            href="/info/reception"
+            className="group bg-green-50 hover:bg-green-100 rounded-lg p-6 transition-colors"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-800 group-hover:text-green-700">
+                  披露宴の進行
+                </h3>
+                <p className="text-sm text-gray-600 mt-1">
+                  ガーデンパーティーの流れ
+                </p>
+              </div>
+              <div className="text-green-600">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </div>
+          </Link>
+        </div>
+      </div>
+
       {/* 参加にあたってのご案内 */}
       <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
         <h2 className="text-2xl font-semibold mb-4">参加にあたってのご案内</h2>
