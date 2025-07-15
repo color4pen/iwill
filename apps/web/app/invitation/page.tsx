@@ -11,12 +11,22 @@ function InvitationContent() {
   const { data: session, status } = useSession()
   const [isProcessing, setIsProcessing] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [redirectTimer, setRedirectTimer] = useState<NodeJS.Timeout | null>(null)
   
   const token = searchParams.get("token")
   const lineId = session?.user?.id || searchParams.get("lineId")
   const name = session?.user?.name || searchParams.get("name")
   const email = session?.user?.email || searchParams.get("email")
   const image = session?.user?.image || searchParams.get("image")
+
+  // クリーンアップ
+  useEffect(() => {
+    return () => {
+      if (redirectTimer) {
+        clearTimeout(redirectTimer)
+      }
+    }
+  }, [redirectTimer])
 
   useEffect(() => {
     // セッションの読み込みが完了していない場合は待つ
@@ -32,10 +42,6 @@ function InvitationContent() {
 
     if (!token) {
       setError("無効な招待URLです")
-      // 3秒後にホームページへリダイレクト
-      setTimeout(() => {
-        router.push("/")
-      }, 3000)
       return
     }
 
@@ -134,7 +140,12 @@ function InvitationContent() {
                     )}
                     <div className="flex flex-col sm:flex-row gap-3">
                       <button
-                        onClick={() => router.push("/")}
+                        onClick={() => {
+                          if (redirectTimer) {
+                            clearTimeout(redirectTimer)
+                          }
+                          router.push("/")
+                        }}
                         className="inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                       >
                         ホームページへ移動
