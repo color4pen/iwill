@@ -19,17 +19,23 @@ function InvitationContent() {
   const image = session?.user?.image || searchParams.get("image")
 
   useEffect(() => {
+    // セッションの読み込みが完了していない場合は待つ
+    if (status === "loading") {
+      return
+    }
+
+    // 既にログイン済みの既存ユーザーの場合は即座にホームへ
+    if (status === "authenticated" && session?.user && session.user.id !== session.user.lineId) {
+      router.push("/")
+      return
+    }
+
     if (!token) {
       setError("無効な招待URLです")
       // 3秒後にホームページへリダイレクト
       setTimeout(() => {
         router.push("/")
       }, 3000)
-      return
-    }
-
-    // セッションの読み込みが完了していない場合は待つ
-    if (status === "loading") {
       return
     }
 
@@ -44,6 +50,12 @@ function InvitationContent() {
       // 既存ユーザーかチェック（DBのユーザーIDとLINE IDが異なる = 既存ユーザー）
       if (lineId && session.user.id !== session.user.lineId) {
         router.push("/")
+        return
+      }
+      
+      // 新規ユーザーだがトークンがない場合はログインページへ
+      if (!token && lineId && session.user.id === session.user.lineId) {
+        router.push("/login?error=invitation_required")
         return
       }
       
