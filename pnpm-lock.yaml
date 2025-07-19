@@ -263,6 +263,9 @@ importers:
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
+      '@types/node':
+        specifier: ^22
+        version: 22.15.3
       prisma:
         specifier: ^6.8.2
         version: 6.8.2(typescript@5.8.2)
