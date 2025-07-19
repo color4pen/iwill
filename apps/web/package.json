@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "next dev --turbopack --port 3000",
     "build": "prisma generate && prisma migrate deploy && next build",
-    "vercel-build": "prisma generate && prisma migrate deploy && next build",
+    "vercel-build": "cd ../.. && pnpm build:packages && cd apps/web && prisma generate && prisma migrate deploy && next build",
     "start": "next start",
     "lint": "next lint --max-warnings 0",
     "check-types": "tsc --noEmit",
