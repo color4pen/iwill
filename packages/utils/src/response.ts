@@ -10,7 +10,7 @@ export interface SuccessResponse<T = any> {
 /**
  * エラーレスポンスの型定義（error.tsから再エクスポート）
  */
-export { ErrorResponse } from './error'
+export type { ErrorResponse } from './error'
 
 /**
  * APIレスポンスの統一型
