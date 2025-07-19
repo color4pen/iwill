@@ -12,7 +12,9 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@repo/types": "workspace:*"
+    "@repo/types": "workspace:*",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
