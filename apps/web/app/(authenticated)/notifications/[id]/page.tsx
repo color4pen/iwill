@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import MarkNotificationAsRead from "@/components/mark-notification-as-read"
+import { paths } from "@/lib/paths"
 
 export default async function NotificationDetailPage({ 
   params 
@@ -14,7 +15,7 @@ export default async function NotificationDetailPage({
   const session = await getServerSession(authOptions)
   
   if (!session?.user) {
-    redirect("/login")
+    redirect(paths.login)
   }
 
   const { id } = await params
@@ -73,7 +74,7 @@ export default async function NotificationDetailPage({
       <MarkNotificationAsRead notificationId={id} />
       <div className="mb-6">
         <Link 
-          href="/notifications" 
+          href={paths.notifications.index} 
           className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-4"
         >
           <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -106,7 +107,7 @@ export default async function NotificationDetailPage({
 
       <div className="mt-8 text-center">
         <Link 
-          href="/" 
+          href={paths.home} 
           className="inline-flex items-center text-blue-600 hover:text-blue-800"
         >
           <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">

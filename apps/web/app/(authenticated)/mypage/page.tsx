@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
+import { paths } from "@/lib/paths";
 
 // メディアアイテムの型定義
 interface MediaItem {
@@ -287,7 +288,7 @@ export default function MyPage() {
                   結婚式の思い出の写真や動画をアップロードして、他の参列者と共有しましょう。
                 </p>
                 <Link
-                  href="/medias"
+                  href={paths.gallery}
                   className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
                 >
                   メディアをアップロード

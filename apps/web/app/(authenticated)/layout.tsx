@@ -4,6 +4,7 @@ import { ReactNode, useState } from "react";
 import Link from "next/link";
 import AuthStatus from "../../components/auth-status";
 import { BackToTop } from "../../components/back-to-top";
+import { paths } from "@/lib/paths";
 
 interface LayoutFrameProps {
   children: ReactNode;
@@ -18,7 +19,7 @@ export default function Layout({ children }: LayoutFrameProps) {
       <header className="w-full p-4 bg-white shadow-md z-20 text-gray-800 border-b border-gray-100">
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <Link href="/" className="hover:opacity-80">
+            <Link href={paths.home} className="hover:opacity-80">
               <h1 className="text-2xl font-bold text-gray-800">iWill</h1>
             </Link>
             {process.env.NODE_ENV === 'development' && (
@@ -45,8 +46,8 @@ export default function Layout({ children }: LayoutFrameProps) {
               <p className="text-center md:text-left text-sm">© 2025 iWill</p>
             </div>
             <div className="flex space-x-3">
-              <Link href="/privacy" className="hover:text-gray-600 text-xs">プライバシーポリシー</Link>
-              <Link href="/terms" className="hover:text-gray-600 text-xs">利用規約</Link>
+              <Link href={paths.privacy} className="hover:text-gray-600 text-xs">プライバシーポリシー</Link>
+              <Link href={paths.terms} className="hover:text-gray-600 text-xs">利用規約</Link>
             </div>
           </div>
         </div>

@@ -3,6 +3,7 @@ import { redirect } from "next/navigation"
 import { authOptions } from "@/lib/auth"
 import { PrismaClient } from "@prisma/client"
 import Link from "next/link"
+import { paths } from "@/lib/paths"
 
 const prisma = new PrismaClient()
 
@@ -10,7 +11,7 @@ export default async function QAPage() {
   const session = await getServerSession(authOptions)
   
   if (!session) {
-    redirect("/login")
+    redirect(paths.login)
   }
 
   const faqs = await prisma.fAQ.findMany({
@@ -148,7 +149,7 @@ export default async function QAPage() {
 
       <div className="mt-8">
         <Link 
-          href="/" 
+          href={paths.home} 
           className="inline-flex items-center text-blue-600 hover:text-blue-800"
         >
           <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">

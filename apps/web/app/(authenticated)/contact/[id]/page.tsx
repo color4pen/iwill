@@ -8,6 +8,7 @@ import ChatMessages from "@/components/chat-messages"
 import ChatInput from "@/components/chat-input"
 import MarkAsRead from "@/components/mark-as-read"
 import HideLayout from "@/components/hide-layout"
+import { paths } from "@/lib/paths"
 import AutoRefreshMessages from "@/components/auto-refresh-messages"
 import { INQUIRY_CATEGORY_LABELS, INQUIRY_STATUS_LABELS, INQUIRY_STATUS_COLORS } from "@repo/types/constants"
 
@@ -19,7 +20,7 @@ export default async function ContactThreadPage({
   const session = await getServerSession(authOptions)
   
   if (!session?.user) {
-    redirect("/login")
+    redirect(paths.login)
   }
 
   const { id } = await params
@@ -37,7 +38,7 @@ export default async function ContactThreadPage({
   })
 
   if (!thread) {
-    redirect("/contact")
+    redirect(paths.contact.index)
   }
 
   const categoryLabels = INQUIRY_CATEGORY_LABELS
@@ -53,7 +54,7 @@ export default async function ContactThreadPage({
           <div className="px-4 py-3">
             <div className="flex items-center gap-3">
               <Link
-                href="/contact"
+                href={paths.contact.index}
                 className="text-gray-500 hover:text-gray-700 p-2 -ml-2"
               >
                 <ArrowLeft className="h-6 w-6" />

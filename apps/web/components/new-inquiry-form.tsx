@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { createInquiryThread } from "@/app/actions/inquiries"
 import { InquiryCategory } from "@prisma/client"
+import { paths } from "@/lib/paths"
 
 export default function NewInquiryForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -75,7 +76,7 @@ export default function NewInquiryForm() {
 
       <div className="flex justify-end gap-4">
         <a
-          href="/contact"
+          href={paths.contact.index}
           className="px-4 py-2 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
         >
           キャンセル
