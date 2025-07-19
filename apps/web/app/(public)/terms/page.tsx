@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { paths } from "@/lib/paths";
 
 export const metadata = {
   title: "利用規約 - iWill",
@@ -99,7 +100,7 @@ export default function TermsOfServicePage() {
         <div className="text-center">
           <p className="text-sm text-gray-500 mb-4">最終更新日: 2025年4月1日</p>
           <Link 
-            href="/" 
+            href={paths.home} 
             className="inline-flex items-center text-blue-600 hover:text-blue-800"
           >
             <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -6,12 +6,13 @@ import Link from "next/link"
 import { Plus, MessageSquare, Check, Clock } from "lucide-react"
 import { format } from "date-fns"
 import { ja } from "date-fns/locale"
+import { paths } from "@/lib/paths"
 
 export default async function ContactPage() {
   const session = await getServerSession(authOptions)
   
   if (!session?.user) {
-    redirect("/login")
+    redirect(paths.login)
   }
 
   const threads = await prisma.inquiryThread.findMany({
@@ -77,7 +78,7 @@ export default async function ContactPage() {
               return (
                 <Link
                   key={thread.id}
-                  href={`/contact/${thread.id}`}
+                  href={paths.contact.detail(thread.id)}
                   className="block"
                 >
                   <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-4">
@@ -127,7 +128,7 @@ export default async function ContactPage() {
 
       {/* 新規作成ボタン */}
       <Link
-        href="/contact/new"
+        href={paths.contact.new}
         className="fixed bottom-20 right-4 w-14 h-14 bg-blue-600 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-blue-700 active:scale-95 transition-all"
         style={{ zIndex: 40 }}
       >

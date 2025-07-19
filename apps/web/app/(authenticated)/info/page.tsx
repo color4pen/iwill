@@ -3,6 +3,7 @@ import Link from "next/link";
 import { MapPin, Calendar, Clock, Navigation, Users, Utensils, Camera, Music } from "lucide-react";
 import TimeSchedule from "@/components/info/TimeSchedule";
 import { prisma } from "@/lib/prisma";
+import { paths } from "@/lib/paths";
 
 // キャッシュを無効化
 export const revalidate = 0;
@@ -54,7 +55,7 @@ export default async function InfoPage() {
             <p className="text-gray-600 text-sm">〒408-0044</p>
             <p className="text-gray-600 text-sm mb-3">山梨県北杜市小淵沢町129-1</p>
             <Link
-              href="/access"
+              href={paths.access}
               className="text-blue-600 hover:text-blue-800 text-sm inline-flex items-center"
             >
               <Navigation className="w-4 h-4 mr-1" />
@@ -72,7 +73,7 @@ export default async function InfoPage() {
         <h2 className="text-2xl font-semibold mb-4">進行の詳細</h2>
         <div className="grid md:grid-cols-2 gap-4">
           <Link
-            href="/info/ceremony"
+            href={paths.info.ceremony}
             className="group bg-blue-50 hover:bg-blue-100 rounded-lg p-6 transition-colors"
           >
             <div className="flex items-center justify-between">
@@ -93,7 +94,7 @@ export default async function InfoPage() {
           </Link>
           
           <Link
-            href="/info/reception"
+            href={paths.info.reception}
             className="group bg-green-50 hover:bg-green-100 rounded-lg p-6 transition-colors"
           >
             <div className="flex items-center justify-between">

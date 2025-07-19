@@ -5,6 +5,7 @@ import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import { paths } from "@/lib/paths";
 
 function LoginContent() {
   // ボタン状態の管理
@@ -16,16 +17,16 @@ function LoginContent() {
   useEffect(() => {
     const error = searchParams.get("error");
     const token = searchParams.get("invitation");
-    
+
     if (error === "invitation_required") {
       setShowInvitationError(true);
     }
-    
+
     // NextAuthのAccessDeniedエラー（招待されていないユーザー）
     if (error === "AccessDenied") {
       setShowInvitationError(true);
     }
-    
+
     if (token) {
       setInvitationToken(token);
     }
@@ -33,17 +34,17 @@ function LoginContent() {
 
   const handleLineLogin = () => {
     setButtonState('press');
-    let callbackUrl = "/";
-    
+    let callbackUrl: string = paths.home;
+
     // 招待トークンがある場合は、コールバックURLに含める
     if (invitationToken) {
       const lineId = searchParams.get("lineId");
-      callbackUrl = `/invitation?token=${invitationToken}`;
+      callbackUrl = `${paths.invitation}?token=${invitationToken}`;
       if (lineId) {
         callbackUrl += `&lineId=${lineId}`;
       }
     }
-    
+
     signIn("line", { callbackUrl, redirect: true });
   };
 
@@ -86,11 +87,11 @@ function LoginContent() {
               ログインする前に以下をご確認ください
             </p>
             <div className="flex justify-center space-x-4">
-              <Link href="/terms" className="text-blue-600 hover:text-blue-800 text-sm">
+              <Link href={paths.terms} className="text-blue-600 hover:text-blue-800 text-sm">
                 利用規約
               </Link>
               <span className="text-gray-400">|</span>
-              <Link href="/privacy" className="text-blue-600 hover:text-blue-800 text-sm">
+              <Link href={paths.privacy} className="text-blue-600 hover:text-blue-800 text-sm">
                 プライバシーポリシー
               </Link>
             </div>

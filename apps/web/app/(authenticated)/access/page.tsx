@@ -1,5 +1,6 @@
 import { MapPin, Train, Car, Bus, Navigation, Shirt, CloudRain } from "lucide-react";
 import Link from "next/link";
+import { paths } from "@/lib/paths";
 
 export default function AccessPage() {
   return (
@@ -259,7 +260,7 @@ export default function AccessPage() {
       {/* 戻るリンク */}
       <div className="text-center">
         <Link 
-          href="/" 
+          href={paths.home} 
           className="inline-flex items-center text-blue-600 hover:text-blue-800"
         >
           <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">

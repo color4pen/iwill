@@ -3,12 +3,13 @@ import { redirect } from "next/navigation"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
+import { paths } from "@/lib/paths"
 
 export default async function NotificationsPage() {
   const session = await getServerSession(authOptions)
   
   if (!session?.user) {
-    redirect("/login")
+    redirect(paths.login)
   }
 
   // お知らせを取得（既読情報も含む）
@@ -82,7 +83,7 @@ export default async function NotificationsPage() {
             return (
               <Link
                 key={notification.id}
-                href={`/notifications/${notification.id}`}
+                href={paths.notifications.detail(notification.id)}
                 className="block p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow"
               >
                 <div className="flex items-start gap-4">

@@ -6,6 +6,7 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { InquiryCategory } from "@prisma/client"
+import { paths } from "@/lib/paths"
 
 export async function createInquiryThread(
   title: string,
@@ -34,7 +35,7 @@ export async function createInquiryThread(
     }
   })
 
-  redirect(`/contact/${thread.id}`)
+  redirect(paths.contact.detail(thread.id))
 }
 
 export async function sendMessage(threadId: string, content: string) {
@@ -70,7 +71,7 @@ export async function sendMessage(threadId: string, content: string) {
     data: { updatedAt: new Date() }
   })
 
-  revalidatePath(`/contact/${threadId}`)
+  revalidatePath(paths.contact.detail(threadId))
 }
 
 export async function markMessagesAsRead(threadId: string) {
@@ -93,5 +94,5 @@ export async function markMessagesAsRead(threadId: string) {
     }
   })
 
-  revalidatePath(`/contact/${threadId}`)
+  revalidatePath(paths.contact.detail(threadId))
 }

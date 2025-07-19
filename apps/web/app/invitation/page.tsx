@@ -4,6 +4,7 @@ import { useSearchParams, useRouter } from "next/navigation"
 import { useEffect, useState, Suspense } from "react"
 import { useSession, signOut } from "next-auth/react"
 import { acceptInvitation } from "./actions"
+import { paths } from "@/lib/paths"
 
 function InvitationContent() {
   const searchParams = useSearchParams()
@@ -36,7 +37,7 @@ function InvitationContent() {
 
     // 既にログイン済みの既存ユーザーの場合は即座にホームへ
     if (status === "authenticated" && session?.user && session.user.id !== session.user.lineId) {
-      router.push("/")
+      router.push(paths.home)
       return
     }
 
@@ -47,7 +48,7 @@ function InvitationContent() {
 
     // 未認証の場合は、招待トークンを持ってログインページへリダイレクト
     if (status === "unauthenticated") {
-      router.push(`/login?invitation=${token}`)
+      router.push(`${paths.login}?invitation=${token}`)
       return
     }
 
@@ -55,13 +56,13 @@ function InvitationContent() {
     if (status === "authenticated" && session?.user) {
       // 既存ユーザーかチェック（DBのユーザーIDとLINE IDが異なる = 既存ユーザー）
       if (lineId && session.user.id !== session.user.lineId) {
-        router.push("/")
+        router.push(paths.home)
         return
       }
       
       // 新規ユーザーだがトークンがない場合はログインページへ
       if (!token && lineId && session.user.id === session.user.lineId) {
-        router.push("/login?error=invitation_required")
+        router.push(`${paths.login}?error=invitation_required`)
         return
       }
       
@@ -84,7 +85,7 @@ function InvitationContent() {
 
       if (result.success) {
         // ユーザー作成成功、ホームページへリダイレクト
-        router.push("/")
+        router.push(paths.home)
       } else {
         setError(result.error || "招待の処理に失敗しました")
       }
@@ -144,7 +145,7 @@ function InvitationContent() {
                           if (redirectTimer) {
                             clearTimeout(redirectTimer)
                           }
-                          router.push("/")
+                          router.push(paths.home)
                         }}
                         className="inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                       >
@@ -153,7 +154,7 @@ function InvitationContent() {
                       <button
                         onClick={() => {
                           // ログアウト処理
-                          signOut({ callbackUrl: "/login" })
+                          signOut({ callbackUrl: paths.login })
                         }}
                         className="inline-flex justify-center items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                       >

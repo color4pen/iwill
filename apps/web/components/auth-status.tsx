@@ -4,6 +4,7 @@ import { useSession, signIn, signOut } from "next-auth/react";
 import { LineLoginButton } from "./line-login-button";
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
+import { paths } from "@/lib/paths";
 
 export default function AuthStatus() {
   const { data: session, status } = useSession();
@@ -11,11 +12,11 @@ export default function AuthStatus() {
   const menuRef = useRef<HTMLDivElement>(null);
 
   const handleLineLogin = () => {
-    signIn("line", { callbackUrl: "/" });
+    signIn("line", { callbackUrl: paths.home });
   };
 
   const handleLogout = () => {
-    signOut({ callbackUrl: "/" });
+    signOut({ callbackUrl: paths.home });
   };
 
   // メニュー外のクリックでメニューを閉じる
@@ -98,7 +99,7 @@ export default function AuthStatus() {
     <div className="flex items-center gap-3">
       <LineLoginButton onClick={handleLineLogin} />
       <Link
-        href="/login"
+        href={paths.login}
         className="text-sm text-gray-600 hover:text-gray-900 transition-colors duration-200"
       >
         ログインページ
