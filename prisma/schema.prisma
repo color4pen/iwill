@@ -24,7 +24,6 @@ model User {
   updatedAt     DateTime  @updatedAt
   
   // Relations
-  attendance    Attendance?
   notifications NotificationRead[]
   media         Media[]
   inquiryThreads InquiryThread[]
@@ -36,29 +35,6 @@ model User {
 enum Role {
   USER
   ADMIN
-}
-
-// RSVP/出欠管理
-model Attendance {
-  id                  String    @id @default(cuid())
-  userId              String    @unique
-  user                User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  status              AttendanceStatus
-  numberOfGuests      Int       @default(1)
-  dietaryRestrictions String?
-  messageToCouple     String?   @db.Text
-  
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
-  
-  @@index([userId])
-}
-
-enum AttendanceStatus {
-  ATTENDING     // 出席
-  NOT_ATTENDING // 欠席
-  UNDECIDED     // 未定
 }
 
 // お知らせ
@@ -134,28 +110,6 @@ model Media {
   @@index([createdAt])
 }
 
-// 結婚式情報
-model WeddingInfo {
-  id              String    @id @default(cuid())
-  
-  groomName       String
-  brideName       String
-  date            DateTime
-  ceremonyTime    String    // "13:00" のような形式
-  receptionTime   String    // "14:00" のような形式
-  
-  venueName       String
-  venueAddress    String
-  accessInfo      String    @db.Text
-  mapUrl          String?
-  venueImageUrl   String?
-  
-  dresscode       String?
-  emergencyContact String?
-  
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-}
 
 // スケジュール
 model Schedule {
