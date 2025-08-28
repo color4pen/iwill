@@ -1,0 +1,33 @@
+{
+  "name": "@apps/cdk",
+  "version": "0.1.0",
+  "description": "AWS CDK infrastructure for iwill project",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "jest",
+    "cdk": "cdk",
+    "deploy": "cdk deploy",
+    "deploy:dev": "cdk deploy --context env=dev && ../../scripts/update-env-from-cdk.sh dev",
+    "deploy:prod": "cdk deploy --context env=prod && ../../scripts/update-env-from-cdk.sh prod",
+    "diff": "cdk diff",
+    "synth": "cdk synth",
+    "bootstrap": "cdk bootstrap",
+    "update-env": "../../scripts/update-env-from-cdk.sh"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.11",
+    "@types/node": "20.11.5",
+    "aws-cdk": "2.133.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2",
+    "ts-node": "^10.9.2",
+    "typescript": "~5.3.3"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "2.133.0",
+    "constructs": "^10.0.0",
+    "source-map-support": "^0.5.21"
+  }
+}
