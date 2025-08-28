@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['via.placeholder.com', 'profile.line-scdn.net'],
+    domains: ['via.placeholder.com', 'profile.line-scdn.net', 'dsbbmmw2icjvs.cloudfront.net'],
   },
   transpilePackages: ["@repo/ui"],
   // ミドルウェアを適用するための設定
