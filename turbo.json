@@ -5,7 +5,7 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**"],
+      "outputs": [".next/**", "!.next/cache/**", "dist/**", "lib/**"],
       "env": [
         "DATABASE_URL",
         "NEXTAUTH_URL",
@@ -13,7 +13,9 @@
         "LINE_CLIENT_ID",
         "LINE_CLIENT_SECRET",
         "WEDDING_DATE",
-        "NODE_ENV"
+        "NODE_ENV",
+        "CDK_DEFAULT_ACCOUNT",
+        "CDK_DEFAULT_REGION"
       ]
     },
     "lint": {
@@ -25,6 +27,18 @@
     "dev": {
       "cache": false,
       "persistent": true
+    },
+    "cdk:synth": {
+      "dependsOn": ["build"],
+      "cache": false
+    },
+    "cdk:deploy": {
+      "dependsOn": ["build"],
+      "cache": false
+    },
+    "cdk:diff": {
+      "dependsOn": ["build"],
+      "cache": false
     }
   }
 }
