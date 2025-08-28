@@ -1,0 +1,279 @@
+"use client"
+
+import { useState, useEffect } from "react"
+import { createUploadUrl, saveMediaMetadata } from "@/app/actions/media"
+import { Upload, Loader2 } from "lucide-react"
+import { FileDropzone } from "./media-upload/file-dropzone"
+import { SelectedFilesList } from "./media-upload/selected-files-list"
+import { UploadProgressDisplay, type UploadProgress } from "./media-upload/upload-progress"
+
+// ファイルタイプとサイズの制限
+const ALLOWED_FILE_TYPES = [
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/gif",
+  "image/webp",
+  "video/mp4",
+  "video/quicktime",
+]
+const MAX_FILE_SIZE = 100 * 1024 * 1024 // 100MB
+
+export default function MediaUploadForm({ onUploadComplete }: { onUploadComplete?: () => void }) {
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([])
+  const [uploadProgress, setUploadProgress] = useState<Map<string, UploadProgress>>(new Map())
+  const [isUploading, setIsUploading] = useState(false)
+  const [selectedFilesPreviews, setSelectedFilesPreviews] = useState<Map<string, string>>(new Map())
+
+  // アップロード中のページ離脱防止
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isUploading) {
+        e.preventDefault()
+        e.returnValue = 'アップロード中です。ページを離れるとアップロードがキャンセルされます。'
+        return e.returnValue
+      }
+    }
+
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload)
+  }, [isUploading])
+
+  const validateFile = (file: File): string | null => {
+    if (file.size > MAX_FILE_SIZE) {
+      return `${file.name} は100MBを超えています`
+    }
+    if (!ALLOWED_FILE_TYPES.includes(file.type)) {
+      return `${file.name} は許可されていない形式です`
+    }
+    return null
+  }
+
+  const generatePreview = (file: File) => {
+    if (file.type.startsWith("image/")) {
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        setSelectedFilesPreviews(prev => {
+          const newMap = new Map(prev)
+          newMap.set(file.name, e.target?.result as string)
+          return newMap
+        })
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const handleFilesSelected = (fileList: FileList) => {
+    const files = Array.from(fileList)
+    const validFiles: File[] = []
+    const errors: string[] = []
+
+    files.forEach((file) => {
+      const error = validateFile(file)
+      if (error) {
+        errors.push(error)
+      } else {
+        validFiles.push(file)
+        generatePreview(file)
+      }
+    })
+
+    if (errors.length > 0) {
+      alert(errors.join('\n'))
+    }
+
+    setSelectedFiles([...selectedFiles, ...validFiles])
+  }
+
+  const removeFile = (index: number) => {
+    const fileToRemove = selectedFiles[index]
+    setSelectedFiles(selectedFiles.filter((_, i) => i !== index))
+    
+    // プレビューも削除
+    if (fileToRemove && selectedFilesPreviews.has(fileToRemove.name)) {
+      setSelectedFilesPreviews(prev => {
+        const newMap = new Map(prev)
+        newMap.delete(fileToRemove.name)
+        return newMap
+      })
+    }
+  }
+
+  const uploadFile = async (file: File): Promise<boolean> => {
+    const progressKey = `${file.name}-${Date.now()}`
+    
+    try {
+      // プログレス初期化
+      setUploadProgress((prev) => 
+        new Map(prev).set(progressKey, {
+          fileName: file.name,
+          progress: 0,
+          status: "uploading",
+        })
+      )
+
+      // 1. アップロードURLを取得
+      const { uploadUrl, fileKey } = await createUploadUrl(
+        file.name,
+        file.type,
+        file.size
+      )
+
+      // 2. S3に直接アップロード
+      const xhr = new XMLHttpRequest()
+      
+      // プログレス監視
+      xhr.upload.addEventListener("progress", (e) => {
+        if (e.lengthComputable) {
+          const progress = Math.round((e.loaded / e.total) * 100)
+          setUploadProgress((prev) => {
+            const newMap = new Map(prev)
+            const current = newMap.get(progressKey)!
+            newMap.set(progressKey, { ...current, progress })
+            return newMap
+          })
+        }
+      })
+
+      // アップロード完了処理
+      await new Promise((resolve, reject) => {
+        xhr.onload = () => {
+          if (xhr.status === 200) {
+            resolve(xhr.response)
+          } else {
+            reject(new Error(`アップロードに失敗しました: ${xhr.statusText}`))
+          }
+        }
+        xhr.onerror = () => reject(new Error("ネットワークエラー"))
+        
+        xhr.open("PUT", uploadUrl)
+        xhr.setRequestHeader("Content-Type", file.type)
+        xhr.send(file)
+      })
+
+      // 3. メタデータをDBに保存
+      setUploadProgress((prev) => {
+        const newMap = new Map(prev)
+        const current = newMap.get(progressKey)!
+        newMap.set(progressKey, { ...current, status: "processing" })
+        return newMap
+      })
+
+      await saveMediaMetadata(fileKey, file.name, file.size, file.type)
+
+      // 完了
+      setUploadProgress((prev) => {
+        const newMap = new Map(prev)
+        const current = newMap.get(progressKey)!
+        newMap.set(progressKey, { ...current, status: "completed", progress: 100 })
+        return newMap
+      })
+
+      return true
+    } catch (error) {
+      // エラー処理
+      setUploadProgress((prev) => {
+        const newMap = new Map(prev)
+        const current = newMap.get(progressKey)!
+        newMap.set(progressKey, { 
+          ...current, 
+          status: "error",
+          error: error instanceof Error ? error.message : "アップロードエラー"
+        })
+        return newMap
+      })
+      return false
+    }
+  }
+
+  const handleUpload = async () => {
+    if (selectedFiles.length === 0) return
+
+    setIsUploading(true)
+    
+    // デバイスとファイルサイズに基づいて最適なチャンクサイズを決定
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+    const totalSize = selectedFiles.reduce((sum, file) => sum + file.size, 0)
+    const avgFileSize = totalSize / selectedFiles.length
+    
+    let CHUNK_SIZE = 2 // デフォルト: 2ファイル同時
+    
+    if (!isMobile && avgFileSize < 10 * 1024 * 1024) {
+      CHUNK_SIZE = 3 // PC + 小さいファイル: 3ファイル同時
+    } else if (isMobile && avgFileSize < 5 * 1024 * 1024) {
+      CHUNK_SIZE = 2 // モバイル + 小さいファイル: 2ファイル同時
+    } else {
+      CHUNK_SIZE = 1 // 大きいファイル: 1ファイルずつ
+    }
+    
+    const results: boolean[] = []
+    
+    // ファイルをチャンクに分割してアップロード
+    for (let i = 0; i < selectedFiles.length; i += CHUNK_SIZE) {
+      const chunk = selectedFiles.slice(i, i + CHUNK_SIZE)
+      const chunkResults = await Promise.all(chunk.map(uploadFile))
+      results.push(...chunkResults)
+    }
+    
+    // 成功したファイルを削除
+    const successCount = results.filter(Boolean).length
+    if (successCount > 0) {
+      setSelectedFiles([])
+      setSelectedFilesPreviews(new Map())
+      onUploadComplete?.()
+    }
+
+    setIsUploading(false)
+
+    // 3秒後にプログレス表示をクリア
+    setTimeout(() => {
+      setUploadProgress(new Map())
+    }, 3000)
+  }
+
+  return (
+    <div className="w-full">
+      {/* ファイル選択エリア */}
+      <FileDropzone 
+        onFilesSelected={handleFilesSelected}
+        disabled={isUploading}
+      />
+
+      {/* 選択されたファイル一覧（アップロード中は非表示） */}
+      {selectedFiles.length > 0 && !isUploading && (
+        <SelectedFilesList
+          files={selectedFiles}
+          previews={selectedFilesPreviews}
+          onRemoveFile={removeFile}
+          disabled={isUploading}
+        />
+      )}
+
+      {/* アップロードプログレス */}
+      {uploadProgress.size > 0 && (
+        <UploadProgressDisplay uploadProgress={uploadProgress} />
+      )}
+
+      {/* アップロードボタン */}
+      {selectedFiles.length > 0 && (
+        <button
+          onClick={handleUpload}
+          disabled={isUploading}
+          className="mt-4 w-full flex justify-center items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isUploading ? (
+            <>
+              <Loader2 className="animate-spin h-4 w-4 mr-2" />
+              アップロード中...
+            </>
+          ) : (
+            <>
+              <Upload className="h-4 w-4 mr-2" />
+              {selectedFiles.length}個のファイルをアップロード
+            </>
+          )}
+        </button>
+      )}
+    </div>
+  )
+}
