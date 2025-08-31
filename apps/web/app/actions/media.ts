@@ -11,6 +11,7 @@ import { revalidatePath } from "next/cache"
 const BUCKET_NAME = process.env.AWS_S3_BUCKET_NAME
 const CLOUDFRONT_URL = process.env.AWS_CLOUDFRONT_URL
 const AWS_REGION = process.env.AWS_REGION || "ap-northeast-1"
+const AWS_ROLE_ARN = process.env.AWS_ROLE_ARN
 
 // デバッグ情報
 console.log("環境変数の確認:", {
@@ -23,10 +24,10 @@ if (!BUCKET_NAME || !CLOUDFRONT_URL) {
   throw new Error(`AWS環境変数が設定されていません: BUCKET_NAME=${BUCKET_NAME}, CLOUDFRONT_URL=${CLOUDFRONT_URL}`)
 }
 
-// S3クライアントの初期化（Vercel OIDC認証を使用）
+// S3クライアントの初期化
+// Vercelが自動的にOIDC認証を処理し、AWS認証情報を環境変数に設定する
 const s3Client = new S3Client({
   region: AWS_REGION,
-  // Vercelの環境では自動的にOIDC認証が使用される
 })
 
 // ファイルタイプとサイズの制限
@@ -68,25 +69,39 @@ export async function createUploadUrl(
   const timestamp = Date.now()
   const uniqueFileName = `${session.user.id}/${timestamp}-${fileName}`
 
-  // S3アップロード用のパラメータ
-  const command = new PutObjectCommand({
-    Bucket: BUCKET_NAME,
-    Key: uniqueFileName,
-    ContentType: fileType,
-    ContentLength: fileSize,
-    Metadata: {
-      userId: session.user.id,
-      originalName: fileName,
-    },
-  })
+  try {
+    // S3アップロード用のパラメータ
+    const command = new PutObjectCommand({
+      Bucket: BUCKET_NAME,
+      Key: uniqueFileName,
+      ContentType: fileType,
+      ContentLength: fileSize,
+      Metadata: {
+        userId: session.user.id,
+        originalName: fileName,
+      },
+    })
 
-  // 署名付きURLを生成（5分間有効）
-  const uploadUrl = await getSignedUrl(s3Client, command, { expiresIn: 300 })
+    // 署名付きURLを生成（5分間有効）
+    const uploadUrl = await getSignedUrl(s3Client, command, { expiresIn: 300 })
+    
+    console.log("Presigned URL generated successfully")
+    console.log("Debug info:", {
+      vercel: process.env.VERCEL ? "true" : "false",
+      awsKeyId: process.env.AWS_ACCESS_KEY_ID ? "available" : "not available",
+      awsSecret: process.env.AWS_SECRET_ACCESS_KEY ? "available" : "not available",
+      awsToken: process.env.AWS_SESSION_TOKEN ? "available" : "not available",
+      roleArn: AWS_ROLE_ARN || "not set",
+    })
 
-  return {
-    uploadUrl,
-    fileKey: uniqueFileName,
-    fileUrl: `${CLOUDFRONT_URL}/${uniqueFileName}`,
+    return {
+      uploadUrl,
+      fileKey: uniqueFileName,
+      fileUrl: `${CLOUDFRONT_URL}/${uniqueFileName}`,
+    }
+  } catch (error) {
+    console.error("Error generating presigned URL:", error)
+    throw error
   }
 }
 
