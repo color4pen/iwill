@@ -148,6 +148,8 @@ export default function MediaUploadForm({ onUploadComplete }: { onUploadComplete
         
         xhr.open("PUT", uploadUrl)
         xhr.setRequestHeader("Content-Type", file.type)
+        // S3暗号化のヘッダーを追加
+        xhr.setRequestHeader("x-amz-server-side-encryption", "AES256")
         xhr.send(file)
       })
 

@@ -3,7 +3,7 @@
 import { prisma } from "@/lib/prisma"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3"
+import { S3Client, PutObjectCommand, HeadObjectCommand } from "@aws-sdk/client-s3"
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
 import { revalidatePath } from "next/cache"
 
@@ -79,6 +79,7 @@ export async function createUploadUrl(
       Key: uniqueFileName,
       ContentType: fileType,
       ContentLength: fileSize,
+      ServerSideEncryption: "AES256", // S3管理の暗号化を明示的に指定
       Metadata: {
         userId: session.user.id,
         originalName: fileName,
