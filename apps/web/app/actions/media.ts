@@ -78,8 +78,9 @@ export async function createUploadUrl(
       Bucket: BUCKET_NAME,
       Key: uniqueFileName,
       ContentType: fileType,
-      ContentLength: fileSize,
+      // ContentLengthは署名に含めない（実際のアップロード時にブラウザが設定）
       ServerSideEncryption: "AES256", // S3管理の暗号化を明示的に指定
+      ChecksumAlgorithm: undefined, // チェックサムを無効化
       Metadata: {
         userId: session.user.id,
         originalName: fileName,
@@ -87,12 +88,16 @@ export async function createUploadUrl(
     })
 
     // 署名付きURLを生成（5分間有効）
-    const uploadUrl = await getSignedUrl(s3Client, command, { expiresIn: 300 })
+    const uploadUrl = await getSignedUrl(s3Client, command, {
+      expiresIn: 300,
+      unhoistableHeaders: new Set(["x-amz-checksum-crc32"]),
+    })
     
     // デバッグ: 現在の認証情報を確認
     const credentials = await s3Client.config.credentials()
     
     console.log("Presigned URL generated successfully")
+    console.log("Generated URL (first 100 chars):", uploadUrl.substring(0, 100) + "...")
     console.log("Debug info:", {
       vercel: process.env.VERCEL ? "true" : "false",
       awsKeyId: process.env.AWS_ACCESS_KEY_ID ? "available" : "not available",
