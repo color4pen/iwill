@@ -88,6 +88,9 @@ export async function createUploadUrl(
     // 署名付きURLを生成（5分間有効）
     const uploadUrl = await getSignedUrl(s3Client, command, { expiresIn: 300 })
     
+    // デバッグ: 現在の認証情報を確認
+    const credentials = await s3Client.config.credentials()
+    
     console.log("Presigned URL generated successfully")
     console.log("Debug info:", {
       vercel: process.env.VERCEL ? "true" : "false",
@@ -95,6 +98,8 @@ export async function createUploadUrl(
       awsSecret: process.env.AWS_SECRET_ACCESS_KEY ? "available" : "not available",
       awsToken: process.env.AWS_SESSION_TOKEN ? "available" : "not available",
       roleArn: AWS_ROLE_ARN || "not set",
+      credentialsType: credentials ? credentials.constructor.name : "none",
+      hasSessionToken: credentials?.sessionToken ? "yes" : "no",
     })
 
     return {
