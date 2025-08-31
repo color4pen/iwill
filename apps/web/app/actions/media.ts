@@ -18,6 +18,9 @@ console.log("環境変数の確認:", {
   BUCKET_NAME: BUCKET_NAME ? "設定済み" : "未設定",
   CLOUDFRONT_URL: CLOUDFRONT_URL ? "設定済み" : "未設定",
   AWS_REGION,
+  VERCEL_ENV: process.env.VERCEL_ENV,
+  VERCEL_URL: process.env.VERCEL_URL,
+  VERCEL_BRANCH_URL: process.env.VERCEL_BRANCH_URL,
 })
 
 if (!BUCKET_NAME || !CLOUDFRONT_URL) {
