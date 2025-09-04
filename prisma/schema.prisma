@@ -97,6 +97,8 @@ model Media {
   mimeType    String
   
   caption     String?
+  mediaSituationId String?   // メディアシチュエーションマスタへの外部キー
+  mediaSituation   MediaSituation? @relation(fields: [mediaSituationId], references: [id], onDelete: SetNull)
   
   isApproved  Boolean   @default(false)
   approvedAt  DateTime?
@@ -108,8 +110,25 @@ model Media {
   @@index([userId])
   @@index([isApproved])
   @@index([createdAt])
+  @@index([mediaSituationId])
 }
 
+// メディアシチュエーションマスタ
+model MediaSituation {
+  id          String    @id @default(cuid())
+  name        String    // 例: 挙式、披露宴、二次会、受付、歓談
+  description String?   // 説明
+  order       Int       // 表示順
+  isActive    Boolean   @default(true)
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  media       Media[]   // このシチュエーションに属するメディア
+  
+  @@index([order])
+  @@index([isActive])
+}
 
 // スケジュール
 model Schedule {
