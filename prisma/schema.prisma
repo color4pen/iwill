@@ -119,7 +119,6 @@ model MediaSituation {
   name        String    // 例: 挙式、披露宴、二次会、受付、歓談
   description String?   // 説明
   order       Int       // 表示順
-  isActive    Boolean   @default(true)
   
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
@@ -127,7 +126,6 @@ model MediaSituation {
   media       Media[]   // このシチュエーションに属するメディア
   
   @@index([order])
-  @@index([isActive])
 }
 
 // スケジュール
