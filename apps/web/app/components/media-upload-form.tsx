@@ -138,18 +138,34 @@ export default function MediaUploadForm({ onUploadComplete }: { onUploadComplete
       // アップロード完了処理
       await new Promise((resolve, reject) => {
         xhr.onload = () => {
-          if (xhr.status === 200) {
+          if (xhr.status === 200 || xhr.status === 204) {
             resolve(xhr.response)
           } else {
-            reject(new Error(`アップロードに失敗しました: ${xhr.statusText}`))
+            console.error(`Upload failed with status: ${xhr.status}`)
+            let errorMsg = `アップロードに失敗しました: ${xhr.status}`
+            if (xhr.status === 403) {
+              errorMsg += " (アクセスが拒否されました。管理者にお問い合わせください)"
+            } else if (xhr.status === 413) {
+              errorMsg += " (ファイルサイズが大きすぎます)"
+            } else if (xhr.status >= 500) {
+              errorMsg += " (サーバーエラーが発生しました。しばらく待ってから再試行してください)"
+            }
+            reject(new Error(errorMsg))
           }
         }
-        xhr.onerror = () => reject(new Error("ネットワークエラー"))
+        xhr.onerror = () => {
+          console.error("Network error during upload")
+          reject(new Error("ネットワークエラーが発生しました"))
+        }
         
         xhr.open("PUT", uploadUrl)
         xhr.setRequestHeader("Content-Type", file.type)
         // S3暗号化のヘッダーを追加
         xhr.setRequestHeader("x-amz-server-side-encryption", "AES256")
+        
+        // アップロード開始をログ出力
+        console.log(`Starting upload: ${file.name} (${file.size} bytes)`)
+        
         xhr.send(file)
       })
 

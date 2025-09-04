@@ -5,7 +5,6 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { S3Client, PutObjectCommand, HeadObjectCommand } from "@aws-sdk/client-s3"
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
-import { STSClient, AssumeRoleCommand } from "@aws-sdk/client-sts"
 import { revalidatePath } from "next/cache"
 
 // 環境変数の検証
@@ -28,48 +27,12 @@ if (!BUCKET_NAME || !CLOUDFRONT_URL) {
   throw new Error(`AWS環境変数が設定されていません: BUCKET_NAME=${BUCKET_NAME}, CLOUDFRONT_URL=${CLOUDFRONT_URL}`)
 }
 
-// 一時的な認証情報を取得してS3クライアントを作成
-async function getS3ClientWithAssumeRole() {
-  // ローカル環境では通常のクライアントを返す
-  if (!process.env.VERCEL) {
-    return new S3Client({
-      region: AWS_REGION,
-      requestChecksumCalculation: "WHEN_REQUIRED",
-      responseChecksumValidation: "WHEN_REQUIRED",
-    })
-  }
-
-  // Vercel環境ではAssumeRoleを使用
-  if (!AWS_ROLE_ARN) {
-    throw new Error("AWS_ROLE_ARN is not set")
-  }
-
-  const stsClient = new STSClient({ region: AWS_REGION })
-  
-  // MediaUploadRoleを引き受ける（このロールはS3への直接アクセス権限を持つ）
-  const assumeRoleCommand = new AssumeRoleCommand({
-    RoleArn: "arn:aws:iam::513202407976:role/iwill-media-upload-role-IwillMediaStack-dev",
-    RoleSessionName: `vercel-upload-${Date.now()}`,
-    DurationSeconds: 900, // 15分
-  })
-
-  const { Credentials } = await stsClient.send(assumeRoleCommand)
-  
-  if (!Credentials) {
-    throw new Error("Failed to assume role")
-  }
-
-  return new S3Client({
-    region: AWS_REGION,
-    credentials: {
-      accessKeyId: Credentials.AccessKeyId!,
-      secretAccessKey: Credentials.SecretAccessKey!,
-      sessionToken: Credentials.SessionToken!,
-    },
-    requestChecksumCalculation: "WHEN_REQUIRED",
-    responseChecksumValidation: "WHEN_REQUIRED",
-  })
-}
+// S3クライアントの初期化
+const s3Client = new S3Client({
+  region: AWS_REGION,
+  requestChecksumCalculation: "WHEN_REQUIRED",
+  responseChecksumValidation: "WHEN_REQUIRED",
+})
 
 // ファイルタイプとサイズの制限
 const ALLOWED_FILE_TYPES = [
@@ -111,9 +74,6 @@ export async function createUploadUrl(
   const uniqueFileName = `${session.user.id}/${timestamp}-${fileName}`
 
   try {
-    // AssumeRoleでS3クライアントを取得
-    const s3Client = await getS3ClientWithAssumeRole()
-    
     // S3アップロード用のパラメータ
     const command = new PutObjectCommand({
       Bucket: BUCKET_NAME,
@@ -153,6 +113,8 @@ export async function createUploadUrl(
       roleArn: AWS_ROLE_ARN || "not set",
       credentialsType: credentials ? credentials.constructor.name : "none",
       hasSessionToken: credentials?.sessionToken ? "yes" : "no",
+      // 実際のアクセスキーの最初の10文字を表示（デバッグ用）
+      accessKeyPrefix: process.env.AWS_ACCESS_KEY_ID?.substring(0, 10) || "none",
     })
 
     return {
