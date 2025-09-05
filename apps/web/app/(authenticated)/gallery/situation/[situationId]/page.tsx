@@ -8,17 +8,18 @@ import { ArrowLeft } from "lucide-react"
 import { notFound } from "next/navigation"
 
 interface PageProps {
-  params: {
+  params: Promise<{
     situationId: string
-  }
+  }>
 }
 
 export default async function SituationMediaPage({ params }: PageProps) {
+  const { situationId } = await params
   const session = await getServerSession(authOptions)
   
   // シチュエーション情報を取得
   const situation = await prisma.mediaSituation.findUnique({
-    where: { id: params.situationId },
+    where: { id: situationId },
   })
 
   if (!situation) {
@@ -26,7 +27,7 @@ export default async function SituationMediaPage({ params }: PageProps) {
   }
 
   // そのシチュエーションのメディアを取得
-  const situationMedia = await getMediaBySituation(params.situationId, 100)
+  const situationMedia = await getMediaBySituation(situationId, 100)
 
   return (
     <div>
