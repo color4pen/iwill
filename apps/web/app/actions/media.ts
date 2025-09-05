@@ -157,8 +157,8 @@ export async function saveMediaMetadata(
     const fileDir = keyParts.slice(0, -1).join('/')
     
     // 動画の場合は拡張子を.jpgに変更
-    let thumbnailFileName = fileName
-    if (mimeType.startsWith("video/")) {
+    let thumbnailFileName = fileName || ''
+    if (mimeType.startsWith("video/") && fileName) {
       // 拡張子を.jpgに変更（.mp4 → .jpg, .mov → .jpg）
       thumbnailFileName = fileName.replace(/\.[^/.]+$/, '') + '.jpg'
     }
