@@ -169,7 +169,6 @@ export default function MediaUploadForm({ onUploadComplete }: { onUploadComplete
           if (xhr.status === 200 || xhr.status === 204) {
             resolve(xhr.response)
           } else {
-            console.error(`Upload failed with status: ${xhr.status}`)
             let errorMsg = `アップロードに失敗しました: ${xhr.status}`
             if (xhr.status === 403) {
               errorMsg += " (アクセスが拒否されました。管理者にお問い合わせください)"
@@ -182,7 +181,6 @@ export default function MediaUploadForm({ onUploadComplete }: { onUploadComplete
           }
         }
         xhr.onerror = () => {
-          console.error("Network error during upload")
           reject(new Error("ネットワークエラーが発生しました"))
         }
         
@@ -191,8 +189,6 @@ export default function MediaUploadForm({ onUploadComplete }: { onUploadComplete
         // S3暗号化のヘッダーを追加
         xhr.setRequestHeader("x-amz-server-side-encryption", "AES256")
         
-        // アップロード開始をログ出力
-        console.log(`Starting upload: ${file.name} (${file.size} bytes)`)
         
         xhr.send(file)
       })

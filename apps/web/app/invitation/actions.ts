@@ -70,7 +70,6 @@ export async function acceptInvitation(
 
     return { success: true, user }
   } catch (error) {
-    console.error("Failed to accept invitation:", error)
     return { error: "招待の処理に失敗しました" }
   }
 }

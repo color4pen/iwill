@@ -10,14 +10,9 @@ export async function markNotificationAsRead(notificationId: string) {
   const session = await getServerSession(authOptions)
   
   if (!session?.user?.id) {
-    console.error("markNotificationAsRead: No user ID in session", session)
     throw new Error("Unauthorized")
   }
 
-  console.log("markNotificationAsRead: Attempting to mark as read", {
-    userId: session.user.id,
-    notificationId: notificationId
-  })
 
   try {
     const result = await prisma.notificationRead.create({
@@ -27,17 +22,14 @@ export async function markNotificationAsRead(notificationId: string) {
       }
     })
     
-    console.log("markNotificationAsRead: Successfully created", result)
     
     revalidatePath(paths.notifications.index)
     revalidatePath(paths.notifications.detail(notificationId))
   } catch (error: any) {
     // 既に既読の場合はエラーを無視
     if (error.code === 'P2002') {
-      console.log("markNotificationAsRead: Already marked as read")
       return
     }
-    console.error("markNotificationAsRead: Error", error)
     throw error
   }
 }

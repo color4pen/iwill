@@ -27,13 +27,9 @@ export default async function MyPage() {
       take: 50, // 最新50件まで
     });
   } catch (error) {
-    console.error('Error fetching user media:', error);
     // エラーが発生してもページを表示できるようにデフォルト値を使用
   }
 
-  // デバッグ用のログ出力
-  console.log('MyPage - Session User:', session.user);
-  console.log('MyPage - User Media Count:', userMedia.length);
 
   return (
     <MyPageClient 

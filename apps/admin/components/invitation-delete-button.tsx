@@ -21,7 +21,6 @@ export default function InvitationDeleteButton({ invitationId }: InvitationDelet
       await deleteInvitation(invitationId)
       router.refresh()
     } catch (error) {
-      console.error("Error:", error)
       alert("削除に失敗しました")
       setIsDeleting(false)
     }

@@ -23,7 +23,6 @@ export default function DeleteNotificationButton({ notificationId }: DeleteNotif
       await deleteNotification(notificationId)
       router.refresh()
     } catch (error) {
-      console.error("Error:", error)
       alert("削除に失敗しました")
       setIsDeleting(false)
     }

@@ -21,7 +21,6 @@ export default function ScheduleDeleteButton({ scheduleId }: ScheduleDeleteButto
       await deleteSchedule(scheduleId)
       router.refresh()
     } catch (error) {
-      console.error("Error:", error)
       alert("削除に失敗しました")
       setIsDeleting(false)
     }

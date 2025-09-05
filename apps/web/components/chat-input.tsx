@@ -30,7 +30,6 @@ export default function ChatInput({ threadId }: ChatInputProps) {
       await sendMessage(threadId, message.trim())
       setMessage("")
     } catch (error) {
-      console.error("Failed to send message:", error)
       alert("メッセージの送信に失敗しました")
     } finally {
       setIsSending(false)
