@@ -22,7 +22,7 @@ async function getMedia(
   
   const where: {
     mediaSituationId?: string;
-    approvalStatus?: string;
+    isApproved?: boolean;
     userId?: string;
   } = {};
   if (situationId && situationId !== 'all') {
