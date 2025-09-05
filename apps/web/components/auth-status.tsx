@@ -66,11 +66,13 @@ export default function AuthStatus() {
               <p className="font-medium text-sm truncate">{session.user.name || "ゲスト"}</p>
               <p className="text-xs text-gray-500 truncate">{session.user.email}</p>
             </div>
-            <div 
-              className="block px-4 py-2 text-sm text-gray-400 cursor-not-allowed"
+            <Link 
+              href={paths.mypage}
+              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              onClick={() => setIsMenuOpen(false)}
             >
-              プロフィール（準備中）
-            </div>
+              プロフィール
+            </Link>
             <a 
               href={window.location.hostname === 'localhost' 
                 ? 'http://localhost:3001' 
