@@ -25,11 +25,10 @@ export default async function SituationsPage() {
     redirect("/login");
   }
 
-  const unreadCount = await getUnreadInquiryCountForAdmin();
   const situations = await getMediaSituations();
 
   return (
-    <AdminLayout user={session.user} unreadCount={unreadCount}>
+    <AdminLayout user={session.user}>
       <div className="py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
           <div className="flex justify-between items-center mb-8">
