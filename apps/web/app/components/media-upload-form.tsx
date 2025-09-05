@@ -60,6 +60,34 @@ export default function MediaUploadForm({ onUploadComplete }: { onUploadComplete
         })
       }
       reader.readAsDataURL(file)
+    } else if (file.type.startsWith("video/")) {
+      // 動画のサムネイルを生成
+      const video = document.createElement("video")
+      const canvas = document.createElement("canvas")
+      const ctx = canvas.getContext("2d")
+      
+      video.onloadeddata = () => {
+        video.currentTime = 0 // 最初のフレーム
+      }
+      
+      video.onseeked = () => {
+        canvas.width = video.videoWidth
+        canvas.height = video.videoHeight
+        ctx?.drawImage(video, 0, 0, canvas.width, canvas.height)
+        
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const url = URL.createObjectURL(blob)
+            setSelectedFilesPreviews(prev => {
+              const newMap = new Map(prev)
+              newMap.set(file.name, url)
+              return newMap
+            })
+          }
+        }, "image/jpeg", 0.8)
+      }
+      
+      video.src = URL.createObjectURL(file)
     }
   }
 

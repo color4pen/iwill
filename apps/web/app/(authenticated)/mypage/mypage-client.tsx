@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import MediaImage from "@/components/media-image";
 import { paths } from "@/lib/paths";
 
 interface MyPageClientProps {
@@ -64,7 +65,7 @@ export default function MyPageClient({ user, userMedia = [] }: MyPageClientProps
               </div>
             </div>
             <Link
-              href={paths.gallery}
+              href={paths.upload}
               className="inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
             >
               <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -86,18 +87,31 @@ export default function MyPageClient({ user, userMedia = [] }: MyPageClientProps
                   style={{ aspectRatio: '1/1' }}
                 >
                   {media.mimeType.startsWith('image/') ? (
-                    <Image
-                      src={media.thumbnailUrl || media.fileUrl}
+                    <MediaImage
+                      src={media.fileUrl}
+                      thumbnailUrl={media.thumbnailUrl}
                       alt={media.caption || "写真"}
                       fill
                       className="object-cover"
                       sizes="(max-width: 640px) 33vw, (max-width: 768px) 25vw, 20vw"
                     />
                   ) : (
-                    <div className="w-full h-full bg-gray-300 flex items-center justify-center">
-                      <svg className="w-8 h-8 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                      </svg>
+                    <div className="relative w-full h-full">
+                      <MediaImage
+                        src={media.fileUrl}
+                        thumbnailUrl={media.thumbnailUrl}
+                        alt={media.caption || "動画"}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 640px) 33vw, (max-width: 768px) 25vw, 20vw"
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="bg-black bg-opacity-50 rounded-full p-2">
+                          <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                          </svg>
+                        </div>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -128,7 +142,7 @@ export default function MyPageClient({ user, userMedia = [] }: MyPageClientProps
                 結婚式の思い出の写真や動画をアップロードして、他の参列者と共有しましょう。
               </p>
               <Link
-                href={paths.gallery}
+                href={paths.upload}
                 className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition-colors"
               >
                 <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">

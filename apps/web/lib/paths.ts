@@ -14,6 +14,7 @@ export const paths = {
   // 認証が必要なページ
   mypage: '/mypage',
   gallery: '/gallery',
+  upload: '/upload',
   
   // 結婚式情報
   info: {

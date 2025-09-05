@@ -145,11 +145,26 @@ export async function saveMediaMetadata(
 
   const fileUrl = `${CLOUDFRONT_URL}/${fileKey}`
 
-  // サムネイル用URLの生成（画像の場合）
+  // サムネイルURLの生成
   let thumbnailUrl = null
-  if (mimeType.startsWith("image/")) {
-    // 将来的にサムネイル生成機能を実装する場合はここで処理
-    thumbnailUrl = fileUrl // 暫定的に同じURLを使用
+  
+  // Lambda関数でサムネイルが生成される想定のパスを設定
+  if (mimeType.startsWith("image/") || mimeType.startsWith("video/")) {
+    // サムネイルのパスは元のファイルパスに基づいて生成
+    // 例: users/123/timestamp-file.jpg → users/123/thumbnails/timestamp-file.jpg
+    const keyParts = fileKey.split('/')
+    const fileName = keyParts[keyParts.length - 1]
+    const fileDir = keyParts.slice(0, -1).join('/')
+    
+    // 動画の場合は拡張子を.jpgに変更
+    let thumbnailFileName = fileName
+    if (mimeType.startsWith("video/")) {
+      // 拡張子を.jpgに変更（.mp4 → .jpg, .mov → .jpg）
+      thumbnailFileName = fileName.replace(/\.[^/.]+$/, '') + '.jpg'
+    }
+    
+    const thumbnailKey = fileDir ? `${fileDir}/thumbnails/${thumbnailFileName}` : `thumbnails/${thumbnailFileName}`
+    thumbnailUrl = `${CLOUDFRONT_URL}/${thumbnailKey}`
   }
 
   // データベースに保存
@@ -209,6 +224,76 @@ export async function getApprovedMedia(limit = 100) {
           image: true,
         },
       },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    take: limit,
+  })
+
+  return media
+}
+
+/**
+ * メディアシチュエーション一覧を取得
+ */
+export async function getMediaSituations() {
+  const situations = await prisma.mediaSituation.findMany({
+    orderBy: {
+      order: "asc",
+    },
+    include: {
+      _count: {
+        select: { media: true },
+      },
+    },
+  })
+
+  return situations
+}
+
+/**
+ * シチュエーション別のメディアを取得
+ */
+export async function getMediaBySituation(situationId: string, limit = 50) {
+  const media = await prisma.media.findMany({
+    where: {
+      mediaSituationId: situationId,
+      // 承認状態に関係なくすべて取得
+    },
+    include: {
+      user: {
+        select: {
+          name: true,
+          image: true,
+        },
+      },
+      mediaSituation: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    take: limit,
+  })
+
+  return media
+}
+
+/**
+ * 最新メディアを取得（限定数）
+ */
+export async function getRecentMedia(limit = 12) {
+  const media = await prisma.media.findMany({
+    // 承認状態に関係なくすべて取得
+    where: {},
+    include: {
+      user: {
+        select: {
+          name: true,
+          image: true,
+        },
+      },
+      mediaSituation: true,
     },
     orderBy: {
       createdAt: "desc",
