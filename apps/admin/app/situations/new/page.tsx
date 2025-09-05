@@ -2,7 +2,6 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import AdminLayout from "@/components/admin-layout";
-import { getUnreadInquiryCountForAdmin } from "@/lib/get-unread-count";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 
