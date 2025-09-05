@@ -15,8 +15,6 @@ const envSchema = z.object({
   LINE_CLIENT_ID: z.string().min(1, 'LINE_CLIENT_IDを設定してください'),
   LINE_CLIENT_SECRET: z.string().min(1, 'LINE_CLIENT_SECRETを設定してください'),
   
-  // アプリケーション設定
-  WEDDING_DATE: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'YYYY-MM-DD形式で設定してください').optional(),
   
   // 環境
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
@@ -95,40 +93,3 @@ export function getBaseUrl(): string {
   return 'http://localhost:3000'
 }
 
-/**
- * 結婚式の日付を取得
- */
-export function getWeddingDate(): Date | null {
-  const weddingDate = process.env.WEDDING_DATE
-  if (!weddingDate) return null
-  
-  const date = new Date(weddingDate)
-  if (isNaN(date.getTime())) return null
-  
-  return date
-}
-
-/**
- * 結婚式当日かどうかを判定
- */
-export function isWeddingDay(): boolean {
-  const weddingDate = getWeddingDate()
-  if (!weddingDate) return false
-  
-  const today = new Date()
-  return (
-    today.getFullYear() === weddingDate.getFullYear() &&
-    today.getMonth() === weddingDate.getMonth() &&
-    today.getDate() === weddingDate.getDate()
-  )
-}
-
-/**
- * 結婚式前かどうかを判定
- */
-export function isBeforeWedding(): boolean {
-  const weddingDate = getWeddingDate()
-  if (!weddingDate) return true
-  
-  return new Date() < weddingDate
-}
