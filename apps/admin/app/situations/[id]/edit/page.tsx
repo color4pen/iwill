@@ -2,7 +2,6 @@ import { getServerSession } from "next-auth";
 import { redirect, notFound } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import AdminLayout from "@/components/admin-layout";
-import { getUnreadInquiryCountForAdmin } from "@/lib/get-unread-count";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import DeleteSituationButton from "@/components/delete-situation-button";
@@ -52,7 +51,6 @@ export default async function EditSituationPage({
 
   const { id } = await params;
 
-  const unreadCount = await getUnreadInquiryCountForAdmin();
   const situation = await prisma.mediaSituation.findUnique({
     where: { id },
     include: {
@@ -67,7 +65,7 @@ export default async function EditSituationPage({
   }
 
   return (
-    <AdminLayout user={session.user} unreadCount={unreadCount}>
+    <AdminLayout user={session.user}>
       <div className="py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
           <div className="max-w-2xl mx-auto">
