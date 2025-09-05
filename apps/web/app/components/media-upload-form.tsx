@@ -141,7 +141,7 @@ export default function MediaUploadForm({ onUploadComplete }: { onUploadComplete
       )
 
       // 1. アップロードURLを取得
-      const { uploadUrl, fileKey } = await createUploadUrl(
+      const { uploadUrl, fileKey, mediaId } = await createUploadUrl(
         file.name,
         file.type,
         file.size
@@ -205,7 +205,7 @@ export default function MediaUploadForm({ onUploadComplete }: { onUploadComplete
         return newMap
       })
 
-      await saveMediaMetadata(fileKey, file.name, file.size, file.type)
+      await saveMediaMetadata(mediaId)
 
       // 完了
       setUploadProgress((prev) => {

@@ -15,15 +15,6 @@ const CLOUDFRONT_URL = env.AWS_CLOUDFRONT_URL
 const AWS_REGION = env.AWS_REGION
 const AWS_ROLE_ARN = env.AWS_ROLE_ARN
 
-// デバッグ情報
-console.log("環境変数の確認:", {
-  BUCKET_NAME: BUCKET_NAME ? "設定済み" : "未設定",
-  CLOUDFRONT_URL: CLOUDFRONT_URL ? "設定済み" : "未設定",
-  AWS_REGION,
-  VERCEL_ENV: env.VERCEL_ENV,
-  VERCEL_URL: env.VERCEL_URL,
-  VERCEL_BRANCH_URL: env.VERCEL_BRANCH_URL,
-})
 
 if (!BUCKET_NAME || !CLOUDFRONT_URL) {
   throw new Error(`AWS環境変数が設定されていません: BUCKET_NAME=${BUCKET_NAME}, CLOUDFRONT_URL=${CLOUDFRONT_URL}`)
@@ -71,15 +62,30 @@ export async function createUploadUrl(
     throw new Error("ファイルサイズが100MBを超えています")
   }
 
-  // ユニークなファイル名を生成
-  const timestamp = Date.now()
-  const uniqueFileName = `${session.user.id}/${timestamp}-${fileName}`
+  // 拡張子を取得（小文字に統一）
+  const fileExtension = fileName.split('.').pop()?.toLowerCase() || ''
+  
+  // 先にメディアレコードを作成してIDを取得
+  const media = await prisma.media.create({
+    data: {
+      userId: session.user.id,
+      fileUrl: '', // 後で更新
+      thumbnailUrl: null,
+      fileName,
+      fileSize,
+      mimeType: fileType,
+      isApproved: false,
+    },
+  })
+
+  // メディアIDを使ったS3キーを生成
+  const s3Key = `${session.user.id}/${media.id}.${fileExtension}`
 
   try {
     // S3アップロード用のパラメータ
     const command = new PutObjectCommand({
       Bucket: BUCKET_NAME,
-      Key: uniqueFileName,
+      Key: s3Key,
       ContentType: fileType,
       // ContentLengthは署名に含めない（実際のアップロード時にブラウザが設定）
       ServerSideEncryption: "AES256", // S3管理の暗号化を明示的に指定
@@ -102,42 +108,34 @@ export async function createUploadUrl(
     url.searchParams.delete("x-amz-sdk-checksum-algorithm")
     uploadUrl = url.toString()
     
-    // デバッグ: 現在の認証情報を確認
-    const credentials = await s3Client.config.credentials()
-    
-    console.log("Presigned URL generated successfully")
-    console.log("Generated URL (first 100 chars):", uploadUrl.substring(0, 100) + "...")
-    console.log("Debug info:", {
-      vercel: env.VERCEL ? "true" : "false",
-      awsKeyId: env.AWS_ACCESS_KEY_ID ? "available" : "not available",
-      awsSecret: env.AWS_SECRET_ACCESS_KEY ? "available" : "not available",
-      awsToken: env.AWS_SESSION_TOKEN ? "available" : "not available",
-      roleArn: AWS_ROLE_ARN || "not set",
-      credentialsType: credentials ? credentials.constructor.name : "none",
-      hasSessionToken: credentials?.sessionToken ? "yes" : "no",
-      // 実際のアクセスキーの最初の10文字を表示（デバッグ用）
-      accessKeyPrefix: env.AWS_ACCESS_KEY_ID?.substring(0, 10) || "none",
+
+    // メディアレコードを更新してURLを保存
+    const fileUrl = `${CLOUDFRONT_URL}/${s3Key}`
+    await prisma.media.update({
+      where: { id: media.id },
+      data: { fileUrl },
     })
 
     return {
       uploadUrl,
-      fileKey: uniqueFileName,
-      fileUrl: `${CLOUDFRONT_URL}/${uniqueFileName}`,
+      fileKey: s3Key,
+      fileUrl,
+      mediaId: media.id,
     }
   } catch (error) {
-    console.error("Error generating presigned URL:", error)
+    // エラー時はメディアレコードを削除
+    await prisma.media.delete({
+      where: { id: media.id },
+    })
     throw error
   }
 }
 
 /**
- * アップロード完了後のメタデータをDBに保存
+ * アップロード完了後のメタデータを更新
  */
 export async function saveMediaMetadata(
-  fileKey: string,
-  fileName: string,
-  fileSize: number,
-  mimeType: string,
+  mediaId: string,
   caption?: string
 ) {
   const session = await getServerSession(authOptions)
@@ -145,22 +143,32 @@ export async function saveMediaMetadata(
     throw new Error("認証が必要です")
   }
 
-  const fileUrl = `${CLOUDFRONT_URL}/${fileKey}`
+  // メディアレコードが存在し、ユーザーが所有者であることを確認
+  const media = await prisma.media.findFirst({
+    where: {
+      id: mediaId,
+      userId: session.user.id,
+    },
+  })
+
+  if (!media) {
+    throw new Error("メディアが見つかりません")
+  }
 
   // サムネイルURLの生成
   let thumbnailUrl = null
   
   // Lambda関数でサムネイルが生成される想定のパスを設定
-  if (mimeType.startsWith("image/") || mimeType.startsWith("video/")) {
-    // サムネイルのパスは元のファイルパスに基づいて生成
-    // 例: users/123/timestamp-file.jpg → users/123/thumbnails/timestamp-file.jpg
+  if (media.mimeType.startsWith("image/") || media.mimeType.startsWith("video/")) {
+    // fileUrlからS3キーを取得
+    const fileKey = media.fileUrl.replace(`${CLOUDFRONT_URL}/`, '')
     const keyParts = fileKey.split('/')
     const fileName = keyParts[keyParts.length - 1]
     const fileDir = keyParts.slice(0, -1).join('/')
     
     // 動画の場合は拡張子を.jpgに変更
     let thumbnailFileName = fileName || ''
-    if (mimeType.startsWith("video/") && fileName) {
+    if (media.mimeType.startsWith("video/") && fileName) {
       // 拡張子を.jpgに変更（.mp4 → .jpg, .mov → .jpg）
       thumbnailFileName = fileName.replace(/\.[^/.]+$/, '') + '.jpg'
     }
@@ -169,17 +177,12 @@ export async function saveMediaMetadata(
     thumbnailUrl = `${CLOUDFRONT_URL}/${thumbnailKey}`
   }
 
-  // データベースに保存
-  const media = await prisma.media.create({
+  // メディアレコードを更新
+  const updatedMedia = await prisma.media.update({
+    where: { id: mediaId },
     data: {
-      userId: session.user.id,
-      fileUrl,
       thumbnailUrl,
-      fileName,
-      fileSize,
-      mimeType,
       caption,
-      isApproved: false, // デフォルトで未承認
     },
   })
 
@@ -187,7 +190,7 @@ export async function saveMediaMetadata(
   revalidatePath("/mypage")
   revalidatePath("/gallery")
 
-  return media
+  return updatedMedia
 }
 
 /**
