@@ -42,7 +42,7 @@ async function deleteSituation(formData: FormData) {
 export default async function EditSituationPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
   const session = await getServerSession(authOptions);
   
@@ -50,9 +50,11 @@ export default async function EditSituationPage({
     redirect("/login");
   }
 
+  const { id } = await params;
+
   const unreadCount = await getUnreadInquiryCountForAdmin();
   const situation = await prisma.mediaSituation.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: {
       _count: {
         select: { media: true }
