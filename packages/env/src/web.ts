@@ -1,16 +1,4 @@
-import { z } from 'zod'
-import { baseEnvSchema, validateEnv } from './base'
-
-/**
- * Webアプリ用の環境変数スキーマ
- */
-const webEnvSchema = baseEnvSchema.extend({
-  // Optional features
-  ENABLE_GALLERY: z.enum(['true', 'false']).transform(val => val === 'true').default('true'),
-  ENABLE_INQUIRIES: z.enum(['true', 'false']).transform(val => val === 'true').default('true'),
-})
-
-export type WebEnv = z.infer<typeof webEnvSchema>
+import { webEnvSchema, validateEnv, type WebEnv } from './all'
 
 /**
  * Webアプリの環境変数を取得
@@ -18,6 +6,9 @@ export type WebEnv = z.infer<typeof webEnvSchema>
 export function getWebEnv(): WebEnv {
   return validateEnv(webEnvSchema)
 }
+
+// 互換性のために再エクスポート
+export { webEnvSchema, type WebEnv } from './all'
 
 // 環境変数をエクスポート（シングルトン）
 export const webEnv = getWebEnv()

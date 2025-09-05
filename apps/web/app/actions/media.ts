@@ -6,21 +6,23 @@ import { authOptions } from "@/lib/auth"
 import { S3Client, PutObjectCommand, HeadObjectCommand } from "@aws-sdk/client-s3"
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
 import { revalidatePath } from "next/cache"
+import { getWebEnv } from "@repo/env"
 
-// 環境変数の検証
-const BUCKET_NAME = process.env.AWS_S3_BUCKET_NAME
-const CLOUDFRONT_URL = process.env.AWS_CLOUDFRONT_URL
-const AWS_REGION = process.env.AWS_REGION || "ap-northeast-1"
-const AWS_ROLE_ARN = process.env.AWS_ROLE_ARN
+// 環境変数の取得
+const env = getWebEnv()
+const BUCKET_NAME = env.AWS_S3_BUCKET_NAME
+const CLOUDFRONT_URL = env.AWS_CLOUDFRONT_URL
+const AWS_REGION = env.AWS_REGION
+const AWS_ROLE_ARN = env.AWS_ROLE_ARN
 
 // デバッグ情報
 console.log("環境変数の確認:", {
   BUCKET_NAME: BUCKET_NAME ? "設定済み" : "未設定",
   CLOUDFRONT_URL: CLOUDFRONT_URL ? "設定済み" : "未設定",
   AWS_REGION,
-  VERCEL_ENV: process.env.VERCEL_ENV,
-  VERCEL_URL: process.env.VERCEL_URL,
-  VERCEL_BRANCH_URL: process.env.VERCEL_BRANCH_URL,
+  VERCEL_ENV: env.VERCEL_ENV,
+  VERCEL_URL: env.VERCEL_URL,
+  VERCEL_BRANCH_URL: env.VERCEL_BRANCH_URL,
 })
 
 if (!BUCKET_NAME || !CLOUDFRONT_URL) {
@@ -106,15 +108,15 @@ export async function createUploadUrl(
     console.log("Presigned URL generated successfully")
     console.log("Generated URL (first 100 chars):", uploadUrl.substring(0, 100) + "...")
     console.log("Debug info:", {
-      vercel: process.env.VERCEL ? "true" : "false",
-      awsKeyId: process.env.AWS_ACCESS_KEY_ID ? "available" : "not available",
-      awsSecret: process.env.AWS_SECRET_ACCESS_KEY ? "available" : "not available",
-      awsToken: process.env.AWS_SESSION_TOKEN ? "available" : "not available",
+      vercel: env.VERCEL ? "true" : "false",
+      awsKeyId: env.AWS_ACCESS_KEY_ID ? "available" : "not available",
+      awsSecret: env.AWS_SECRET_ACCESS_KEY ? "available" : "not available",
+      awsToken: env.AWS_SESSION_TOKEN ? "available" : "not available",
       roleArn: AWS_ROLE_ARN || "not set",
       credentialsType: credentials ? credentials.constructor.name : "none",
       hasSessionToken: credentials?.sessionToken ? "yes" : "no",
       // 実際のアクセスキーの最初の10文字を表示（デバッグ用）
-      accessKeyPrefix: process.env.AWS_ACCESS_KEY_ID?.substring(0, 10) || "none",
+      accessKeyPrefix: env.AWS_ACCESS_KEY_ID?.substring(0, 10) || "none",
     })
 
     return {

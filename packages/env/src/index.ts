@@ -1,50 +1,11 @@
-import { z } from 'zod'
-
-/**
- * 環境変数のスキーマ定義
- */
-const envSchema = z.object({
-  // データベース
-  DATABASE_URL: z.string().url('有効なデータベースURLを設定してください'),
-  
-  // NextAuth
-  NEXTAUTH_URL: z.string().url('有効なNEXTAUTH_URLを設定してください').optional(),
-  NEXTAUTH_SECRET: z.string().min(1, 'NEXTAUTH_SECRETを設定してください'),
-  
-  // LINE OAuth
-  LINE_CLIENT_ID: z.string().min(1, 'LINE_CLIENT_IDを設定してください'),
-  LINE_CLIENT_SECRET: z.string().min(1, 'LINE_CLIENT_SECRETを設定してください'),
-  
-  
-  // 環境
-  NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
-  
-  // オプション
-  VERCEL_URL: z.string().optional(),
-})
-
-/**
- * 環境変数の型定義
- */
-export type Env = z.infer<typeof envSchema>
+import { envSchema, validateEnv, type Env } from './all'
 
 /**
  * 環境変数をバリデーションして取得
  * @returns バリデーション済みの環境変数
  */
 export function getEnv(): Env {
-  try {
-    return envSchema.parse(process.env)
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      console.error('環境変数のバリデーションエラー:')
-      error.errors.forEach((err) => {
-        console.error(`- ${err.path.join('.')}: ${err.message}`)
-      })
-      throw new Error('環境変数の設定が不正です')
-    }
-    throw error
-  }
+  return validateEnv(envSchema)
 }
 
 /**
@@ -93,3 +54,19 @@ export function getBaseUrl(): string {
   return 'http://localhost:3000'
 }
 
+// 環境変数の型と検証関数をエクスポート
+export { 
+  envSchema, 
+  webEnvSchema, 
+  adminEnvSchema,
+  cdkEnvSchema,
+  validateEnv,
+  type Env,
+  type WebEnv,
+  type AdminEnv,
+  type CdkEnv
+} from './all'
+
+// 個別のアプリケーション用のエクスポート
+export { getWebEnv, webEnv } from './web'
+export { getAdminEnv, adminEnv } from './admin'
