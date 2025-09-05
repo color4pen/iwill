@@ -10,6 +10,9 @@ import MediaDeleteButton from "@/components/media-delete-button";
 import Pagination from "@/components/pagination";
 import Link from "next/link";
 import MediaFilter from "@/components/media-filter";
+import MediaSituationSelect from "@/components/media-situation-select";
+import MediaApprovalSelect from "@/components/media-approval-select";
+import MediaPreview from "@/components/media-preview";
 
 const ITEMS_PER_PAGE = 20;
 
@@ -78,7 +81,7 @@ async function getUsers() {
   });
 }
 
-async function toggleApproval(formData: FormData) {
+async function updateApprovalStatus(formData: FormData) {
   "use server";
   
   const id = formData.get("id") as string;
@@ -87,8 +90,24 @@ async function toggleApproval(formData: FormData) {
   await prisma.media.update({
     where: { id },
     data: { 
-      isApproved: !isApproved,
-      approvedAt: !isApproved ? new Date() : null,
+      isApproved,
+      approvedAt: isApproved ? new Date() : null,
+    },
+  });
+  
+  revalidatePath("/media");
+}
+
+async function updateMediaSituation(formData: FormData) {
+  "use server";
+  
+  const id = formData.get("id") as string;
+  const situationId = formData.get("situationId") as string;
+  
+  await prisma.media.update({
+    where: { id },
+    data: { 
+      mediaSituationId: situationId || null,
     },
   });
   
@@ -155,32 +174,29 @@ export default async function MediaPage({
             currentUserId={userId}
           />
 
-          <div className="bg-white rounded-lg shadow overflow-hidden">
+          <div className="bg-white rounded-lg shadow overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24">
                     プレビュー
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[120px]">
                     ユーザー
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[150px]">
                     キャプション
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[140px]">
                     シチュエーション
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    ファイル情報
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-32">
                     承認状態
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-28">
                     アップロード日
                   </th>
-                  <th className="relative px-6 py-3">
+                  <th className="relative px-6 py-3 w-20">
                     <span className="sr-only">操作</span>
                   </th>
                 </tr>
@@ -189,23 +205,13 @@ export default async function MediaPage({
                 {media.map((item) => (
                   <tr key={item.id}>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="w-20 h-20 relative bg-gray-100 rounded-lg overflow-hidden">
-                        {item.mimeType.startsWith('image/') ? (
-                          <Image
-                            src={item.thumbnailUrl || item.fileUrl}
-                            alt={item.caption || "画像"}
-                            fill
-                            className="object-cover"
-                            sizes="80px"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center">
-                            <svg className="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                            </svg>
-                          </div>
-                        )}
-                      </div>
+                      <MediaPreview
+                        fileUrl={item.fileUrl}
+                        thumbnailUrl={item.thumbnailUrl}
+                        mimeType={item.mimeType}
+                        caption={item.caption}
+                        fileName={item.fileName}
+                      />
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                       {item.user.name || "ゲスト"}
@@ -216,29 +222,19 @@ export default async function MediaPage({
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {item.mediaSituation?.name || "-"}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-500">
-                      <div className="text-xs">
-                        <p>{item.fileName}</p>
-                        <p className="text-gray-400">{Math.round(item.fileSize / 1024)}KB</p>
-                      </div>
+                      <MediaSituationSelect
+                        mediaId={item.id}
+                        currentSituationId={item.mediaSituationId}
+                        situations={situations}
+                        updateAction={updateMediaSituation}
+                      />
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <form action={toggleApproval} className="inline">
-                        <input type="hidden" name="id" value={item.id} />
-                        <input type="hidden" name="isApproved" value={item.isApproved.toString()} />
-                        <button
-                          type="submit"
-                          className={`px-3 py-1 text-xs font-semibold rounded-full ${
-                            item.isApproved
-                              ? "bg-green-100 text-green-800"
-                              : "bg-yellow-100 text-yellow-800"
-                          }`}
-                        >
-                          {item.isApproved ? "承認済み" : "未承認"}
-                        </button>
-                      </form>
+                      <MediaApprovalSelect
+                        mediaId={item.id}
+                        isApproved={item.isApproved}
+                        updateAction={updateApprovalStatus}
+                      />
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {new Date(item.createdAt).toLocaleDateString('ja-JP')}
@@ -250,7 +246,7 @@ export default async function MediaPage({
                 ))}
                 {media.length === 0 && (
                   <tr>
-                    <td colSpan={8} className="px-6 py-12 text-center">
+                    <td colSpan={7} className="px-6 py-12 text-center">
                       <p className="text-gray-500">アップロードされたメディアはありません</p>
                     </td>
                   </tr>
