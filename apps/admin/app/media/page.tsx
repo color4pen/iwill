@@ -1,5 +1,6 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import { authOptions } from "@/lib/auth";
 import AdminLayout from "@/components/admin-layout";
 import { prisma } from "@/lib/prisma";
