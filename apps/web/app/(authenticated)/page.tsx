@@ -1,5 +1,4 @@
 import { Calendar, Camera, User, Bell, HelpCircle, MapPin, MessageSquare } from "lucide-react";
-import { shouldEnableRestrictedFeatures } from "../utils/environment";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { MenuCard } from "../../components/menu-card";
@@ -9,7 +8,6 @@ import { paths } from "@/lib/paths";
 
 export default async function Home() {
   const session = await getServerSession(authOptions);
-  const enableAllFeatures = shouldEnableRestrictedFeatures();
 
   if (!session?.user) {
     redirect(paths.login);
@@ -54,8 +52,6 @@ export default async function Home() {
           href={paths.gallery}
           color="bg-amber-500"
           icon={<Camera size={24} strokeWidth={1.5} />}
-          disabled={!enableAllFeatures}
-          disabledText="9月7日から利用可能"
         />
         <MenuCard
           title="マイページ"
@@ -63,8 +59,6 @@ export default async function Home() {
           href={paths.mypage}
           color="bg-violet-500"
           icon={<User size={24} strokeWidth={1.5} />}
-          disabled={!enableAllFeatures}
-          disabledText="9月7日から利用可能"
         />
         <MenuCard
           title="お問い合わせ"
