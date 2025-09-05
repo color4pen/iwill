@@ -129,12 +129,12 @@ async function deleteMedia(formData: FormData) {
 export default async function MediaPage({
   searchParams,
 }: {
-  searchParams: { 
+  searchParams: Promise<{ 
     page?: string;
     situation?: string;
     approval?: string;
     user?: string;
-  };
+  }>;
 }) {
   const session = await getServerSession(authOptions);
   
@@ -142,10 +142,11 @@ export default async function MediaPage({
     redirect("/login");
   }
 
-  const currentPage = Number(searchParams.page) || 1;
-  const situationId = searchParams.situation || 'all';
-  const approvalStatus = searchParams.approval || 'all';
-  const userId = searchParams.user || 'all';
+  const params = await searchParams;
+  const currentPage = Number(params.page) || 1;
+  const situationId = params.situation || 'all';
+  const approvalStatus = params.approval || 'all';
+  const userId = params.user || 'all';
   
   const [{ media, totalPages, totalCount }, situations, users] = await Promise.all([
     getMedia(currentPage, situationId, approvalStatus, userId),
