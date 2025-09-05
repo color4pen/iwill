@@ -5,7 +5,6 @@ import AdminLayout from "@/components/admin-layout";
 import { getUnreadInquiryCountForAdmin } from "@/lib/get-unread-count";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import { revalidatePath } from "next/cache";
 
 async function getMediaSituations() {
   return await prisma.mediaSituation.findMany({

@@ -31,8 +31,6 @@ export default async function NewSituationPage() {
     redirect("/login");
   }
 
-  const unreadCount = await getUnreadInquiryCountForAdmin();
-  
   // 次の表示順を取得
   const maxOrder = await prisma.mediaSituation.findFirst({
     select: { order: true },

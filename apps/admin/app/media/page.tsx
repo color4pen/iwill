@@ -4,11 +4,8 @@ import { authOptions } from "@/lib/auth";
 import AdminLayout from "@/components/admin-layout";
 import { getUnreadInquiryCountForAdmin } from "@/lib/get-unread-count";
 import { prisma } from "@/lib/prisma";
-import Image from "next/image";
-import { revalidatePath } from "next/cache";
 import MediaDeleteButton from "@/components/media-delete-button";
 import Pagination from "@/components/pagination";
-import Link from "next/link";
 import MediaFilter from "@/components/media-filter";
 import MediaSituationSelect from "@/components/media-situation-select";
 import MediaApprovalSelect from "@/components/media-approval-select";
@@ -24,7 +21,11 @@ async function getMedia(
 ) {
   const skip = (page - 1) * ITEMS_PER_PAGE;
   
-  const where: any = {};
+  const where: {
+    mediaSituationId?: string;
+    approvalStatus?: string;
+    userId?: string;
+  } = {};
   if (situationId && situationId !== 'all') {
     where.mediaSituationId = situationId;
   }
@@ -147,7 +148,6 @@ export default async function MediaPage({
   const approvalStatus = searchParams.approval || 'all';
   const userId = searchParams.user || 'all';
   
-  const unreadCount = await getUnreadInquiryCountForAdmin();
   const [{ media, totalPages, totalCount }, situations, users] = await Promise.all([
     getMedia(currentPage, situationId, approvalStatus, userId),
     getMediaSituations(),
