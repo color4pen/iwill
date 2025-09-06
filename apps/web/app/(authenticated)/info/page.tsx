@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { MapPin, Calendar, Clock, Navigation, Users, Utensils, Camera, Music } from "lucide-react";
+import { MapPin, Calendar, Clock, Navigation, Users, Utensils, Camera, Music, ExternalLink, Church, Hotel, Coffee, Waves } from "lucide-react";
 import TimeSchedule from "@/components/info/TimeSchedule";
 import { prisma } from "@/lib/prisma";
 import { paths } from "@/lib/paths";
@@ -11,7 +11,11 @@ export const revalidate = 0;
 export default async function InfoPage() {
   const schedules = await prisma.schedule.findMany({
     where: { isActive: true },
-    orderBy: { order: "asc" },
+    orderBy: [
+      { date: "asc" },
+      { time: "asc" },
+      { order: "asc" }
+    ],
   });
 
   return (
@@ -37,10 +41,21 @@ export default async function InfoPage() {
             <Calendar className="w-8 h-8 text-blue-600 mr-3" />
             <h2 className="text-2xl font-semibold">日程</h2>
           </div>
-          <div className="space-y-2">
+          <div className="space-y-3">
             <div>
-              <p className="text-2xl font-bold text-gray-800">2025年9月21日</p>
-              <p className="text-lg text-gray-600">日曜日</p>
+              <p className="text-2xl font-bold text-gray-800">2025年9月21日（日）</p>
+            </div>
+            <div className="space-y-2 mt-4">
+              <div className="flex items-center gap-2">
+                <Church className="w-5 h-5 text-blue-500" />
+                <span className="text-gray-700">挙式開始</span>
+                <span className="font-semibold">14:15</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Utensils className="w-5 h-5 text-blue-500" />
+                <span className="text-gray-700">披露宴開始</span>
+                <span className="font-semibold">15:30</span>
+              </div>
             </div>
           </div>
         </div>
@@ -51,7 +66,17 @@ export default async function InfoPage() {
             <h2 className="text-2xl font-semibold">会場</h2>
           </div>
           <div className="space-y-2">
-            <p className="text-lg font-semibold text-gray-800">星野リゾート リゾナーレ八ヶ岳</p>
+            <div className="flex items-center gap-2">
+              <Link
+                href="https://hoshinoresorts.com/ja/hotels/risonareyatsugatake/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-lg font-semibold text-gray-800 hover:text-blue-600 transition-colors inline-flex items-center gap-2"
+              >
+                星野リゾート リゾナーレ八ヶ岳
+                <ExternalLink className="w-5 h-5 text-blue-600" />
+              </Link>
+            </div>
             <p className="text-gray-600 text-sm">〒408-0044</p>
             <p className="text-gray-600 text-sm mb-3">山梨県北杜市小淵沢町129-1</p>
             <Link
@@ -61,6 +86,20 @@ export default async function InfoPage() {
               <Navigation className="w-4 h-4 mr-1" />
               アクセス方法を見る
             </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* ご来館時のご案内 */}
+      <div className="bg-blue-50 border-l-4 border-blue-500 rounded-lg p-6 mb-8">
+        <div className="flex items-start">
+          <Navigation className="w-6 h-6 text-blue-600 mr-3 mt-1 flex-shrink-0" />
+          <div>
+            <h3 className="text-lg font-semibold text-blue-900 mb-2">ご来館時のご案内</h3>
+            <p className="text-blue-800">
+              ご到着されましたら、まずは<span className="font-semibold">フロントの婚礼カウンター</span>へお越しください。
+              スタッフがご案内いたします。
+            </p>
           </div>
         </div>
       </div>
@@ -99,6 +138,36 @@ export default async function InfoPage() {
                 <li>その他では自由に撮影いただけます</li>
                 <li>撮影した写真は今後追加される「ギャラリー」からシェアをお願いします</li>
               </ul>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-6 mt-6">
+          <div>
+            <h3 className="font-medium text-lg mb-3 flex items-center">
+              <Hotel className="w-5 h-5 mr-2 text-blue-600" />
+              宿泊について
+            </h3>
+            <div className="bg-gray-50 rounded-lg p-4">
+              <ul className="text-sm text-gray-600 space-y-1">
+                <li>チェックイン: 15:00〜</li>
+                <li>チェックアウト: 〜12:00</li>
+                <li>朝食: 7:00〜10:00（ビュッフェ）</li>
+                <li className="text-xs mt-2">※朝食は時間内にお召し上がりいただけます<br />※レストランの混雑状況は宿泊アプリからご確認いただけます</li>
+              </ul>
+            </div>
+          </div>
+
+          <div>
+            <h3 className="font-medium text-lg mb-3 flex items-center">
+              <Waves className="w-5 h-5 mr-2 text-blue-600" />
+              プールのご利用
+            </h3>
+            <div className="bg-gray-50 rounded-lg p-4">
+              <p className="text-sm text-gray-600">
+                結婚式当日は意外と入る時間がございません。<br />
+                ご利用を希望される方は、<span className="font-semibold">チェックアウト後</span>のご利用がおすすめです。
+              </p>
             </div>
           </div>
         </div>

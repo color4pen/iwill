@@ -17,6 +17,8 @@ const envConfig = {
     removalPolicy: cdk.RemovalPolicy.DESTROY, // 開発環境では削除可能
     corsOrigins: [
       'https://*.vercel.app',
+      'https://dev.iwill.yurinasu.com',
+      'https://iwill.yurinasu.com',
       'http://localhost:3000',
       'http://localhost:3001',
     ],

@@ -60,6 +60,34 @@ export default function MediaUploadForm({ onUploadComplete }: { onUploadComplete
         })
       }
       reader.readAsDataURL(file)
+    } else if (file.type.startsWith("video/")) {
+      // 動画のサムネイルを生成
+      const video = document.createElement("video")
+      const canvas = document.createElement("canvas")
+      const ctx = canvas.getContext("2d")
+      
+      video.onloadeddata = () => {
+        video.currentTime = 0 // 最初のフレーム
+      }
+      
+      video.onseeked = () => {
+        canvas.width = video.videoWidth
+        canvas.height = video.videoHeight
+        ctx?.drawImage(video, 0, 0, canvas.width, canvas.height)
+        
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const url = URL.createObjectURL(blob)
+            setSelectedFilesPreviews(prev => {
+              const newMap = new Map(prev)
+              newMap.set(file.name, url)
+              return newMap
+            })
+          }
+        }, "image/jpeg", 0.8)
+      }
+      
+      video.src = URL.createObjectURL(file)
     }
   }
 
@@ -113,7 +141,7 @@ export default function MediaUploadForm({ onUploadComplete }: { onUploadComplete
       )
 
       // 1. アップロードURLを取得
-      const { uploadUrl, fileKey } = await createUploadUrl(
+      const { uploadUrl, fileKey, mediaId } = await createUploadUrl(
         file.name,
         file.type,
         file.size
@@ -138,16 +166,30 @@ export default function MediaUploadForm({ onUploadComplete }: { onUploadComplete
       // アップロード完了処理
       await new Promise((resolve, reject) => {
         xhr.onload = () => {
-          if (xhr.status === 200) {
+          if (xhr.status === 200 || xhr.status === 204) {
             resolve(xhr.response)
           } else {
-            reject(new Error(`アップロードに失敗しました: ${xhr.statusText}`))
+            let errorMsg = `アップロードに失敗しました: ${xhr.status}`
+            if (xhr.status === 403) {
+              errorMsg += " (アクセスが拒否されました。管理者にお問い合わせください)"
+            } else if (xhr.status === 413) {
+              errorMsg += " (ファイルサイズが大きすぎます)"
+            } else if (xhr.status >= 500) {
+              errorMsg += " (サーバーエラーが発生しました。しばらく待ってから再試行してください)"
+            }
+            reject(new Error(errorMsg))
           }
         }
-        xhr.onerror = () => reject(new Error("ネットワークエラー"))
+        xhr.onerror = () => {
+          reject(new Error("ネットワークエラーが発生しました"))
+        }
         
         xhr.open("PUT", uploadUrl)
         xhr.setRequestHeader("Content-Type", file.type)
+        // S3暗号化のヘッダーを追加
+        xhr.setRequestHeader("x-amz-server-side-encryption", "AES256")
+        
+        
         xhr.send(file)
       })
 
@@ -159,7 +201,7 @@ export default function MediaUploadForm({ onUploadComplete }: { onUploadComplete
         return newMap
       })
 
-      await saveMediaMetadata(fileKey, file.name, file.size, file.type)
+      await saveMediaMetadata(mediaId)
 
       // 完了
       setUploadProgress((prev) => {

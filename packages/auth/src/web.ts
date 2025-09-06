@@ -40,10 +40,8 @@ export const webAuthOptions: NextAuthOptions = {
         // ユーザーが存在しない場合
         // 新規ユーザーの場合も一時的にログインを許可
         // （招待ページでトークン検証後にユーザー作成される）
-        console.log("New user signing in:", lineId)
         return true
       } catch (error) {
-        console.error("Error in signIn callback:", error)
         return false
       }
     },

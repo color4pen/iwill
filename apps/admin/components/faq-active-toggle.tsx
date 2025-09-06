@@ -20,8 +20,7 @@ export default function FAQActiveToggle({ faq }: FAQActiveToggleProps) {
 
     try {
       await toggleFAQStatus(faq.id, !faq.isActive)
-    } catch (error) {
-      console.error("Failed to update FAQ status:", error)
+    } catch {
       alert("ステータスの更新に失敗しました")
     } finally {
       setIsUpdating(false)

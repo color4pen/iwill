@@ -40,8 +40,7 @@ export default function UserActions({ user }: UserActionsProps) {
     try {
       const newRole: Role = user.role === 'ADMIN' ? 'USER' : 'ADMIN'
       await updateUserRole(user.id, newRole)
-    } catch (error) {
-      console.error("Failed to update user role:", error)
+    } catch {
       alert("更新に失敗しました")
     } finally {
       setIsUpdating(false)
@@ -55,8 +54,7 @@ export default function UserActions({ user }: UserActionsProps) {
 
     try {
       await deleteUser(user.id)
-    } catch (error) {
-      console.error("Failed to delete user:", error)
+    } catch {
       alert("削除に失敗しました")
     }
   }

@@ -1,9 +1,10 @@
 import { Clock } from "lucide-react";
 import * as Icons from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@repo/utils";
 
 interface ScheduleItem {
   id: string;
+  date?: Date | string | null;
   time: string;
   title: string;
   description?: string | null;
@@ -50,6 +51,20 @@ export default function TimeSchedule({ scheduleItems }: TimeScheduleProps) {
     );
   }
 
+  // 日付でグループ化
+  const schedulesByDate = scheduleItems.reduce((acc, item) => {
+    const dateKey = item.date ? new Date(item.date).toDateString() : 'default';
+    if (!acc[dateKey]) acc[dateKey] = [];
+    acc[dateKey].push(item);
+    return acc;
+  }, {} as Record<string, ScheduleItem[]>);
+
+  const dateKeys = Object.keys(schedulesByDate).sort((a, b) => {
+    if (a === 'default') return -1;
+    if (b === 'default') return 1;
+    return new Date(a).getTime() - new Date(b).getTime();
+  });
+
   return (
     <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
       <h2 className="text-2xl font-semibold mb-6 flex items-center">
@@ -57,45 +72,65 @@ export default function TimeSchedule({ scheduleItems }: TimeScheduleProps) {
         タイムスケジュール
       </h2>
       
-      <div className="relative">
-        {/* タイムライン */}
-        <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gray-300"></div>
-        
-        <div className="space-y-6">
-          {scheduleItems.map((item, index) => {
-            const Icon = item.icon ? (Icons as any)[item.icon] : null;
+      {dateKeys.map((dateKey, dateIndex) => (
+        <div key={dateKey} className={dateIndex > 0 ? 'mt-12' : ''}>
+          {dateIndex > 0 && (
+            <div className="border-t border-gray-200 mb-8"></div>
+          )}
+          {dateKey !== 'default' && (
+            <div className="mb-6 bg-gray-50 rounded-lg p-4">
+              <h3 className="text-lg font-semibold text-gray-800">
+                {new Date(dateKey).toLocaleDateString('ja-JP', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                  weekday: 'long'
+                })}
+              </h3>
+            </div>
+          )}
+          
+          <div className="relative">
+            {/* タイムライン */}
+            <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gray-300"></div>
             
-            return (
-              <div key={item.id} className="flex items-start">
-                <div className="relative">
-                  <div className={cn(
-                    "w-16 h-16 rounded-full flex items-center justify-center",
-                    colorClasses[item.colorBg as keyof typeof colorClasses] || "bg-gray-100"
-                  )}>
-                    <span className={cn(
-                      "font-bold",
-                      colorClasses[item.colorText as keyof typeof colorClasses] || "text-gray-600"
-                    )}>{item.time}</span>
-                  </div>
-                </div>
+            <div className="space-y-6">
+              {schedulesByDate[dateKey]?.map((item) => {
+                const Icon = item.icon ? (Icons as any)[item.icon] : null;
                 
-                <div className="ml-6 pt-3">
-                  <h3 className="font-semibold text-lg flex items-center">
-                    {Icon && <Icon className={cn(
-                      "w-5 h-5 mr-2",
-                      colorClasses[item.colorText as keyof typeof colorClasses] || "text-gray-600"
-                    )} />}
-                    {item.title}
-                  </h3>
-                  {item.description && (
-                    <p className="text-gray-600 text-sm mt-1">{item.description}</p>
-                  )}
-                </div>
-              </div>
-            );
-          })}
+                return (
+                  <div key={item.id} className="flex items-start">
+                    <div className="relative">
+                      <div className={cn(
+                        "w-16 h-16 rounded-full flex items-center justify-center",
+                        colorClasses[item.colorBg as keyof typeof colorClasses] || "bg-gray-100"
+                      )}>
+                        <span className={cn(
+                          "font-bold",
+                          colorClasses[item.colorText as keyof typeof colorClasses] || "text-gray-600"
+                        )}>{item.time}</span>
+                      </div>
+                    </div>
+                    
+                    <div className="ml-6 pt-3">
+                      <h3 className="font-semibold text-lg flex items-center">
+                        {Icon && <Icon className={cn(
+                          "w-5 h-5 mr-2",
+                          colorClasses[item.colorText as keyof typeof colorClasses] || "text-gray-600"
+                        )} />}
+                        {item.title}
+                      </h3>
+                      {item.description && (
+                        <p className="text-gray-600 text-sm mt-1">{item.description}</p>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
-      </div>
+      ))}
     </div>
   );
 }

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { MediaImage } from "@repo/ui/media-image";
 import { paths } from "@/lib/paths";
 
 interface MyPageClientProps {
@@ -23,13 +24,13 @@ interface MyPageClientProps {
 
 export default function MyPageClient({ user, userMedia = [] }: MyPageClientProps) {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* ヘッダー */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <div className="w-16 h-16 relative rounded-full overflow-hidden mr-4 border-2 border-gray-200">
+        <div className="mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center mb-4 sm:mb-0">
+              <div className="w-16 h-16 flex-shrink-0 relative rounded-full overflow-hidden mr-4 border-2 border-gray-200">
                 {user.image ? (
                   <Image
                     src={user.image}
@@ -56,16 +57,16 @@ export default function MyPageClient({ user, userMedia = [] }: MyPageClientProps
                   </div>
                 )}
               </div>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">
+              <div className="min-w-0">
+                <h1 className="text-xl sm:text-2xl font-bold text-gray-900 truncate">
                   {user.name || "ゲスト"}さんのマイページ
                 </h1>
                 <p className="text-sm text-gray-500 mt-1">アップロードした写真・動画（{userMedia.length}件）</p>
               </div>
             </div>
             <Link
-              href={paths.gallery}
-              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+              href={paths.upload}
+              className="inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
             >
               <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -76,27 +77,41 @@ export default function MyPageClient({ user, userMedia = [] }: MyPageClientProps
         </div>
 
         {/* メディア一覧 */}
-        <div className="bg-white rounded-lg shadow-sm p-6">
+        <div>
           {userMedia.length > 0 ? (
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-2">
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
               {userMedia.map((media) => (
                 <div 
                   key={media.id}
-                  className="aspect-square bg-gray-200 relative overflow-hidden rounded-lg"
+                  className="relative overflow-hidden rounded-lg bg-gray-200"
+                  style={{ aspectRatio: '1/1' }}
                 >
                   {media.mimeType.startsWith('image/') ? (
-                    <Image
-                      src={media.thumbnailUrl || media.fileUrl}
+                    <MediaImage
+                      src={media.fileUrl}
+                      thumbnailUrl={media.thumbnailUrl}
                       alt={media.caption || "写真"}
                       fill
                       className="object-cover"
-                      sizes="(max-width: 640px) 33vw, (max-width: 768px) 25vw, (max-width: 1024px) 20vw, 12.5vw"
+                      sizes="(max-width: 640px) 33vw, (max-width: 768px) 25vw, 20vw"
                     />
                   ) : (
-                    <div className="w-full h-full bg-gray-300 flex items-center justify-center">
-                      <svg className="w-8 h-8 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                      </svg>
+                    <div className="relative w-full h-full">
+                      <MediaImage
+                        src={media.fileUrl}
+                        thumbnailUrl={media.thumbnailUrl}
+                        alt={media.caption || "動画"}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 640px) 33vw, (max-width: 768px) 25vw, 20vw"
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="bg-black bg-opacity-50 rounded-full p-2">
+                          <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                          </svg>
+                        </div>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -127,7 +142,7 @@ export default function MyPageClient({ user, userMedia = [] }: MyPageClientProps
                 結婚式の思い出の写真や動画をアップロードして、他の参列者と共有しましょう。
               </p>
               <Link
-                href={paths.gallery}
+                href={paths.upload}
                 className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition-colors"
               >
                 <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">

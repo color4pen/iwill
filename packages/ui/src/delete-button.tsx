@@ -34,7 +34,6 @@ export function DeleteButton({
       await onDelete()
       router.refresh()
     } catch (error) {
-      console.error("Delete error:", error)
       alert("削除に失敗しました")
     } finally {
       setIsDeleting(false)

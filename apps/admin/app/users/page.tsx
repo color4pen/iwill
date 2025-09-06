@@ -16,7 +16,6 @@ export default async function UsersPage() {
 
   const users = await prisma.user.findMany({
     include: {
-      attendance: true,
       notifications: true,
       media: true,
     },
@@ -80,17 +79,6 @@ export default async function UsersPage() {
                           <span>
                             登録日: {new Date(user.createdAt).toLocaleDateString('ja-JP')}
                           </span>
-                          {user.attendance && (
-                            <span className={`px-2 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full whitespace-nowrap ${
-                              user.attendance.status === 'ATTENDING' ? 'bg-green-100 text-green-800' :
-                              user.attendance.status === 'NOT_ATTENDING' ? 'bg-red-100 text-red-800' :
-                              'bg-yellow-100 text-yellow-800'
-                            }`}>
-                              {user.attendance.status === 'ATTENDING' && '出席'}
-                              {user.attendance.status === 'NOT_ATTENDING' && '欠席'}
-                              {user.attendance.status === 'UNDECIDED' && '未定'}
-                            </span>
-                          )}
                         </div>
                         <div className="mt-1 flex flex-wrap items-center gap-4 text-xs text-gray-400">
                           <span>

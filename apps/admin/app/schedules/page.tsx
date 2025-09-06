@@ -15,7 +15,11 @@ export default async function SchedulesPage() {
   }
 
   const schedules = await prisma.schedule.findMany({
-    orderBy: { order: "asc" },
+    orderBy: [
+      { date: "asc" },
+      { time: "asc" },
+      { order: "asc" }
+    ],
   })
 
   return (
@@ -61,6 +65,11 @@ export default async function SchedulesPage() {
                               <p className="text-sm text-gray-500 mt-1">{schedule.description}</p>
                             )}
                             <div className="mt-2 flex items-center text-sm text-gray-500">
+                              {schedule.date && (
+                                <span className="mr-4">
+                                  {new Date(schedule.date).toLocaleDateString('ja-JP')}
+                                </span>
+                              )}
                               <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                                 schedule.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
                               }`}>

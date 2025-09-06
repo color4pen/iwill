@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, Bell, Users, HelpCircle, LogOut, Menu, X, Mail, Clock, MessageSquare } from "lucide-react"
+import { Home, Bell, Users, HelpCircle, LogOut, Menu, X, Mail, Clock, MessageSquare, Camera, Image as ImageIcon } from "lucide-react"
 import { useState } from "react"
 
 interface AdminSidebarProps {
@@ -21,6 +21,8 @@ const navigation = [
   { name: "FAQ管理", href: "/faq", icon: HelpCircle },
   { name: "招待URL管理", href: "/invitations", icon: Mail },
   { name: "問い合わせ管理", href: "/inquiries", icon: MessageSquare },
+  { name: "メディア管理", href: "/media", icon: ImageIcon },
+  { name: "メディアシチュエーション管理", href: "/situations", icon: Camera },
 ]
 
 export default function AdminSidebar({ user, unreadCount = 0 }: AdminSidebarProps) {

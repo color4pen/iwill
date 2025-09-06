@@ -15,7 +15,6 @@ export async function handleServerAction<T>(
       data,
     }
   } catch (error) {
-    console.error('Server action error:', error)
     
     // Prismaエラーのハンドリング
     if (error && typeof error === 'object' && 'code' in error) {
