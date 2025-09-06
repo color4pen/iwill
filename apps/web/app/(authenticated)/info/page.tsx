@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { MapPin, Calendar, Clock, Navigation, Users, Utensils, Camera, Music, ExternalLink, Church } from "lucide-react";
+import { MapPin, Calendar, Clock, Navigation, Users, Utensils, Camera, Music, ExternalLink, Church, Hotel, Coffee, Waves } from "lucide-react";
 import TimeSchedule from "@/components/info/TimeSchedule";
 import { prisma } from "@/lib/prisma";
 import { paths } from "@/lib/paths";
@@ -90,6 +90,20 @@ export default async function InfoPage() {
         </div>
       </div>
 
+      {/* ご来館時のご案内 */}
+      <div className="bg-blue-50 border-l-4 border-blue-500 rounded-lg p-6 mb-8">
+        <div className="flex items-start">
+          <Navigation className="w-6 h-6 text-blue-600 mr-3 mt-1 flex-shrink-0" />
+          <div>
+            <h3 className="text-lg font-semibold text-blue-900 mb-2">ご来館時のご案内</h3>
+            <p className="text-blue-800">
+              ご到着されましたら、まずは<span className="font-semibold">フロントの婚礼カウンター</span>へお越しください。
+              スタッフがご案内いたします。
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* タイムスケジュール */}
       <TimeSchedule scheduleItems={schedules} />
 
@@ -124,6 +138,36 @@ export default async function InfoPage() {
                 <li>その他では自由に撮影いただけます</li>
                 <li>撮影した写真は今後追加される「ギャラリー」からシェアをお願いします</li>
               </ul>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-6 mt-6">
+          <div>
+            <h3 className="font-medium text-lg mb-3 flex items-center">
+              <Hotel className="w-5 h-5 mr-2 text-blue-600" />
+              宿泊について
+            </h3>
+            <div className="bg-gray-50 rounded-lg p-4">
+              <ul className="text-sm text-gray-600 space-y-1">
+                <li>チェックイン: 15:00〜</li>
+                <li>チェックアウト: 〜12:00</li>
+                <li>朝食: 7:00〜10:00（ビュッフェ）</li>
+                <li className="text-xs mt-2">※朝食は時間内にお召し上がりいただけます<br />※レストランの混雑状況は宿泊アプリからご確認いただけます</li>
+              </ul>
+            </div>
+          </div>
+
+          <div>
+            <h3 className="font-medium text-lg mb-3 flex items-center">
+              <Waves className="w-5 h-5 mr-2 text-blue-600" />
+              プールのご利用
+            </h3>
+            <div className="bg-gray-50 rounded-lg p-4">
+              <p className="text-sm text-gray-600">
+                結婚式当日は意外と入る時間がございません。<br />
+                ご利用を希望される方は、<span className="font-semibold">チェックアウト後</span>のご利用がおすすめです。
+              </p>
             </div>
           </div>
         </div>
