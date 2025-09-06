@@ -90,7 +90,7 @@ export default function TimeSchedule({ scheduleItems }: TimeScheduleProps) {
             <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gray-300"></div>
             
             <div className="space-y-6">
-              {schedulesByDate[dateKey].map((item, index) => {
+              {schedulesByDate[dateKey]?.map((item) => {
                 const Icon = item.icon ? (Icons as any)[item.icon] : null;
                 
                 return (
