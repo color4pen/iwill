@@ -73,16 +73,21 @@ export default function TimeSchedule({ scheduleItems }: TimeScheduleProps) {
       </h2>
       
       {dateKeys.map((dateKey, dateIndex) => (
-        <div key={dateKey} className={dateIndex > 0 ? 'mt-8' : ''}>
+        <div key={dateKey} className={dateIndex > 0 ? 'mt-12' : ''}>
+          {dateIndex > 0 && (
+            <div className="border-t border-gray-200 mb-8"></div>
+          )}
           {dateKey !== 'default' && (
-            <h3 className="text-lg font-medium text-gray-700 mb-4">
-              {new Date(dateKey).toLocaleDateString('ja-JP', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                weekday: 'long'
-              })}
-            </h3>
+            <div className="mb-6 bg-gray-50 rounded-lg p-4">
+              <h3 className="text-lg font-semibold text-gray-800">
+                {new Date(dateKey).toLocaleDateString('ja-JP', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                  weekday: 'long'
+                })}
+              </h3>
+            </div>
           )}
           
           <div className="relative">
