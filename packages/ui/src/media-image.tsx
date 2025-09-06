@@ -17,7 +17,7 @@ interface MediaImageProps {
   style?: React.CSSProperties
 }
 
-export default function MediaImage({
+export function MediaImage({
   src,
   thumbnailUrl,
   alt,
@@ -32,6 +32,7 @@ export default function MediaImage({
 }: MediaImageProps) {
   const [thumbnailError, setThumbnailError] = useState(false)
   const [imageError, setImageError] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   
   // 動画の場合、サムネイルURLの拡張子を調整
   // 古いファイルは拡張子がそのまま（.mp4）、新しいファイルは.jpg
@@ -60,6 +61,12 @@ export default function MediaImage({
       // 元画像でもエラーが発生した場合
       setImageError(true)
     }
+    setIsLoading(false)
+  }
+  
+  const handleLoad = () => {
+    setIsLoading(false)
+    onLoad?.()
   }
   
   // 両方でエラーが発生した場合はプレースホルダーを表示
@@ -88,31 +95,45 @@ export default function MediaImage({
   
   if (fill) {
     return (
-      <Image
-        src={imageUrl}
-        alt={alt}
-        fill
-        className={className}
-        sizes={sizes}
-        priority={priority}
-        onError={handleError}
-        onLoad={onLoad}
-        style={style}
-      />
+      <>
+        {isLoading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-200">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-600"></div>
+          </div>
+        )}
+        <Image
+          src={imageUrl}
+          alt={alt}
+          fill
+          className={className}
+          sizes={sizes}
+          priority={priority}
+          onError={handleError}
+          onLoad={handleLoad}
+          style={style}
+        />
+      </>
     )
   }
   
   return (
-    <Image
-      src={imageUrl}
-      alt={alt}
-      width={width!}
-      height={height!}
-      className={className}
-      priority={priority}
-      onError={handleError}
-      onLoad={onLoad}
-      style={style}
-    />
+    <>
+      {isLoading && (
+        <div className="flex items-center justify-center bg-gray-200" style={{ width, height }}>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-600"></div>
+        </div>
+      )}
+      <Image
+        src={imageUrl}
+        alt={alt}
+        width={width!}
+        height={height!}
+        className={className}
+        priority={priority}
+        onError={handleError}
+        onLoad={handleLoad}
+        style={style}
+      />
+    </>
   )
 }

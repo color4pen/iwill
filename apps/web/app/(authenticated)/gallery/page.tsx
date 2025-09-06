@@ -3,7 +3,7 @@ import { authOptions } from "@/lib/auth"
 import { getRecentMedia, getMediaSituations } from "@/app/actions/media"
 import Link from "next/link"
 import Image from "next/image"
-import MediaImage from "@/components/media-image"
+import { MediaImage } from "@repo/ui/media-image"
 import { Film, ArrowRight, Camera } from "lucide-react"
 import RecentMediaSection from "./recent-media-section"
 

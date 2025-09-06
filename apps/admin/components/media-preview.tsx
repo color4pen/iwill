@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import MediaImage from "./media-image"
+import { MediaImage } from "@repo/ui/media-image"
 import { X } from "lucide-react"
 
 interface MediaPreviewProps {

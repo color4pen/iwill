@@ -7,7 +7,7 @@ import { deleteMedia } from "@/app/actions/media"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import MediaViewer from "@/components/media-viewer"
-import MediaImage from "@/components/media-image"
+import { MediaImage } from "@repo/ui/media-image"
 
 interface MediaItem {
   id: string

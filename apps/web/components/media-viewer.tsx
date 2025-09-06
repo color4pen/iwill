@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react"
 import Image from "next/image"
-import MediaImage from "@/components/media-image"
+import { MediaImage } from "@repo/ui/media-image"
 import { X, ChevronLeft, ChevronRight, Play, Pause, Volume2, VolumeX } from "lucide-react"
 
 interface MediaItem {

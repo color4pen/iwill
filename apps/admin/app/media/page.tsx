@@ -115,17 +115,6 @@ async function updateMediaSituation(formData: FormData) {
   revalidatePath("/media");
 }
 
-async function deleteMedia(formData: FormData) {
-  "use server";
-  
-  const id = formData.get("id") as string;
-  
-  await prisma.media.delete({
-    where: { id },
-  });
-  
-  revalidatePath("/media");
-}
 
 export default async function MediaPage({
   searchParams,
@@ -241,7 +230,7 @@ export default async function MediaPage({
                       {new Date(item.createdAt).toLocaleDateString('ja-JP')}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <MediaDeleteButton id={item.id} deleteAction={deleteMedia} />
+                      <MediaDeleteButton id={item.id} />
                     </td>
                   </tr>
                 ))}

@@ -1,45 +1,29 @@
-"use client";
+"use client"
 
-import { useFormStatus } from "react-dom";
+import { DeleteButton } from "@repo/ui/delete-button"
+import { deleteSituation } from "@/app/actions/situations"
 
 interface DeleteSituationButtonProps {
-  id: string;
-  mediaCount: number;
-  deleteAction: (formData: FormData) => Promise<void>;
+  id: string
+  mediaCount: number
 }
 
-function DeleteButton() {
-  const { pending } = useFormStatus();
-  
-  return (
-    <button
-      type="submit"
-      className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
-      onClick={(e) => {
-        if (!confirm("このメディアシチュエーションを削除してよろしいですか？")) {
-          e.preventDefault();
-        }
-      }}
-      disabled={pending}
-    >
-      {pending ? "削除中..." : "削除"}
-    </button>
-  );
-}
-
-export default function DeleteSituationButton({ id, mediaCount, deleteAction }: DeleteSituationButtonProps) {
+export default function DeleteSituationButton({ id, mediaCount }: DeleteSituationButtonProps) {
   if (mediaCount > 0) {
     return (
       <p className="text-sm text-gray-500 py-2">
         メディア {mediaCount} 件が関連付けられているため削除できません
       </p>
-    );
+    )
   }
 
   return (
-    <form action={deleteAction} className="inline">
-      <input type="hidden" name="id" value={id} />
-      <DeleteButton />
-    </form>
-  );
+    <DeleteButton
+      onDelete={() => deleteSituation(id)}
+      confirmMessage="このメディアシチュエーションを削除してよろしいですか？"
+      variant="button"
+      size="md"
+      className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+    />
+  )
 }

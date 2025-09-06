@@ -26,17 +26,6 @@ async function updateSituation(formData: FormData) {
   redirect("/situations");
 }
 
-async function deleteSituation(formData: FormData) {
-  "use server";
-
-  const id = formData.get("id") as string;
-  
-  await prisma.mediaSituation.delete({
-    where: { id },
-  });
-
-  redirect("/situations");
-}
 
 export default async function EditSituationPage({
   params,
@@ -124,8 +113,7 @@ export default async function EditSituationPage({
           <div>
             <DeleteSituationButton 
               id={situation.id} 
-              mediaCount={situation._count.media} 
-              deleteAction={deleteSituation}
+              mediaCount={situation._count.media}
             />
           </div>
           

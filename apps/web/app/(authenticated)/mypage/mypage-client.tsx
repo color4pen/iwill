@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import MediaImage from "@/components/media-image";
+import { MediaImage } from "@repo/ui/media-image";
 import { paths } from "@/lib/paths";
 
 interface MyPageClientProps {

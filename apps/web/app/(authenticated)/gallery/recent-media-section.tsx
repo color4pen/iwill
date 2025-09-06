@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import MediaImage from "@/components/media-image"
+import { MediaImage } from "@repo/ui/media-image"
 import MediaViewer from "@/components/media-viewer"
 import { Film, ArrowRight } from "lucide-react"
 

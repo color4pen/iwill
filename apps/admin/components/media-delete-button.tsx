@@ -1,36 +1,20 @@
-"use client";
+"use client"
 
-import { useFormStatus } from "react-dom";
+import { DeleteButton } from "@repo/ui/delete-button"
+import { deleteMedia } from "@/app/actions/media"
 
 interface MediaDeleteButtonProps {
-  id: string;
-  deleteAction: (formData: FormData) => Promise<void>;
+  id: string
 }
 
-function DeleteButton() {
-  const { pending } = useFormStatus();
-  
+export default function MediaDeleteButton({ id }: MediaDeleteButtonProps) {
   return (
-    <button
-      type="submit"
-      className="text-sm text-red-600 hover:text-red-800"
-      onClick={(e) => {
-        if (!confirm("このメディアを削除してよろしいですか？")) {
-          e.preventDefault();
-        }
-      }}
-      disabled={pending}
-    >
-      {pending ? "削除中..." : "削除"}
-    </button>
-  );
-}
-
-export default function MediaDeleteButton({ id, deleteAction }: MediaDeleteButtonProps) {
-  return (
-    <form action={deleteAction} className="inline">
-      <input type="hidden" name="id" value={id} />
-      <DeleteButton />
-    </form>
-  );
+    <DeleteButton
+      onDelete={() => deleteMedia(id)}
+      confirmMessage="このメディアを削除してよろしいですか？"
+      variant="button"
+      size="sm"
+      className="text-red-600 hover:text-red-800"
+    />
+  )
 }

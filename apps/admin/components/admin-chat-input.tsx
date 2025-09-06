@@ -29,7 +29,7 @@ export default function AdminChatInput({ threadId }: AdminChatInputProps) {
     try {
       await replyToInquiry(threadId, message.trim())
       setMessage("")
-    } catch (error) {
+    } catch {
       alert("メッセージの送信に失敗しました")
     } finally {
       setIsSending(false)
