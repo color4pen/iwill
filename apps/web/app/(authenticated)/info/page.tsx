@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { MapPin, Calendar, Clock, Navigation, Users, Utensils, Camera, Music } from "lucide-react";
+import { MapPin, Calendar, Clock, Navigation, Users, Utensils, Camera, Music, ExternalLink, Church } from "lucide-react";
 import TimeSchedule from "@/components/info/TimeSchedule";
 import { prisma } from "@/lib/prisma";
 import { paths } from "@/lib/paths";
@@ -11,7 +11,11 @@ export const revalidate = 0;
 export default async function InfoPage() {
   const schedules = await prisma.schedule.findMany({
     where: { isActive: true },
-    orderBy: { order: "asc" },
+    orderBy: [
+      { date: "asc" },
+      { time: "asc" },
+      { order: "asc" }
+    ],
   });
 
   return (
@@ -37,10 +41,21 @@ export default async function InfoPage() {
             <Calendar className="w-8 h-8 text-blue-600 mr-3" />
             <h2 className="text-2xl font-semibold">日程</h2>
           </div>
-          <div className="space-y-2">
+          <div className="space-y-3">
             <div>
-              <p className="text-2xl font-bold text-gray-800">2025年9月21日</p>
-              <p className="text-lg text-gray-600">日曜日</p>
+              <p className="text-2xl font-bold text-gray-800">2025年9月21日（日）</p>
+            </div>
+            <div className="space-y-2 mt-4">
+              <div className="flex items-center gap-2">
+                <Church className="w-5 h-5 text-blue-500" />
+                <span className="text-gray-700">挙式開始</span>
+                <span className="font-semibold">14:15</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Utensils className="w-5 h-5 text-blue-500" />
+                <span className="text-gray-700">披露宴開始</span>
+                <span className="font-semibold">15:30</span>
+              </div>
             </div>
           </div>
         </div>
@@ -51,7 +66,17 @@ export default async function InfoPage() {
             <h2 className="text-2xl font-semibold">会場</h2>
           </div>
           <div className="space-y-2">
-            <p className="text-lg font-semibold text-gray-800">星野リゾート リゾナーレ八ヶ岳</p>
+            <div className="flex items-center gap-2">
+              <Link
+                href="https://hoshinoresorts.com/ja/hotels/risonareyatsugatake/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-lg font-semibold text-gray-800 hover:text-blue-600 transition-colors inline-flex items-center gap-2"
+              >
+                星野リゾート リゾナーレ八ヶ岳
+                <ExternalLink className="w-5 h-5 text-blue-600" />
+              </Link>
+            </div>
             <p className="text-gray-600 text-sm">〒408-0044</p>
             <p className="text-gray-600 text-sm mb-3">山梨県北杜市小淵沢町129-1</p>
             <Link

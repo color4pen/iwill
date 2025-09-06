@@ -131,6 +131,7 @@ model MediaSituation {
 // スケジュール
 model Schedule {
   id          String    @id @default(cuid())
+  date        DateTime? // イベントの日付（nullの場合は結婚式当日）
   time        String    // "14:30" のような形式
   title       String    // イベント名
   description String?
@@ -143,7 +144,7 @@ model Schedule {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   
-  @@index([order])
+  @@index([date, time, order])
   @@index([isActive])
 }
 

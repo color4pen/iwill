@@ -29,6 +29,7 @@ const colorOptions = [
 interface ScheduleFormProps {
   initialData?: {
     id?: string
+    date?: Date | string | null
     time?: string
     title?: string
     description?: string | null
@@ -44,6 +45,7 @@ export default function ScheduleForm({ initialData }: ScheduleFormProps) {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [formData, setFormData] = useState({
+    date: initialData?.date ? new Date(initialData.date).toISOString().split('T')[0] : "",
     time: initialData?.time || "",
     title: initialData?.title || "",
     description: initialData?.description || "",
@@ -92,6 +94,16 @@ export default function ScheduleForm({ initialData }: ScheduleFormProps) {
       <div className="space-y-6">
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           <Input
+            id="date"
+            name="date"
+            label="日付（オプション）"
+            type="date"
+            value={formData.date}
+            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+            placeholder="結婚式当日の場合は空欄"
+          />
+
+          <Input
             id="time"
             name="time"
             label="時刻（必須）"
@@ -101,7 +113,9 @@ export default function ScheduleForm({ initialData }: ScheduleFormProps) {
             onChange={(e) => setFormData({ ...formData, time: e.target.value })}
             placeholder="14:30"
           />
+        </div>
 
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           <Input
             id="order"
             name="order"
@@ -111,6 +125,8 @@ export default function ScheduleForm({ initialData }: ScheduleFormProps) {
             onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) || 0 })}
             min="0"
           />
+
+          <div></div>
         </div>
 
         <Input
