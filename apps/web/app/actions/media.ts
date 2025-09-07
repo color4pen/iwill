@@ -136,6 +136,7 @@ export async function createUploadUrl(
  */
 export async function saveMediaMetadata(
   mediaId: string,
+  situationId?: string,
   caption?: string
 ) {
   const session = await getServerSession(authOptions)
@@ -183,6 +184,7 @@ export async function saveMediaMetadata(
     data: {
       thumbnailUrl,
       caption,
+      mediaSituationId: situationId,
     },
   })
 

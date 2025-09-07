@@ -19,11 +19,23 @@ const ALLOWED_FILE_TYPES = [
 ]
 const MAX_FILE_SIZE = 100 * 1024 * 1024 // 100MB
 
-export default function MediaUploadForm({ onUploadComplete }: { onUploadComplete?: () => void }) {
+interface MediaSituation {
+  id: string
+  name: string
+  icon?: string | null
+}
+
+interface MediaUploadFormProps {
+  onUploadComplete?: () => void
+  situations?: MediaSituation[]
+}
+
+export default function MediaUploadForm({ onUploadComplete, situations }: MediaUploadFormProps) {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([])
   const [uploadProgress, setUploadProgress] = useState<Map<string, UploadProgress>>(new Map())
   const [isUploading, setIsUploading] = useState(false)
   const [selectedFilesPreviews, setSelectedFilesPreviews] = useState<Map<string, string>>(new Map())
+  const [selectedSituation, setSelectedSituation] = useState<string>("")
 
   // アップロード中のページ離脱防止
   useEffect(() => {
@@ -201,7 +213,7 @@ export default function MediaUploadForm({ onUploadComplete }: { onUploadComplete
         return newMap
       })
 
-      await saveMediaMetadata(mediaId)
+      await saveMediaMetadata(mediaId, selectedSituation || undefined)
 
       // 完了
       setUploadProgress((prev) => {
@@ -283,12 +295,38 @@ export default function MediaUploadForm({ onUploadComplete }: { onUploadComplete
 
       {/* 選択されたファイル一覧（アップロード中は非表示） */}
       {selectedFiles.length > 0 && !isUploading && (
-        <SelectedFilesList
-          files={selectedFiles}
-          previews={selectedFilesPreviews}
-          onRemoveFile={removeFile}
-          disabled={isUploading}
-        />
+        <>
+          <SelectedFilesList
+            files={selectedFiles}
+            previews={selectedFilesPreviews}
+            onRemoveFile={removeFile}
+            disabled={isUploading}
+          />
+          
+          {/* シチュエーション選択 */}
+          {situations && situations.length > 0 && (
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                シチュエーション（任意）
+              </label>
+              <select
+                value={selectedSituation}
+                onChange={(e) => setSelectedSituation(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="">選択しない</option>
+                {situations.map((situation) => (
+                  <option key={situation.id} value={situation.id}>
+                    {situation.name}
+                  </option>
+                ))}
+              </select>
+              <p className="mt-1 text-xs text-gray-500">
+                写真・動画のシーンを選択すると、後で見つけやすくなります
+              </p>
+            </div>
+          )}
+        </>
       )}
 
       {/* アップロードプログレス */}

@@ -6,7 +6,17 @@ import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import MediaUploadForm from "@/app/components/media-upload-form"
 
-export default function UploadClient() {
+interface MediaSituation {
+  id: string
+  name: string
+  icon?: string | null
+}
+
+interface UploadClientProps {
+  situations: MediaSituation[]
+}
+
+export default function UploadClient({ situations }: UploadClientProps) {
   const router = useRouter()
   const [uploadSuccess, setUploadSuccess] = useState(false)
 
@@ -42,7 +52,7 @@ export default function UploadClient() {
         </div>
       ) : (
         <div className="bg-white rounded-lg shadow-sm p-6">
-          <MediaUploadForm onUploadComplete={handleUploadComplete} />
+          <MediaUploadForm onUploadComplete={handleUploadComplete} situations={situations} />
         </div>
       )}
 

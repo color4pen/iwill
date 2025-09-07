@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import UploadClient from "./upload-client"
+import { getMediaSituations } from "@/app/actions/media"
 
 export default async function UploadPage() {
   const session = await getServerSession(authOptions)
@@ -10,5 +11,7 @@ export default async function UploadPage() {
     redirect("/login")
   }
 
-  return <UploadClient />
+  const situations = await getMediaSituations()
+
+  return <UploadClient situations={situations} />
 }
