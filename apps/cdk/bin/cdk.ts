@@ -29,7 +29,8 @@ const envConfig = {
     description: 'Media storage infrastructure for iwill wedding management app (Production)',
     removalPolicy: cdk.RemovalPolicy.RETAIN, // 本番環境では保護
     corsOrigins: [
-      'https://iwill-wedding.vercel.app', // TODO: 本番ドメインに更新
+      'https://iwill.yurinasu.com', // 本番ドメイン
+      'https://iwill-wedding.vercel.app',
       'https://*.vercel.app',
     ],
   },
