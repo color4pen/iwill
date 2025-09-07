@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import AdminLayout from "@/components/admin-layout";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
+import * as Icons from "lucide-react";
 
 async function getMediaSituations() {
   return await prisma.mediaSituation.findMany({
@@ -48,6 +49,9 @@ export default async function SituationsPage() {
                 表示順
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                アイコン
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 名称
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -66,6 +70,12 @@ export default async function SituationsPage() {
               <tr key={situation.id}>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                   {situation.order}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {situation.icon && (() => {
+                    const Icon = (Icons as any)[situation.icon];
+                    return Icon ? <Icon className="w-5 h-5 text-gray-600" /> : situation.icon;
+                  })()}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                   {situation.name}
