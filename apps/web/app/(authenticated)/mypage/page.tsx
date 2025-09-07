@@ -13,6 +13,7 @@ export default async function MyPage() {
   }
 
   let userMedia: any[] = [];
+  let mediaSituations: any[] = [];
 
   try {
     // ユーザーがアップロードしたメディアを取得
@@ -21,10 +22,27 @@ export default async function MyPage() {
         userId: session.user.id,
         // 自分のメディアはすべて表示（承認状態に関係なく）
       },
+      include: {
+        mediaSituation: true,
+      },
       orderBy: {
         createdAt: 'desc',
       },
       take: 50, // 最新50件まで
+    });
+
+    // メディアシチュエーションのリストを取得
+    mediaSituations = await prisma.mediaSituation.findMany({
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        icon: true,
+        order: true,
+      },
+      orderBy: {
+        order: 'asc',
+      },
     });
   } catch (error) {
     // エラーが発生してもページを表示できるようにデフォルト値を使用
@@ -35,6 +53,7 @@ export default async function MyPage() {
     <MyPageClient 
       user={session.user} 
       userMedia={userMedia}
+      mediaSituations={mediaSituations}
     />
   );
 }
