@@ -73,8 +73,9 @@ export default async function SituationsPage() {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                   {situation.icon && (() => {
-                    const Icon = (Icons as any)[situation.icon];
-                    return Icon ? <Icon className="w-5 h-5 text-gray-600" /> : situation.icon;
+                    const iconName = situation.icon as keyof typeof Icons;
+                    const Icon = Icons[iconName];
+                    return typeof Icon === 'function' ? <Icon className="w-5 h-5 text-gray-600" /> : situation.icon;
                   })()}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
