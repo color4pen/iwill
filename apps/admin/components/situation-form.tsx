@@ -16,7 +16,7 @@ interface SituationFormProps {
   submitLabel: string;
 }
 
-export default function SituationForm({ situation, action, submitLabel }: SituationFormProps) {
+export default function SituationForm({ situation, action }: SituationFormProps) {
   const [selectedIcon, setSelectedIcon] = useState(situation?.icon || "");
   const [showIconPicker, setShowIconPicker] = useState(false);
 
@@ -26,7 +26,7 @@ export default function SituationForm({ situation, action, submitLabel }: Situat
     await action(formData);
   };
 
-  const Icon = selectedIcon ? (Icons as any)[selectedIcon] : null;
+  const Icon = selectedIcon ? (Icons as Record<string, React.ComponentType<{ className?: string }>>)[selectedIcon] : null;
 
   return (
     <>

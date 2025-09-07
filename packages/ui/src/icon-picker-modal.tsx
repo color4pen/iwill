@@ -13,7 +13,7 @@ import {
   Smile, Frown, Meh, ThumbsUp, ThumbsDown, Award, Trophy, Medal,
   Download, Upload, Save, Edit, Trash, Plus, Minus, Check,
   AlertCircle, AlertTriangle, Ban, Shield, Lock, Unlock, Key,
-  Settings, Wrench, Tool, Hammer, Briefcase, Package, Box
+  Settings, Wrench, Hammer, Briefcase, Package, Box
 } from "lucide-react";
 
 interface IconPickerModalProps {
@@ -50,7 +50,7 @@ const iconMap = {
   // 警告・セキュリティ
   AlertCircle, AlertTriangle, Ban, Shield, Lock, Unlock, Key,
   // ツール
-  Settings, Wrench, Tool, Hammer, Briefcase, Package, Box
+  Settings, Wrench, Hammer, Briefcase, Package, Box
 };
 
 // カテゴリー別のアイコン
