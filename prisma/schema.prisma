@@ -81,6 +81,7 @@ model MediaSituation {
   id          String   @id @default(cuid())
   name        String
   description String?
+  icon        String?  // Lucideアイコン名（例: Camera, Church, Utensils）
   order       Int
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
