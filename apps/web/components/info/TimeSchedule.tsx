@@ -121,7 +121,7 @@ export default function TimeSchedule({ scheduleItems }: TimeScheduleProps) {
                         {item.title}
                       </h3>
                       {item.description && (
-                        <p className="text-gray-600 text-sm mt-1">{item.description}</p>
+                        <p className="text-gray-600 text-sm mt-1 whitespace-pre-wrap">{item.description}</p>
                       )}
                     </div>
                   </div>
