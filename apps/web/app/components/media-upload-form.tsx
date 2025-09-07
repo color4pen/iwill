@@ -139,18 +139,17 @@ export default function MediaUploadForm({ onUploadComplete, situations }: MediaU
     }
   }
 
-  const uploadFile = async (file: File): Promise<boolean> => {
-    const progressKey = `${file.name}-${Date.now()}`
+  const uploadFile = async (file: File, fileIndex?: number): Promise<boolean> => {
+    const progressKey = `${file.name}-${fileIndex ?? Date.now()}`
     
     try {
-      // プログレス初期化
-      setUploadProgress((prev) => 
-        new Map(prev).set(progressKey, {
-          fileName: file.name,
-          progress: 0,
-          status: "uploading",
-        })
-      )
+      // プログレス更新（既に初期化済み）
+      setUploadProgress((prev) => {
+        const newMap = new Map(prev)
+        const current = newMap.get(progressKey) || { fileName: file.name, progress: 0, status: "uploading" as const }
+        newMap.set(progressKey, { ...current, status: "uploading" })
+        return newMap
+      })
 
       // 1. アップロードURLを取得
       const { uploadUrl, fileKey, mediaId } = await createUploadUrl(
@@ -245,6 +244,18 @@ export default function MediaUploadForm({ onUploadComplete, situations }: MediaU
 
     setIsUploading(true)
     
+    // 最初に全ファイルの進捗エントリーを作成（0%で初期化）
+    const initialProgress = new Map<string, UploadProgress>()
+    selectedFiles.forEach((file, index) => {
+      const progressKey = `${file.name}-${index}`
+      initialProgress.set(progressKey, {
+        fileName: file.name,
+        progress: 0,
+        status: "uploading"
+      })
+    })
+    setUploadProgress(initialProgress)
+    
     // デバイスとファイルサイズに基づいて最適なチャンクサイズを決定
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
     const totalSize = selectedFiles.reduce((sum, file) => sum + file.size, 0)
@@ -265,7 +276,7 @@ export default function MediaUploadForm({ onUploadComplete, situations }: MediaU
     // ファイルをチャンクに分割してアップロード
     for (let i = 0; i < selectedFiles.length; i += CHUNK_SIZE) {
       const chunk = selectedFiles.slice(i, i + CHUNK_SIZE)
-      const chunkResults = await Promise.all(chunk.map(uploadFile))
+      const chunkResults = await Promise.all(chunk.map((file, chunkIndex) => uploadFile(file, i + chunkIndex)))
       results.push(...chunkResults)
     }
     
