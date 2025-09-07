@@ -26,7 +26,8 @@ export default function SituationForm({ situation, action }: SituationFormProps)
     await action(formData);
   };
 
-  const Icon = selectedIcon ? (Icons as Record<string, React.ComponentType<{ className?: string }>>)[selectedIcon] : null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const Icon = selectedIcon ? (Icons as any)[selectedIcon] : null;
 
   return (
     <>
