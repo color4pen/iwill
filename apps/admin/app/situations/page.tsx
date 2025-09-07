@@ -73,9 +73,14 @@ export default async function SituationsPage() {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                   {situation.icon && (() => {
-                    const iconName = situation.icon as keyof typeof Icons;
-                    const Icon = Icons[iconName];
-                    return typeof Icon === 'function' ? <Icon className="w-5 h-5 text-gray-600" /> : situation.icon;
+                    const iconName = situation.icon;
+                    // アイコン名に対応するコンポーネントを安全に取得
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    const Icon = (Icons as any)[iconName];
+                    if (Icon && typeof Icon === 'function') {
+                      return <Icon className="w-5 h-5 text-gray-600" />;
+                    }
+                    return situation.icon;
                   })()}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
