@@ -157,6 +157,16 @@ export default function MyPageClient({ user, userMedia = [], mediaSituations = [
                       </div>
                     </div>
                   )}
+                  
+                  {/* シチュエーションアイコンバッジ */}
+                  {media.mediaSituation?.icon && (() => {
+                    const Icon = (Icons as any)[media.mediaSituation.icon];
+                    return Icon ? (
+                      <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm rounded-full p-2 shadow-lg">
+                        <Icon className="w-4 h-4 text-gray-700" />
+                      </div>
+                    ) : null;
+                  })()}
                 </div>
               ))}
             </div>

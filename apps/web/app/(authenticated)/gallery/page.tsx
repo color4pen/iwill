@@ -1,14 +1,10 @@
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
 import { getRecentMedia, getMediaSituations } from "@/app/actions/media"
 import Link from "next/link"
-import Image from "next/image"
-import { MediaImage } from "@repo/ui/media-image"
-import { Film, ArrowRight, Camera } from "lucide-react"
+import { ArrowRight, Camera } from "lucide-react"
 import RecentMediaSection from "./recent-media-section"
+import * as Icons from "lucide-react"
 
 export default async function GalleryPage() {
-  const session = await getServerSession(authOptions)
   const recentMedia = await getRecentMedia(12)
   const situations = await getMediaSituations()
 
@@ -47,7 +43,13 @@ export default async function GalleryPage() {
             >
               <div className="p-6">
                 <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-lg font-semibold text-gray-900">{situation.name}</h3>
+                  <div className="flex items-center gap-3">
+                    {situation.icon && (() => {
+                      const Icon = (Icons as any)[situation.icon];
+                      return Icon ? <Icon className="w-6 h-6 text-blue-600" /> : null;
+                    })()}
+                    <h3 className="text-lg font-semibold text-gray-900">{situation.name}</h3>
+                  </div>
                   <span className="text-sm font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded">
                     {situation._count.media}枚
                   </span>
