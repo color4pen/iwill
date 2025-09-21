@@ -93,16 +93,20 @@ export default function MediaViewer({ media, initialIndex, isOpen, onClose }: Me
       {/* メインコンテンツ */}
       <div className="relative w-full h-full flex items-center justify-center">
         {/* メディア表示 */}
-        <div className="relative max-w-6xl max-h-[85vh] w-full h-full flex items-center justify-center">
+        <div className="relative max-w-6xl max-h-[85vh] w-full h-full flex items-center justify-center"
+          onClick={(e) => e.stopPropagation()}>
           {isVideo ? (
-            <video
-              src={currentMedia.fileUrl}
-              className="max-w-full max-h-full object-contain"
-              controls
-              muted={isMuted}
-              onPlay={() => setIsPlaying(true)}
-              onPause={() => setIsPlaying(false)}
-            />
+            <div onClick={(e) => e.stopPropagation()}>
+              <video
+                src={currentMedia.fileUrl}
+                className="max-w-full max-h-full object-contain"
+                controls
+                muted={isMuted}
+                onPlay={() => setIsPlaying(true)}
+                onPause={() => setIsPlaying(false)}
+                onClick={(e) => e.stopPropagation()}
+              />
+            </div>
           ) : (
             <div className="relative w-full h-full flex items-center justify-center">
               {imageLoading && (
