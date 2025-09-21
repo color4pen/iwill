@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react"
 import Image from "next/image"
 import { MediaImage } from "@repo/ui/media-image"
-import { X, ChevronLeft, ChevronRight, Play, Pause, Volume2, VolumeX } from "lucide-react"
+import { X, Play, Pause, Volume2, VolumeX } from "lucide-react"
 
 interface MediaItem {
   id: string
@@ -31,75 +31,29 @@ export default function MediaViewer({ media, initialIndex, isOpen, onClose }: Me
   const [isPlaying, setIsPlaying] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
   const [imageLoading, setImageLoading] = useState(true)
-  const thumbnailContainerRef = useRef<HTMLDivElement>(null)
-  const activeThumbnailRef = useRef<HTMLButtonElement>(null)
 
   const currentMedia = media[currentIndex]
   const isVideo = currentMedia?.mimeType.startsWith("video/")
 
-  // キーボード操作
+  // キーボード操作（ESCのみ）
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!isOpen) return
       
-      switch (e.key) {
-        case "Escape":
-          onClose()
-          break
-        case "ArrowLeft":
-          navigateToPrevious()
-          break
-        case "ArrowRight":
-          navigateToNext()
-          break
-        case " ":
-          if (isVideo) {
-            e.preventDefault()
-            setIsPlaying(!isPlaying)
-          }
-          break
+      if (e.key === "Escape") {
+        onClose()
       }
     }
 
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [isOpen, currentIndex, isVideo, isPlaying])
+  }, [isOpen])
 
   // インデックスが変更されたら更新
   useEffect(() => {
     setCurrentIndex(initialIndex)
   }, [initialIndex])
 
-  // 現在のサムネイルをビューポートの中央にスクロール
-  useEffect(() => {
-    if (activeThumbnailRef.current && thumbnailContainerRef.current) {
-      const container = thumbnailContainerRef.current
-      const thumbnail = activeThumbnailRef.current
-      
-      // コンテナとサムネイルの位置情報を取得
-      const containerRect = container.getBoundingClientRect()
-      const thumbnailRect = thumbnail.getBoundingClientRect()
-      
-      // サムネイルをコンテナの中央に配置するためのスクロール位置を計算
-      const scrollLeft = thumbnail.offsetLeft - (containerRect.width / 2) + (thumbnailRect.width / 2)
-      
-      // スムーズスクロール
-      container.scrollTo({
-        left: scrollLeft,
-        behavior: 'smooth'
-      })
-    }
-  }, [currentIndex])
-
-  const navigateToPrevious = useCallback(() => {
-    setCurrentIndex((prev) => (prev > 0 ? prev - 1 : media.length - 1))
-    setImageLoading(true)
-  }, [media.length])
-
-  const navigateToNext = useCallback(() => {
-    setCurrentIndex((prev) => (prev < media.length - 1 ? prev + 1 : 0))
-    setImageLoading(true)
-  }, [media.length])
 
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat("ja-JP", {
@@ -138,42 +92,6 @@ export default function MediaViewer({ media, initialIndex, isOpen, onClose }: Me
 
       {/* メインコンテンツ */}
       <div className="relative w-full h-full flex items-center justify-center">
-        {/* 左側クリックエリア */}
-        <div 
-          className="absolute left-0 top-0 w-1/3 h-full cursor-pointer z-10"
-          onClick={(e) => {
-            e.stopPropagation()
-            navigateToPrevious()
-          }}
-        />
-        
-        {/* 中央クリックエリア（何もしない） */}
-        <div 
-          className="absolute left-1/3 top-0 w-1/3 h-full z-10"
-          onClick={(e) => e.stopPropagation()}
-        />
-        
-        {/* 右側クリックエリア */}
-        <div 
-          className="absolute right-0 top-0 w-1/3 h-full cursor-pointer z-10"
-          onClick={(e) => {
-            e.stopPropagation()
-            navigateToNext()
-          }}
-        />
-
-        {/* 前へボタン */}
-        <button
-          onClick={(e) => {
-            e.stopPropagation()
-            navigateToPrevious()
-          }}
-          className="absolute left-4 p-3 rounded-full bg-white/10 hover:bg-white/20 transition-colors z-20"
-          aria-label="前の写真"
-        >
-          <ChevronLeft className="w-6 h-6 text-white" />
-        </button>
-
         {/* メディア表示 */}
         <div className="relative max-w-6xl max-h-[85vh] w-full h-full flex items-center justify-center">
           {isVideo ? (
@@ -181,7 +99,6 @@ export default function MediaViewer({ media, initialIndex, isOpen, onClose }: Me
               src={currentMedia.fileUrl}
               className="max-w-full max-h-full object-contain"
               controls
-              autoPlay={isPlaying}
               muted={isMuted}
               onPlay={() => setIsPlaying(true)}
               onPause={() => setIsPlaying(false)}
@@ -206,17 +123,6 @@ export default function MediaViewer({ media, initialIndex, isOpen, onClose }: Me
           )}
         </div>
 
-        {/* 次へボタン */}
-        <button
-          onClick={(e) => {
-            e.stopPropagation()
-            navigateToNext()
-          }}
-          className="absolute right-4 p-3 rounded-full bg-white/10 hover:bg-white/20 transition-colors z-20"
-          aria-label="次の写真"
-        >
-          <ChevronRight className="w-6 h-6 text-white" />
-        </button>
       </div>
 
       {/* フッター情報 */}
@@ -282,70 +188,6 @@ export default function MediaViewer({ media, initialIndex, isOpen, onClose }: Me
           </div>
         </div>
       </div>
-
-      {/* サムネイルバー */}
-      {media.length > 1 && (
-        <div className="absolute bottom-20 left-0 right-0 px-4">
-          <div 
-            ref={thumbnailContainerRef}
-            className="flex gap-2 justify-start overflow-x-auto py-2 max-w-6xl mx-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent"
-            style={{ scrollBehavior: 'smooth' }}
-          >
-            {/* 左側のパディング */}
-            <div className="flex-shrink-0 w-[calc(50%-36px)]" />
-            
-            {media.map((item, index) => (
-              <button
-                key={item.id}
-                ref={index === currentIndex ? activeThumbnailRef : null}
-                onClick={(e) => {
-                  e.stopPropagation()
-                  setCurrentIndex(index)
-                  setImageLoading(true)
-                }}
-                className={`relative w-16 h-16 rounded overflow-hidden flex-shrink-0 border-2 transition-all ${
-                  index === currentIndex 
-                    ? "border-white scale-110 shadow-xl" 
-                    : "border-white/20 opacity-60 hover:opacity-100 hover:border-white/40"
-                }`}
-              >
-                {item.mimeType.startsWith("image/") ? (
-                  <MediaImage
-                    src={item.fileUrl}
-                    thumbnailUrl={item.thumbnailUrl}
-                    alt=""
-                    fill
-                    className="object-cover"
-                    sizes="64px"
-                  />
-                ) : (
-                  <div className="relative w-full h-full">
-                    <MediaImage
-                      src={item.fileUrl}
-                      thumbnailUrl={item.thumbnailUrl}
-                      alt=""
-                      fill
-                      className="object-cover"
-                      sizes="64px"
-                    />
-                    <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                      <Play className="w-4 h-4 text-white" />
-                    </div>
-                  </div>
-                )}
-                
-                {/* 現在の画像インジケーター */}
-                {index === currentIndex && (
-                  <div className="absolute inset-0 bg-white/10 pointer-events-none" />
-                )}
-              </button>
-            ))}
-            
-            {/* 右側のパディング */}
-            <div className="flex-shrink-0 w-[calc(50%-36px)]" />
-          </div>
-        </div>
-      )}
     </div>
   )
 }
