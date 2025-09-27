@@ -187,6 +187,31 @@ importers:
         specifier: 5.8.2
         version: 5.8.2
 
+  apps/scripts:
+    dependencies:
+      '@aws-sdk/client-s3':
+        specifier: '*'
+        version: 3.876.0
+      '@prisma/client':
+        specifier: '*'
+        version: 6.12.0(prisma@6.12.0(typescript@5.8.2))(typescript@5.8.2)
+      '@repo/env':
+        specifier: workspace:*
+        version: link:../../packages/env
+      sharp:
+        specifier: '*'
+        version: 0.34.3
+    devDependencies:
+      '@types/node':
+        specifier: '*'
+        version: 22.16.5
+      tsx:
+        specifier: '*'
+        version: 4.20.3
+      typescript:
+        specifier: '*'
+        version: 5.8.2
+
   apps/web:
     dependencies:
       '@aws-sdk/client-s3':
@@ -7536,13 +7561,11 @@ snapshots:
     dependencies:
       color-name: 1.1.4
       simple-swizzle: 0.2.2
-    optional: true
 
   color@4.2.3:
     dependencies:
       color-convert: 2.0.1
       color-string: 1.9.1
-    optional: true
 
   commander@10.0.1: {}
 
@@ -8466,8 +8489,7 @@ snapshots:
 
   is-arrayish@0.2.1: {}
 
-  is-arrayish@0.3.2:
-    optional: true
+  is-arrayish@0.3.2: {}
 
   is-async-function@2.1.1:
     dependencies:
@@ -9825,7 +9847,6 @@ snapshots:
       '@img/sharp-win32-arm64': 0.34.3
       '@img/sharp-win32-ia32': 0.34.3
       '@img/sharp-win32-x64': 0.34.3
-    optional: true
 
   shebang-command@2.0.0:
     dependencies:
@@ -9868,7 +9889,6 @@ snapshots:
   simple-swizzle@0.2.2:
     dependencies:
       is-arrayish: 0.3.2
-    optional: true
 
   sisteransi@1.0.5: {}
 
