@@ -214,7 +214,10 @@ export default function MediaViewer({ media, initialIndex, isOpen, onClose, isAd
                 aria-label="詳細を見る"
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onClose()
+                }}
               >
                 <ExternalLink className="w-4 h-4 text-white" />
               </Link>
