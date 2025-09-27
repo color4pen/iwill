@@ -60,78 +60,79 @@ export default function MediaDetailClient({
   }
   
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-black flex flex-col">
       {/* メディア表示 */}
-      <div className="relative w-full h-screen flex items-center justify-center">
+      <div className="relative flex-1 flex items-center justify-center">
         {isVideo ? (
           <video
             src={media.fileUrl}
             className="max-w-full max-h-full w-auto h-auto object-contain"
-            style={{ maxHeight: '100vh' }}
+            style={{ maxHeight: 'calc(100vh - 120px)' }}
             controls
             autoPlay
             muted
           />
         ) : (
-          <Image
-            src={media.fileUrl}
-            alt={media.caption || "写真"}
-            fill
-            className="object-contain"
-            sizes="100vw"
-            priority
-          />
+          <div className="relative w-full h-full flex items-center justify-center">
+            <Image
+              src={media.fileUrl}
+              alt={media.caption || "写真"}
+              fill
+              className="object-contain"
+              sizes="100vw"
+              priority
+            />
+          </div>
         )}
-        
-        {/* メタ情報（オーバーレイ） */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent pointer-events-none"
-          style={{ paddingBottom: isVideo ? '80px' : '16px' }}>
-          <div className="max-w-4xl mx-auto text-white">
-            {/* キャプション */}
-            {media.caption && (
-              <p className="text-lg mb-3">{media.caption}</p>
+      </div>
+      
+      {/* メタ情報（下部に固定） */}
+      <div className="bg-black border-t border-gray-800 p-4">
+        <div className="max-w-4xl mx-auto text-white">
+          {/* キャプション */}
+          {media.caption && (
+            <p className="text-lg mb-3">{media.caption}</p>
+          )}
+          
+          {/* メタ情報 */}
+          <div className="flex items-center gap-4 text-sm text-white/80">
+            {media.user && (
+              <div className="flex items-center gap-2">
+                {media.user.image && (
+                  <Image
+                    src={media.user.image}
+                    alt={media.user.name || ""}
+                    width={24}
+                    height={24}
+                    className="rounded-full"
+                  />
+                )}
+                <span>{media.user.name || "ゲスト"}</span>
+              </div>
             )}
             
-            {/* メタ情報 */}
-            <div className="flex items-center gap-4 text-sm text-white/80">
-              {media.user && (
-                <div className="flex items-center gap-2">
-                  {media.user.image && (
-                    <Image
-                      src={media.user.image}
-                      alt={media.user.name || ""}
-                      width={24}
-                      height={24}
-                      className="rounded-full"
-                    />
-                  )}
-                  <span>{media.user.name || "ゲスト"}</span>
-                </div>
-              )}
-              
-              <span>{formatDate(media.createdAt)}</span>
-              
-              {media.mediaSituation && (
-                <span>#{media.mediaSituation.name}</span>
-              )}
-              
-              <span>{formatFileSize(media.fileSize)}</span>
-              
-              {isAdmin && (
-                <button
-                  onClick={handleCopyId}
-                  className="flex items-center gap-1 text-xs hover:text-white pointer-events-auto"
-                  title="IDをコピー"
-                >
-                  <span className="font-mono">{media.id}</span>
-                  {copiedId ? (
-                    <Check className="w-3 h-3 text-green-400" />
-                  ) : (
-                    <Copy className="w-3 h-3" />
-                  )}
-                </button>
-              )}
-            </div>
+            <span>{formatDate(media.createdAt)}</span>
+            
+            {media.mediaSituation && (
+              <span>#{media.mediaSituation.name}</span>
+            )}
+            
+            <span>{formatFileSize(media.fileSize)}</span>
+            
+            {isAdmin && (
+              <button
+                onClick={handleCopyId}
+                className="flex items-center gap-1 text-xs hover:text-white"
+                title="IDをコピー"
+              >
+                <span className="font-mono">{media.id}</span>
+                {copiedId ? (
+                  <Check className="w-3 h-3 text-green-400" />
+                ) : (
+                  <Copy className="w-3 h-3" />
+                )}
+              </button>
+            )}
           </div>
         </div>
       </div>
