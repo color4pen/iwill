@@ -2,6 +2,7 @@
 
 import { ReactNode, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import AuthStatus from "../../components/auth-status";
 import { BackToTop } from "../../components/back-to-top";
 import { paths } from "@/lib/paths";
@@ -11,7 +12,13 @@ interface LayoutFrameProps {
 }
 
 export default function Layout({ children }: LayoutFrameProps) {
-  // モバイルメニューは不要のため削除
+  const pathname = usePathname();
+  // メディア詳細ページの場合はヘッダー/フッターを非表示
+  const isMediaDetailPage = pathname.startsWith('/media/') && pathname.split('/').length === 3;
+
+  if (isMediaDetailPage) {
+    return <>{children}</>;
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-white relative">

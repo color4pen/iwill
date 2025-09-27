@@ -83,14 +83,17 @@ export default function MediaDetailClient({
           />
         )}
         
-        {/* メタ情報（オーバーレイ） */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent pointer-events-none"
-          style={{ paddingBottom: isVideo ? '80px' : '16px' }}>
+        {/* メタ情報 - 動画の場合は上部、写真の場合は下部に表示 */}
+        <div className={`absolute left-0 right-0 p-4 pointer-events-none ${
+          isVideo 
+            ? 'top-0 bg-gradient-to-b from-black/80 to-transparent' 
+            : 'bottom-0 bg-gradient-to-t from-black/80 to-transparent'
+        }`}>
           <div className="max-w-4xl mx-auto text-white">
-            {/* キャプション */}
-            {media.caption && (
-              <p className="text-lg mb-3">{media.caption}</p>
-            )}
+              {/* キャプション */}
+              {media.caption && (
+                <p className="text-lg mb-3">{media.caption}</p>
+              )}
             
             {/* メタ情報 */}
             <div className="flex items-center gap-4 text-sm text-white/80">
@@ -131,8 +134,8 @@ export default function MediaDetailClient({
                   )}
                 </button>
               )}
+              </div>
             </div>
-          </div>
         </div>
       </div>
     </div>
