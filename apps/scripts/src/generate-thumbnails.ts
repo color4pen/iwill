@@ -1,12 +1,13 @@
-import { prisma } from "../apps/web/lib/prisma"
+import { config } from "./config"
+import { prisma } from "./lib/prisma"
 import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3"
 import sharp from "sharp"
 import { Readable } from "stream"
 
 // 環境変数
-const BUCKET_NAME = process.env.AWS_S3_BUCKET_NAME!
-const CLOUDFRONT_URL = process.env.AWS_CLOUDFRONT_URL!
-const AWS_REGION = process.env.AWS_REGION || "ap-northeast-1"
+const BUCKET_NAME = config.AWS_S3_BUCKET_NAME
+const CLOUDFRONT_URL = config.AWS_CLOUDFRONT_URL
+const AWS_REGION = config.AWS_REGION
 
 // S3クライアント
 const s3Client = new S3Client({ region: AWS_REGION })
@@ -105,13 +106,12 @@ async function generateThumbnails() {
   console.log("Starting thumbnail generation for existing media...")
   
   try {
-    // サムネイルがない、または元のURLと同じメディアを取得
+    // サムネイルURLが設定されているメディアのみ取得（再生成対象）
     const mediaList = await prisma.media.findMany({
       where: {
-        OR: [
-          { thumbnailUrl: null },
-          { thumbnailUrl: { equals: prisma.media.fields.fileUrl } },
-        ],
+        thumbnailUrl: {
+          not: null,
+        },
       },
       orderBy: { createdAt: "desc" },
     })

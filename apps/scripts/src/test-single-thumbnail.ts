@@ -1,12 +1,13 @@
-import { prisma } from "../apps/web/lib/prisma"
+import { config } from "./config"
+import { prisma } from "./lib/prisma"
 import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3"
 import sharp from "sharp"
 import { Readable } from "stream"
 
 // 環境変数
-const BUCKET_NAME = process.env.AWS_S3_BUCKET_NAME!
-const CLOUDFRONT_URL = process.env.AWS_CLOUDFRONT_URL!
-const AWS_REGION = process.env.AWS_REGION || "ap-northeast-1"
+const BUCKET_NAME = config.AWS_S3_BUCKET_NAME
+const CLOUDFRONT_URL = config.AWS_CLOUDFRONT_URL
+const AWS_REGION = config.AWS_REGION
 
 // S3クライアント
 const s3Client = new S3Client({ region: AWS_REGION })
@@ -36,9 +37,23 @@ async function generateImageThumbnail(imageBuffer: Buffer): Promise<Buffer> {
     .toBuffer()
 }
 
-async function processSingleMedia(media: any) {
+async function processSingleMedia(mediaId: string) {
   try {
-    console.log(`Processing: ${media.id} - ${media.fileName}`)
+    console.log(`Looking for media with ID: ${mediaId}`)
+    
+    // 特定のメディアを取得
+    const media = await prisma.media.findUnique({
+      where: { id: mediaId }
+    })
+    
+    if (!media) {
+      console.error(`Media not found: ${mediaId}`)
+      return
+    }
+    
+    console.log(`Found media: ${media.fileName}`)
+    console.log(`File URL: ${media.fileUrl}`)
+    console.log(`Current thumbnail URL: ${media.thumbnailUrl}`)
     
     // 画像のみ処理（動画はLambdaで処理するため）
     if (!media.mimeType.startsWith("image/")) {
@@ -48,14 +63,16 @@ async function processSingleMedia(media: any) {
     
     // S3からファイルキーを抽出
     const fileKey = media.fileUrl.replace(CLOUDFRONT_URL + "/", "")
+    console.log(`S3 Key: ${fileKey}`)
     
     // サムネイルキーを生成
     const keyParts = fileKey.split("/")
     const fileName = keyParts[keyParts.length - 1]
     const fileDir = keyParts.slice(0, -1).join("/")
     const thumbnailKey = fileDir ? `${fileDir}/thumbnails/${fileName}` : `thumbnails/${fileName}`
+    console.log(`Thumbnail Key: ${thumbnailKey}`)
     
-    console.log(`Fetching from S3: ${fileKey}`)
+    console.log(`Fetching from S3...`)
     
     // S3から画像を取得
     const getCommand = new GetObjectCommand({
@@ -65,13 +82,15 @@ async function processSingleMedia(media: any) {
     
     const response = await s3Client.send(getCommand)
     const imageBuffer = await streamToBuffer(response.Body as Readable)
+    console.log(`Downloaded image: ${imageBuffer.length} bytes`)
     
     // サムネイルを生成
     console.log("Generating thumbnail...")
     const thumbnailBuffer = await generateImageThumbnail(imageBuffer)
+    console.log(`Generated thumbnail: ${thumbnailBuffer.length} bytes`)
     
     // S3にアップロード
-    console.log(`Uploading thumbnail: ${thumbnailKey}`)
+    console.log(`Uploading thumbnail to S3...`)
     const putCommand = new PutObjectCommand({
       Bucket: BUCKET_NAME,
       Key: thumbnailKey,
@@ -86,6 +105,7 @@ async function processSingleMedia(media: any) {
     })
     
     await s3Client.send(putCommand)
+    console.log(`✅ Uploaded to S3: ${thumbnailKey}`)
     
     // データベースを更新
     const thumbnailUrl = `${CLOUDFRONT_URL}/${thumbnailKey}`
@@ -94,51 +114,22 @@ async function processSingleMedia(media: any) {
       data: { thumbnailUrl },
     })
     
-    console.log(`✅ Completed: ${media.fileName}`)
+    console.log(`✅ Updated database with thumbnail URL: ${thumbnailUrl}`)
+    console.log(`✅ Completed successfully!`)
     
   } catch (error) {
-    console.error(`❌ Error processing ${media.id}:`, error)
-  }
-}
-
-async function generateThumbnails() {
-  console.log("Starting thumbnail generation for existing media...")
-  
-  try {
-    // サムネイルがない、または元のURLと同じメディアを取得
-    const mediaList = await prisma.media.findMany({
-      where: {
-        OR: [
-          { thumbnailUrl: null },
-          { thumbnailUrl: { equals: prisma.media.fields.fileUrl } },
-        ],
-      },
-      orderBy: { createdAt: "desc" },
-    })
-    
-    console.log(`Found ${mediaList.length} media items to process`)
-    
-    // バッチ処理（同時実行数を制限）
-    const batchSize = 5
-    for (let i = 0; i < mediaList.length; i += batchSize) {
-      const batch = mediaList.slice(i, i + batchSize)
-      await Promise.all(batch.map(processSingleMedia))
-      
-      console.log(`Progress: ${Math.min(i + batchSize, mediaList.length)}/${mediaList.length}`)
-      
-      // レート制限のための遅延
-      await new Promise(resolve => setTimeout(resolve, 1000))
-    }
-    
-    console.log("✅ Thumbnail generation completed!")
-    
-  } catch (error) {
-    console.error("Fatal error:", error)
-    process.exit(1)
+    console.error(`❌ Error processing:`, error)
   } finally {
     await prisma.$disconnect()
   }
 }
 
+// メディアIDを抽出
+const mediaId = "cmfwc3gpw0001l504079x94si"
+
 // 実行
-generateThumbnails()
+console.log("=== Test Single Thumbnail Generation ===")
+console.log(`Target media ID: ${mediaId}`)
+console.log("")
+
+processSingleMedia(mediaId)

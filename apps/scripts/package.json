@@ -1,0 +1,22 @@
+{
+  "name": "scripts",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test-thumbnail": "tsx --env-file=.env src/test-single-thumbnail.ts",
+    "generate-thumbnails": "tsx --env-file=.env src/generate-thumbnails.ts",
+    "check-thumbnails": "tsx --env-file=.env src/check-thumbnails.ts"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "*",
+    "@prisma/client": "*",
+    "@repo/env": "workspace:*",
+    "sharp": "*"
+  },
+  "devDependencies": {
+    "@types/node": "*",
+    "tsx": "*",
+    "typescript": "*"
+  }
+}
