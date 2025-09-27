@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { createUploadUrl, saveMediaMetadata } from "@/app/actions/media"
+import { createUploadUrl, saveMediaMetadata, deleteFailedUpload } from "@/app/actions/media"
 import { Upload, Loader2 } from "lucide-react"
 import { FileDropzone } from "./media-upload/file-dropzone"
 import { SelectedFilesList } from "./media-upload/selected-files-list"
@@ -141,6 +141,7 @@ export default function MediaUploadForm({ onUploadComplete, situations }: MediaU
 
   const uploadFile = async (file: File, fileIndex?: number): Promise<boolean> => {
     const progressKey = `${file.name}-${fileIndex ?? Date.now()}`
+    let mediaId: string | undefined
     
     try {
       // プログレス更新（既に初期化済み）
@@ -152,11 +153,13 @@ export default function MediaUploadForm({ onUploadComplete, situations }: MediaU
       })
 
       // 1. アップロードURLを取得
-      const { uploadUrl, fileKey, mediaId } = await createUploadUrl(
+      const result = await createUploadUrl(
         file.name,
         file.type,
         file.size
       )
+      mediaId = result.mediaId
+      const { uploadUrl, fileKey } = result
 
       // 2. S3に直接アップロード
       const xhr = new XMLHttpRequest()
@@ -235,6 +238,17 @@ export default function MediaUploadForm({ onUploadComplete, situations }: MediaU
         })
         return newMap
       })
+      
+      // アップロード失敗時にメディアレコードを削除
+      try {
+        if (mediaId) {
+          await deleteFailedUpload(mediaId)
+        }
+      } catch (deleteError) {
+        // 削除エラーは無視（ログに記録するだけ）
+        console.error("Failed to delete media record:", deleteError)
+      }
+      
       return false
     }
   }

@@ -207,6 +207,9 @@ export async function getUserMedia(limit = 50) {
   const media = await prisma.media.findMany({
     where: {
       userId: session.user.id,
+      thumbnailUrl: {
+        not: null,
+      },
     },
     orderBy: {
       createdAt: "desc",
@@ -223,7 +226,11 @@ export async function getUserMedia(limit = 50) {
 export async function getApprovedMedia(limit = 100) {
   const media = await prisma.media.findMany({
     // 承認状態に関係なくすべて取得
-    where: {},
+    where: {
+      thumbnailUrl: {
+        not: null,
+      },
+    },
     include: {
       user: {
         select: {
@@ -266,6 +273,9 @@ export async function getMediaBySituation(situationId: string, limit = 50) {
   const media = await prisma.media.findMany({
     where: {
       mediaSituationId: situationId,
+      thumbnailUrl: {
+        not: null,
+      },
       // 承認状態に関係なくすべて取得
     },
     include: {
@@ -292,7 +302,11 @@ export async function getMediaBySituation(situationId: string, limit = 50) {
 export async function getRecentMedia(limit = 12) {
   const media = await prisma.media.findMany({
     // 承認状態に関係なくすべて取得
-    where: {},
+    where: {
+      thumbnailUrl: {
+        not: null,
+      },
+    },
     include: {
       user: {
         select: {
@@ -343,6 +357,39 @@ export async function deleteMedia(mediaId: string) {
 
   revalidatePath("/mypage")
   revalidatePath("/gallery")
+
+  return { success: true }
+}
+
+/**
+ * アップロード失敗時にメディアレコードを削除
+ */
+export async function deleteFailedUpload(mediaId: string) {
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.id) {
+    throw new Error("認証が必要です")
+  }
+
+  // 所有者確認とfileUrlが空であることを確認
+  const media = await prisma.media.findFirst({
+    where: {
+      id: mediaId,
+      userId: session.user.id,
+      fileUrl: '', // アップロードが完了していない
+    },
+  })
+
+  if (!media) {
+    // メディアが見つからない、または既にアップロード済み
+    return { success: false }
+  }
+
+  // データベースから削除
+  await prisma.media.delete({
+    where: {
+      id: mediaId,
+    },
+  })
 
   return { success: true }
 }
