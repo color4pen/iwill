@@ -66,7 +66,8 @@ export default function MediaDetailClient({
         {isVideo ? (
           <video
             src={media.fileUrl}
-            className="max-w-full max-h-full object-contain"
+            className="max-w-full max-h-full w-auto h-auto object-contain"
+            style={{ maxHeight: '100vh' }}
             controls
             autoPlay
             muted
@@ -83,7 +84,8 @@ export default function MediaDetailClient({
         )}
         
         {/* メタ情報（オーバーレイ） */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
+        <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent pointer-events-none"
+          style={{ paddingBottom: isVideo ? '80px' : '16px' }}>
           <div className="max-w-4xl mx-auto text-white">
             {/* キャプション */}
             {media.caption && (
@@ -118,7 +120,7 @@ export default function MediaDetailClient({
               {isAdmin && (
                 <button
                   onClick={handleCopyId}
-                  className="flex items-center gap-1 text-xs hover:text-white"
+                  className="flex items-center gap-1 text-xs hover:text-white pointer-events-auto"
                   title="IDをコピー"
                 >
                   <span className="font-mono">{media.id}</span>
