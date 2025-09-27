@@ -22,9 +22,10 @@ interface MediaItem {
 
 interface RecentMediaSectionProps {
   recentMedia: MediaItem[]
+  isAdmin?: boolean
 }
 
-export default function RecentMediaSection({ recentMedia }: RecentMediaSectionProps) {
+export default function RecentMediaSection({ recentMedia, isAdmin = false }: RecentMediaSectionProps) {
   const [viewerOpen, setViewerOpen] = useState(false)
   const [viewerIndex, setViewerIndex] = useState(0)
 
@@ -90,6 +91,7 @@ export default function RecentMediaSection({ recentMedia }: RecentMediaSectionPr
             initialIndex={viewerIndex}
             isOpen={viewerOpen}
             onClose={() => setViewerOpen(false)}
+            isAdmin={isAdmin}
           />
         </>
       ) : (

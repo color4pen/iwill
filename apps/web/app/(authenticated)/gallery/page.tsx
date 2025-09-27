@@ -3,8 +3,19 @@ import Link from "next/link"
 import { ArrowRight, Camera } from "lucide-react"
 import RecentMediaSection from "./recent-media-section"
 import * as Icons from "lucide-react"
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth"
+import { prisma } from "@/lib/prisma"
 
 export default async function GalleryPage() {
+  const session = await getServerSession(authOptions)
+  const user = session?.user?.id ? await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { role: true }
+  }) : null
+  
+  const isAdmin = user?.role === 'ADMIN'
+  
   const recentMedia = await getRecentMedia(12)
   const situations = await getMediaSituations()
 
@@ -28,7 +39,7 @@ export default async function GalleryPage() {
       </div>
 
       {/* 最新のメディア */}
-      <RecentMediaSection recentMedia={recentMedia} />
+      <RecentMediaSection recentMedia={recentMedia} isAdmin={isAdmin} />
 
       {/* シーン別セクション */}
       <section>

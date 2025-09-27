@@ -24,9 +24,10 @@ interface MediaViewerProps {
   initialIndex: number
   isOpen: boolean
   onClose: () => void
+  isAdmin?: boolean
 }
 
-export default function MediaViewer({ media, initialIndex, isOpen, onClose }: MediaViewerProps) {
+export default function MediaViewer({ media, initialIndex, isOpen, onClose, isAdmin = false }: MediaViewerProps) {
   const [currentIndex, setCurrentIndex] = useState(initialIndex)
   const [isPlaying, setIsPlaying] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
@@ -52,6 +53,7 @@ export default function MediaViewer({ media, initialIndex, isOpen, onClose }: Me
   // インデックスが変更されたら更新
   useEffect(() => {
     setCurrentIndex(initialIndex)
+    setImageLoading(true)  // 新しい画像の読み込み状態をリセット
   }, [initialIndex])
 
 
@@ -156,39 +158,50 @@ export default function MediaViewer({ media, initialIndex, isOpen, onClose }: Me
               <span>{formatDate(currentMedia.createdAt)}</span>
             </div>
             
-            {isVideo && (
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    setIsPlaying(!isPlaying)
-                  }}
-                  className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
-                  aria-label={isPlaying ? "一時停止" : "再生"}
+            <div className="flex items-center gap-2">
+              {isVideo && (
+                <>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setIsPlaying(!isPlaying)
+                    }}
+                    className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+                    aria-label={isPlaying ? "一時停止" : "再生"}
+                  >
+                    {isPlaying ? (
+                      <Pause className="w-4 h-4 text-white" />
+                    ) : (
+                      <Play className="w-4 h-4 text-white" />
+                    )}
+                  </button>
+                  
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setIsMuted(!isMuted)
+                    }}
+                    className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+                    aria-label={isMuted ? "ミュート解除" : "ミュート"}
+                  >
+                    {isMuted ? (
+                      <VolumeX className="w-4 h-4 text-white" />
+                    ) : (
+                      <Volume2 className="w-4 h-4 text-white" />
+                    )}
+                  </button>
+                </>
+              )}
+              {isAdmin && (
+                <div 
+                  onClick={(e) => e.stopPropagation()}
+                  className="text-white/60 text-xs bg-black/20 px-2 py-1 rounded select-text cursor-text"
+                  title="クリックしてコピー"
                 >
-                  {isPlaying ? (
-                    <Pause className="w-4 h-4 text-white" />
-                  ) : (
-                    <Play className="w-4 h-4 text-white" />
-                  )}
-                </button>
-                
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    setIsMuted(!isMuted)
-                  }}
-                  className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
-                  aria-label={isMuted ? "ミュート解除" : "ミュート"}
-                >
-                  {isMuted ? (
-                    <VolumeX className="w-4 h-4 text-white" />
-                  ) : (
-                    <Volume2 className="w-4 h-4 text-white" />
-                  )}
-                </button>
-              </div>
-            )}
+                  ID: {currentMedia.id}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

@@ -25,6 +25,7 @@ interface MediaItem {
 interface GalleryClientProps {
   initialMedia: MediaItem[]
   currentUserId?: string
+  isAdmin?: boolean
 }
 
 interface GalleryClientPropsExtended extends GalleryClientProps {
@@ -32,7 +33,7 @@ interface GalleryClientPropsExtended extends GalleryClientProps {
   customEmptyMessage?: string
 }
 
-export default function GalleryClient({ initialMedia, currentUserId, hideHeader = true, customEmptyMessage }: GalleryClientPropsExtended) {
+export default function GalleryClient({ initialMedia, currentUserId, hideHeader = true, customEmptyMessage, isAdmin = false }: GalleryClientPropsExtended) {
   const [media, setMedia] = useState(initialMedia)
   const router = useRouter()
   const [viewerOpen, setViewerOpen] = useState(false)
@@ -163,6 +164,7 @@ export default function GalleryClient({ initialMedia, currentUserId, hideHeader 
         initialIndex={viewerIndex}
         isOpen={viewerOpen}
         onClose={() => setViewerOpen(false)}
+        isAdmin={isAdmin}
       />
     </div>
   )

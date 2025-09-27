@@ -4,9 +4,16 @@ import { getApprovedMedia } from "@/app/actions/media"
 import GalleryClient from "../gallery-client"
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
+import { prisma } from "@/lib/prisma"
 
 export default async function AllMediaPage() {
   const session = await getServerSession(authOptions)
+  const user = session?.user?.id ? await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { role: true }
+  }) : null
+  
+  const isAdmin = user?.role === 'ADMIN'
   const allMedia = await getApprovedMedia(100)
 
   return (
@@ -29,6 +36,7 @@ export default async function AllMediaPage() {
       <GalleryClient 
         initialMedia={allMedia}
         currentUserId={session?.user?.id}
+        isAdmin={isAdmin}
       />
     </div>
   )
