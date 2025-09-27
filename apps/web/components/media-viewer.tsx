@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useCallback, useRef } from "react"
 import Image from "next/image"
-import { MediaImage } from "@repo/ui/media-image"
-import { X, Play, Pause, Volume2, VolumeX } from "lucide-react"
+import Link from "next/link"
+import { X, Play, Pause, Volume2, VolumeX, ExternalLink } from "lucide-react"
 
 interface MediaItem {
   id: string
@@ -78,8 +78,7 @@ export default function MediaViewer({ media, initialIndex, isOpen, onClose, isAd
 
   return (
     <div 
-      className="fixed inset-0 z-50 bg-black bg-opacity-95 flex items-center justify-center"
-      onClick={onClose}
+      className="fixed inset-0 z-[100] bg-black bg-opacity-95 flex items-center justify-center"
     >
       {/* ヘッダー */}
       <div className="absolute top-0 left-0 right-0 p-4 flex justify-between items-center bg-gradient-to-b from-black/50 to-transparent z-30">
@@ -209,6 +208,16 @@ export default function MediaViewer({ media, initialIndex, isOpen, onClose, isAd
                   ID: {currentMedia.id}
                 </div>
               )}
+              <Link
+                href={`/media/${currentMedia.id}`}
+                className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+                aria-label="詳細を見る"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <ExternalLink className="w-4 h-4 text-white" />
+              </Link>
             </div>
           </div>
         </div>
