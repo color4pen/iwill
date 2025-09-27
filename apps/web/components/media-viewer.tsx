@@ -55,6 +55,13 @@ export default function MediaViewer({ media, initialIndex, isOpen, onClose, isAd
     setCurrentIndex(initialIndex)
     setImageLoading(true)  // 新しい画像の読み込み状態をリセット
   }, [initialIndex])
+  
+  // currentIndexが変更されたら画像の読み込み状態をリセット
+  useEffect(() => {
+    if (!isVideo) {
+      setImageLoading(true)
+    }
+  }, [currentIndex, isVideo])
 
 
   const formatDate = (date: Date) => {
@@ -117,6 +124,7 @@ export default function MediaViewer({ media, initialIndex, isOpen, onClose, isAd
                 </div>
               )}
               <Image
+                key={currentMedia.id}
                 src={currentMedia.fileUrl}
                 alt={currentMedia.caption || "写真"}
                 fill
