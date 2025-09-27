@@ -25,7 +25,12 @@ async function getMedia(
     mediaSituationId?: string;
     isApproved?: boolean;
     userId?: string;
-  } = {};
+    thumbnailUrl?: { not: null };
+  } = {
+    thumbnailUrl: {
+      not: null,
+    },
+  };
   if (situationId && situationId !== 'all') {
     where.mediaSituationId = situationId;
   }
@@ -75,7 +80,11 @@ async function getUsers() {
     },
     where: {
       media: {
-        some: {}
+        some: {
+          thumbnailUrl: {
+            not: null,
+          },
+        }
       }
     },
     orderBy: { name: "asc" },
